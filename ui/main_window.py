@@ -1,20 +1,23 @@
 """
-KyteRename - Main Window (雙欄預覽、拖曳資料夾、漸進式元資料預讀與衝突防呆)
+KyteRename - Main Window (雙欄預覽、安全拓撲改名、進度對話框與 Ctrl+Z 快照復原)
 """
 import os
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 
 from PySide6.QtCore import Qt, QUrl
-from PySide6.QtGui import QDragEnterEvent, QDropEvent, QIcon, QFont
+from PySide6.QtGui import QDragEnterEvent, QDropEvent, QIcon, QFont, QKeySequence, QShortcut
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton,
-    QLabel, QFileDialog, QSplitter, QMessageBox, QStatusBar, QDialog
+    QLabel, QFileDialog, QSplitter, QMessageBox, QStatusBar, QDialog,
+    QProgressDialog
 )
 
 from core.file_scanner import scan_path
 from core.rule_engine import RuleEngine
 from core.metadata_worker import MetadataWorker
+from core.rename_executor import RenameWorker
+from core.snapshot_manager import SnapshotManager
 from rules.base_rule import FileEntry, BaseRule
 from ui.preview_table import PreviewTable
 from ui.rule_panel import RulePanel
@@ -31,7 +34,7 @@ QWidget {
     font-size: 13px;
 }
 
-/* 捲動區域與內部面板徹底深色化，杜絕原生白色漏光 */
+/* 捲動區域與內部面板徹底深色化 */
 QScrollArea, #rule_scroll_area, #rule_panel_content {
     background-color: #16181B;
     border: none;
@@ -40,7 +43,7 @@ QScrollArea > QWidget > QWidget {
     background-color: #16181B;
 }
 
-/* 捲動條極簡微調 */
+/* 捲動條微調 */
 QScrollBar:vertical {
     background-color: #16181B;
     width: 7px;
@@ -132,6 +135,21 @@ QPushButton#btn_primary:disabled {
     border: 1px solid #1F2833;
     color: #556270;
 }
+QPushButton#btn_undo {
+    background-color: #262B33;
+    border: 1px solid #38404D;
+    color: #F0A020;
+    font-weight: 500;
+}
+QPushButton#btn_undo:hover {
+    background-color: #323A45;
+    border-color: #F0A020;
+}
+QPushButton#btn_undo:disabled {
+    background-color: #1C2026;
+    border-color: #272C33;
+    color: #555E6B;
+}
 
 /* 快捷標籤 Tag Chips */
 QPushButton[class="tag_btn"] {
@@ -183,15 +201,15 @@ QStatusBar {
 }
 
 /* 對話框樣式 */
-QMessageBox {
+QMessageBox, QProgressDialog {
     background-color: #1A1D21;
 }
-QMessageBox QLabel {
+QMessageBox QLabel, QProgressDialog QLabel {
     color: #F0F2F5;
     font-size: 13px;
     background-color: transparent;
 }
-QMessageBox QPushButton {
+QMessageBox QPushButton, QProgressDialog QPushButton {
     background-color: #282C34;
     border: 1px solid #3A404D;
     border-radius: 5px;
@@ -199,9 +217,21 @@ QMessageBox QPushButton {
     color: #FFFFFF;
     min-width: 65px;
 }
-QMessageBox QPushButton:hover {
+QMessageBox QPushButton:hover, QProgressDialog QPushButton:hover {
     background-color: #177DDC;
     border-color: #177DDC;
+}
+QProgressBar {
+    border: 1px solid #333842;
+    border-radius: 5px;
+    text-align: center;
+    background-color: #16181B;
+    color: #FFFFFF;
+    height: 18px;
+}
+QProgressBar::chunk {
+    background-color: #177DDC;
+    border-radius: 4px;
 }
 """
 
@@ -217,8 +247,12 @@ class MainWindow(QMainWindow):
         self.rule_engine = RuleEngine()
         self.current_rules: List[BaseRule] = []
         self.meta_worker: MetadataWorker = None
+        self.rename_worker: RenameWorker = None
+        self.snapshot_manager = SnapshotManager()
 
         self._init_ui()
+        self._init_shortcuts()
+        self._update_undo_button_state()
 
     def _init_ui(self):
         central_widget = QWidget(self)
@@ -232,14 +266,13 @@ class MainWindow(QMainWindow):
         self.btn_open_folder = QPushButton("📂 開啟資料夾")
         self.btn_open_files = QPushButton("📄 新增檔案")
         self.btn_clear = QPushButton("🗑️ 清空列表")
-
-        self.lbl_tip = QLabel("（可直接將相片、音樂或資料夾拖曳至此視窗）")
-        self.lbl_tip.setStyleSheet("color: #7A7A7A; font-size: 12px;")
+        self.btn_undo = QPushButton("↩️ 復原上次改名 (Ctrl+Z)")
+        self.btn_undo.setObjectName("btn_undo")
 
         top_bar.addWidget(self.btn_open_folder)
         top_bar.addWidget(self.btn_open_files)
         top_bar.addWidget(self.btn_clear)
-        top_bar.addWidget(self.lbl_tip)
+        top_bar.addWidget(self.btn_undo)
         top_bar.addStretch()
 
         self.btn_apply = QPushButton("🚀 執行重新命名")
@@ -249,7 +282,7 @@ class MainWindow(QMainWindow):
 
         main_layout.addLayout(top_bar)
 
-        # 中間 Splitter（左邊 QTableView，右邊 RulePanel）
+        # 中間 Splitter
         splitter = QSplitter(Qt.Orientation.Horizontal)
         self.table = PreviewTable(self)
         self.rule_panel = RulePanel(self)
@@ -269,8 +302,18 @@ class MainWindow(QMainWindow):
         self.btn_open_folder.clicked.connect(self._on_open_folder)
         self.btn_open_files.clicked.connect(self._on_open_files)
         self.btn_clear.clicked.connect(self._on_clear)
+        self.btn_undo.clicked.connect(self._on_undo_clicked)
         self.btn_apply.clicked.connect(self._on_apply_clicked)
         self.rule_panel.rules_changed.connect(self._on_rules_changed)
+
+    def _init_shortcuts(self):
+        # 註冊 Ctrl+Z 快速復原
+        shortcut_undo = QShortcut(QKeySequence("Ctrl+Z"), self)
+        shortcut_undo.activated.connect(self._on_undo_clicked)
+
+    def _update_undo_button_state(self):
+        has_snapshot = (self.snapshot_manager.get_latest_snapshot() is not None)
+        self.btn_undo.setEnabled(has_snapshot)
 
     def dragEnterEvent(self, event: QDragEnterEvent):
         if event.mimeData().hasUrls():
@@ -381,9 +424,96 @@ class MainWindow(QMainWindow):
         self.status_bar.showMessage(msg)
 
     def _on_apply_clicked(self):
-        box = QMessageBox(self)
-        box.setWindowTitle("準備執行")
-        box.setIcon(QMessageBox.Icon.Information)
-        box.setText("Phase 2 變數展開與流水號計算正常！\n\n執行實體改名、拓撲防撞與快照復原功能將於 Phase 4 完整就緒。")
-        box.setStandardButtons(QMessageBox.StandardButton.Ok)
-        box.exec()
+        previews = self.table.table_model.preview_names
+        changed_ops: List[Tuple[Path, Path]] = []
+        for entry, new_name in zip(self.entries, previews):
+            if entry.original_name != new_name:
+                dst = entry.parent_dir / new_name
+                changed_ops.append((entry.path, dst))
+
+        if not changed_ops:
+            QMessageBox.information(self, "提示", "目前沒有需要更名的檔案。")
+            return
+
+        reply = QMessageBox.question(
+            self,
+            "確認執行重新命名",
+            f"即將對 {len(changed_ops)} 個檔案執行重新命名。\n\n改名完成後會自動產生安全快照，隨時可按 Ctrl+Z 完整還原。\n是否確定執行？",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.Yes
+        )
+
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+
+        # 建立進度對話框
+        progress_dialog = QProgressDialog("正在執行安全批次改名...", "取消", 0, len(changed_ops), self)
+        progress_dialog.setWindowTitle("處理中")
+        progress_dialog.setWindowModality(Qt.WindowModality.WindowModal)
+        progress_dialog.setMinimumDuration(0)
+
+        self.rename_worker = RenameWorker(changed_ops, self)
+
+        self.rename_worker.progress.connect(lambda cur, tot, name: (
+            progress_dialog.setValue(cur),
+            progress_dialog.setLabelText(f"正在更名 ({cur}/{tot}): {name}")
+        ))
+
+        progress_dialog.canceled.connect(self.rename_worker.cancel)
+
+        def _on_rename_finished(result: dict):
+            progress_dialog.close()
+
+            # 儲存快照
+            if result["success_ops"]:
+                self.snapshot_manager.save_snapshot(result["success_ops"])
+
+            self._update_undo_button_state()
+
+            # 重新掃描並更新當前列表的檔案資訊
+            updated_paths = [op["renamed_path"] for op in result["success_ops"]]
+            # 加上未變更的檔案
+            for e, n in zip(self.entries, previews):
+                if e.original_name == n and e.path.exists():
+                    updated_paths.append(str(e.path.resolve()))
+
+            self.entries.clear()
+            self._load_paths(list(set(updated_paths)))
+
+            msg = f"更名完成！\n\n成功: {result['success_count']} 個檔案"
+            if result["failed_count"] > 0:
+                msg += f"\n失敗: {result['failed_count']} 個檔案（因鎖定或權限不足已略過）"
+            msg += "\n\n隨時可點擊「復原上次改名」或按 Ctrl+Z 還原。"
+
+            QMessageBox.information(self, "執行結果", msg)
+
+        self.rename_worker.finished_batch.connect(_on_rename_finished)
+        self.rename_worker.start()
+
+    def _on_undo_clicked(self):
+        reply = QMessageBox.question(
+            self,
+            "確認復原改名",
+            "確定要復原上一次的改名操作嗎？\n所有更名檔案將依據快照逆向拓撲還原回原始名稱。",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.Yes
+        )
+
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+
+        undo_result = self.snapshot_manager.undo_snapshot()
+        self._update_undo_button_state()
+
+        if undo_result["success"]:
+            # 重新載入列表
+            current_dirs = list({str(e.parent_dir) for e in self.entries if e.parent_dir.exists()})
+            self.entries.clear()
+            if current_dirs:
+                self._load_paths(current_dirs)
+            else:
+                self._refresh_previews(full_reset=True)
+
+            QMessageBox.information(self, "復原完成", f"{undo_result['message']}！")
+        else:
+            QMessageBox.warning(self, "復原失敗", undo_result["message"])
