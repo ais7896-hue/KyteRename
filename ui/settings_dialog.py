@@ -97,6 +97,13 @@ class SettingsDialog(QDialog):
         self.btn_diag.clicked.connect(self._copy_diagnostic_info)
         bottom_bar.addWidget(self.btn_diag)
 
+        self.btn_open_license = QPushButton("💎 專業版授權")
+        self.btn_open_license.setFixedHeight(30)
+        self.btn_open_license.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.btn_open_license.setToolTip("查看當前 7 天試用天數、輸入序號啟用或管理授權")
+        self.btn_open_license.clicked.connect(self._on_open_license_clicked)
+        bottom_bar.addWidget(self.btn_open_license)
+
         bottom_bar.addStretch()
 
         self.btn_cancel = QPushButton("取消")
@@ -458,6 +465,10 @@ class SettingsDialog(QDialog):
         QMessageBox.information(self, "設定已儲存", "✓ 偏好設定已成功更新並儲存！")
         self.accept()
 
+
+    def _on_open_license_clicked(self):
+        diag = LicenseDialog(self)
+        diag.exec()
     def _copy_diagnostic_info(self):
         """收集軟硬體環境資訊複製至剪貼簿"""
         lines = [

@@ -315,13 +315,13 @@ class RulePanel(QWidget):
         self.edit_find.textChanged.connect(self._on_find_changed)
         self.edit_replace.textChanged.connect(self._on_input_changed)
         self.chk_case.stateChanged.connect(self._on_find_changed)
-        self.chk_regex.stateChanged.connect(self._on_find_changed)
+        self.chk_regex.stateChanged.connect(self._on_regex_changed)
         self.btn_regex_helper.clicked.connect(self._show_regex_helper_menu)
 
         self.edit_prefix.textChanged.connect(self._on_input_changed)
         self.edit_suffix.textChanged.connect(self._on_input_changed)
 
-        self.chk_pinyin.toggled.connect(self._on_input_changed)
+        self.chk_pinyin.toggled.connect(self._on_pinyin_toggled)
         self.combo_pinyin_mode.currentIndexChanged.connect(self._on_input_changed)
 
         self.chk_sanitize_illegal.toggled.connect(self._on_input_changed)
@@ -374,6 +374,47 @@ class RulePanel(QWidget):
         # 廣播 pattern 供左欄即時高亮
         self.pattern_changed.emit(pattern)
         self._on_input_changed()
+
+    def _on_pinyin_toggled(self, checked: bool):
+        if checked:
+            lic_mgr = LicenseManager.get_instance()
+            if not lic_mgr.is_unlimited():
+                reply = QMessageBox.information(
+                    self,
+                    "專業版進階功能",
+                    "「中文轉拼音」為專業版專屬進階功能。\n\n7 天試用期已結束，請啟用專業版解鎖漢字拼音能力。",
+                    QMessageBox.StandardButton.Open | QMessageBox.StandardButton.Cancel,
+                    QMessageBox.StandardButton.Open
+                )
+                if reply == QMessageBox.StandardButton.Open:
+                    from ui.license_dialog import LicenseDialog
+                    LicenseDialog(self.window()).exec()
+                self.chk_pinyin.blockSignals(True)
+                self.chk_pinyin.setChecked(False)
+                self.chk_pinyin.blockSignals(False)
+                return
+        self._on_input_changed()
+
+    def _on_regex_changed(self, state: int):
+        checked = (state == 2)
+        if checked:
+            lic_mgr = LicenseManager.get_instance()
+            if not lic_mgr.is_unlimited():
+                reply = QMessageBox.information(
+                    self,
+                    "專業版進階功能",
+                    "「正規表達式 (Regex) 高級搜尋與群組替換」為專業版專屬進階功能。\n\n7 天試用期已結束，純文字替換仍然完全免費開放！",
+                    QMessageBox.StandardButton.Open | QMessageBox.StandardButton.Cancel,
+                    QMessageBox.StandardButton.Open
+                )
+                if reply == QMessageBox.StandardButton.Open:
+                    from ui.license_dialog import LicenseDialog
+                    LicenseDialog(self.window()).exec()
+                self.chk_regex.blockSignals(True)
+                self.chk_regex.setChecked(False)
+                self.chk_regex.blockSignals(False)
+                return
+        self._on_find_changed()
 
     def _on_meta_toggled(self, checked: bool):
         self.edit_template.setEnabled(checked)

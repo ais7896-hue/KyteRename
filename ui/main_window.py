@@ -25,6 +25,8 @@ from ui.preview_table import PreviewTable
 from ui.search_bar import SearchBar
 from ui.rule_panel import RulePanel
 from ui.settings_dialog import SettingsDialog
+from core.license import LicenseManager
+from ui.license_dialog import LicenseDialog
 from ui.styles import get_theme_stylesheet, DARK_STYLE, LIGHT_STYLE
 
 
@@ -47,6 +49,8 @@ class MainWindow(QMainWindow):
 
         # 快照目錄連動 Settings
         self.snapshot_manager = SnapshotManager(self.settings.get_snapshot_dir())
+        self.license_mgr = LicenseManager.get_instance()
+        self.license_mgr.license_changed.connect(lambda _: self._update_license_button())
 
         self._init_ui()
         self._init_shortcuts()
@@ -80,6 +84,12 @@ class MainWindow(QMainWindow):
         top_bar.addWidget(self.btn_clear)
         top_bar.addWidget(self.btn_undo)
         top_bar.addWidget(self.btn_settings)
+        self.btn_license = QPushButton()
+        self.btn_license.setObjectName("btn_license")
+        self.btn_license.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.btn_license.clicked.connect(self._on_license_clicked)
+        top_bar.addWidget(self.btn_license)
+        self._update_license_button()
         top_bar.addStretch()
 
         self.btn_apply = QPushButton("🚀 執行重新命名")
@@ -196,6 +206,25 @@ class MainWindow(QMainWindow):
             self.snapshot_manager.max_snapshots = int(val)
         elif key == "theme_mode":
             self.apply_theme()
+
+
+    def _update_license_button(self):
+        plan = self.license_mgr.get_plan_type()
+        days_left = self.license_mgr.get_trial_days_left()
+        if plan == "pro":
+            self.btn_license.setText("💎 專業版")
+            self.btn_license.setToolTip("KyteRename 專業版永久授權 (已啟用)")
+        elif plan == "trial":
+            self.btn_license.setText(f"✨ 試用剩餘 {days_left} 天")
+            self.btn_license.setToolTip("點擊查看或啟用 KyteRename 專業版")
+        else:
+            self.btn_license.setText("⚠️ 升級專業版")
+            self.btn_license.setToolTip("7 天試用期已結束，點擊升級解鎖無限批次與進階功能")
+
+    def _on_license_clicked(self):
+        dialog = LicenseDialog(self)
+        dialog.exec()
+        self._update_license_button()
 
     def _on_settings_clicked(self):
         dlg = SettingsDialog(self)
@@ -363,6 +392,39 @@ class MainWindow(QMainWindow):
         if not changed_ops:
             QMessageBox.information(self, "提示", "目前沒有需要更名的檔案。")
             return
+
+        # 授權與降級檢查 (7天試用期過後溫和降級)
+        if not self.license_mgr.is_unlimited():
+            # 1. 批次數量上限檢查 (免費版限 10 檔)
+            allowed, limit_msg = self.license_mgr.check_batch_limit(len(changed_ops))
+            if not allowed:
+                reply = QMessageBox.warning(
+                    self,
+                    "免費版批次限制提示",
+                    limit_msg,
+                    QMessageBox.StandardButton.Open | QMessageBox.StandardButton.Cancel,
+                    QMessageBox.StandardButton.Open
+                )
+                if reply == QMessageBox.StandardButton.Open:
+                    self._on_license_clicked()
+                return
+
+            # 2. 進階規則功能檢查 (EXIF/ID3/Metadata、拼音、Regex)
+            for rule in self.current_rules:
+                rt = rule.__class__.__name__
+                params = getattr(rule, "__dict__", {})
+                allowed, rule_msg = self.license_mgr.check_rule_allowed(rt, params)
+                if not allowed:
+                    reply = QMessageBox.warning(
+                        self,
+                        "專業版專屬功能提示",
+                        rule_msg,
+                        QMessageBox.StandardButton.Open | QMessageBox.StandardButton.Cancel,
+                        QMessageBox.StandardButton.Open
+                    )
+                    if reply == QMessageBox.StandardButton.Open:
+                        self._on_license_clicked()
+                    return
 
         if self.settings.get("confirm_before_apply", True):
             reply = QMessageBox.question(

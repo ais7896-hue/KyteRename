@@ -176,6 +176,36 @@ QPushButton#btn_undo:hover {{
     background-color: #323A45;
     border-color: #F0A020;
 }}
+
+QPushButton#btn_license {{
+    background-color: rgba(99, 102, 241, 0.18);
+    border: 1px solid rgba(99, 102, 241, 0.45);
+    color: #c7d2fe;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 4px 12px;
+}}
+QPushButton#btn_license:hover {{
+    background-color: rgba(99, 102, 241, 0.32);
+    border-color: #818cf8;
+    color: #ffffff;
+}}
+
+
+QPushButton#btn_license {{
+    background-color: #eef2ff;
+    border: 1px solid #c7d2fe;
+    color: #4338ca;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 4px 12px;
+}}
+QPushButton#btn_license:hover {{
+    background-color: #e0e7ff;
+    border-color: #818cf8;
+    color: #312e81;
+}}
+
 QPushButton#btn_undo:disabled {{
     background-color: #1C2026;
     border-color: #272C33;
