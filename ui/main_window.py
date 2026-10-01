@@ -20,55 +20,102 @@ from ui.preview_table import PreviewTable
 from ui.rule_panel import RulePanel
 
 DARK_STYLE = """
+/* 全域底色與字體 */
 QMainWindow, QDialog, QMessageBox {
-    background-color: #141414;
-    color: #E6E6E6;
+    background-color: #121315;
+    color: #E6E8EA;
 }
 QWidget {
-    color: #E6E6E6;
+    color: #E2E4E8;
     font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
     font-size: 13px;
 }
+
+/* 捲動區域與內部面板徹底深色化，杜絕原生白色漏光 */
+QScrollArea, #rule_scroll_area, #rule_panel_content {
+    background-color: #16181B;
+    border: none;
+}
+QScrollArea > QWidget > QWidget {
+    background-color: #16181B;
+}
+
+/* 捲動條極簡微調 */
+QScrollBar:vertical {
+    background-color: #16181B;
+    width: 7px;
+    margin: 0;
+}
+QScrollBar::handle:vertical {
+    background-color: #2E3238;
+    border-radius: 3px;
+    min-height: 25px;
+}
+QScrollBar::handle:vertical:hover {
+    background-color: #434952;
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+
+/* 精緻卡片式 GroupBox */
 QGroupBox {
-    border: 1px solid #303030;
+    border: 1px solid #282C34;
     border-radius: 8px;
-    margin-top: 10px;
-    padding-top: 14px;
-    font-weight: bold;
-    color: #A6B2C0;
+    margin-top: 14px;
+    padding-top: 10px;
+    font-weight: 600;
+    color: #58A6FF;
+    background-color: #1A1D21;
 }
 QGroupBox::title {
     subcontrol-origin: margin;
     subcontrol-position: top left;
-    left: 10px;
-    padding: 0 4px;
+    left: 12px;
+    padding: 0 6px;
+    background-color: #16181B;
+    border-radius: 4px;
 }
+
+/* 輸入框、下拉選單、數字框 */
 QLineEdit, QSpinBox, QComboBox {
-    background-color: #1F1F1F;
-    border: 1px solid #3A3A3A;
+    background-color: #21252B;
+    border: 1px solid #333842;
     border-radius: 5px;
     padding: 5px 8px;
-    color: #FFFFFF;
+    color: #F0F2F5;
+    selection-background-color: #177DDC;
 }
 QLineEdit:focus, QSpinBox:focus, QComboBox:focus {
     border: 1px solid #177DDC;
 }
 QComboBox QAbstractItemView {
-    background-color: #1F1F1F;
+    background-color: #21252B;
+    border: 1px solid #333842;
     selection-background-color: #177DDC;
-    color: #FFFFFF;
+    color: #F0F2F5;
 }
+QSpinBox::up-button, QSpinBox::down-button {
+    background-color: #282C34;
+    border: none;
+    width: 16px;
+}
+QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+    background-color: #353B45;
+}
+
+/* 按鈕美化 */
 QPushButton {
-    background-color: #1F1F1F;
-    border: 1px solid #3A3A3A;
+    background-color: #21252B;
+    border: 1px solid #333842;
     border-radius: 6px;
     padding: 6px 12px;
     font-weight: 500;
-    color: #E6E6E6;
+    color: #E2E4E8;
 }
 QPushButton:hover {
-    background-color: #2A2A2A;
-    border: 1px solid #4A4A4A;
+    background-color: #282C34;
+    border: 1px solid #434952;
     color: #FFFFFF;
 }
 QPushButton#btn_primary {
@@ -81,50 +128,72 @@ QPushButton#btn_primary:hover {
     background-color: #1668B8;
 }
 QPushButton#btn_primary:disabled {
-    background-color: #2A3B4C;
-    border: 1px solid #2A3B4C;
-    color: #6D8093;
+    background-color: #1F2833;
+    border: 1px solid #1F2833;
+    color: #556270;
 }
-QTableView {
-    background-color: #1A1A1A;
-    alternate-background-color: #202020;
-    border: 1px solid #2D2D2D;
-    border-radius: 6px;
-    gridline-color: #2D2D2D;
-    selection-background-color: #173853;
+
+/* 快捷標籤 Tag Chips */
+QPushButton[class="tag_btn"] {
+    background-color: #1B2635;
+    border: 1px solid #253A52;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 11px;
+    color: #79BAF2;
+    font-weight: 500;
 }
-QHeaderView::section {
-    background-color: #262626;
-    color: #CCCCCC;
-    padding: 6px;
-    border: none;
-    border-right: 1px solid #333333;
-    border-bottom: 1px solid #333333;
-    font-weight: bold;
+QPushButton[class="tag_btn"]:hover {
+    background-color: #177DDC;
+    border-color: #177DDC;
+    color: #FFFFFF;
 }
-QStatusBar {
-    background-color: #1A1A1A;
-    border-top: 1px solid #262626;
-    color: #8C8C8C;
-}
+
+/* 單選與核取方塊 */
 QRadioButton, QCheckBox {
-    color: #E0E0E0;
-    spacing: 6px;
+    color: #D1D5DB;
+    spacing: 7px;
 }
 QRadioButton:hover, QCheckBox:hover {
     color: #FFFFFF;
 }
+
+/* 左側預覽表格 */
+QTableView {
+    background-color: #16181B;
+    alternate-background-color: #1A1D21;
+    border: 1px solid #282C34;
+    border-radius: 8px;
+    gridline-color: #22262C;
+    selection-background-color: #1B3854;
+}
+QHeaderView::section {
+    background-color: #1F2328;
+    color: #B0B8C4;
+    padding: 7px;
+    border: none;
+    border-right: 1px solid #282C34;
+    border-bottom: 1px solid #282C34;
+    font-weight: bold;
+}
+QStatusBar {
+    background-color: #16181B;
+    border-top: 1px solid #24282E;
+    color: #8C94A0;
+}
+
+/* 對話框樣式 */
 QMessageBox {
-    background-color: #1E1E1E;
+    background-color: #1A1D21;
 }
 QMessageBox QLabel {
-    color: #FFFFFF;
+    color: #F0F2F5;
     font-size: 13px;
     background-color: transparent;
 }
 QMessageBox QPushButton {
-    background-color: #262626;
-    border: 1px solid #404040;
+    background-color: #282C34;
+    border: 1px solid #3A404D;
     border-radius: 5px;
     padding: 6px 18px;
     color: #FFFFFF;
@@ -134,17 +203,13 @@ QMessageBox QPushButton:hover {
     background-color: #177DDC;
     border-color: #177DDC;
 }
-QScrollArea {
-    background: transparent;
-    border: none;
-}
 """
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("KyteRename — 規則式即時預覽批次重新命名")
-        self.resize(1150, 750)
+        self.resize(1180, 760)
         self.setAcceptDrops(True)
         self.setStyleSheet(DARK_STYLE)
 
@@ -191,8 +256,8 @@ class MainWindow(QMainWindow):
 
         splitter.addWidget(self.table)
         splitter.addWidget(self.rule_panel)
-        splitter.setStretchFactor(0, 65) # 表格佔 65%
-        splitter.setStretchFactor(1, 35) # 規則佔 35%
+        splitter.setStretchFactor(0, 62)
+        splitter.setStretchFactor(1, 38)
         main_layout.addWidget(splitter, stretch=1)
 
         # 狀態列
@@ -245,16 +310,13 @@ class MainWindow(QMainWindow):
             loaded_entries.extend(scan_path(p, recursive=False))
 
         existing_paths = {e.path.resolve() for e in self.entries}
-        new_items: List[FileEntry] = []
         for e in loaded_entries:
             if e.path.resolve() not in existing_paths:
                 self.entries.append(e)
-                new_items.append(e)
                 existing_paths.add(e.path.resolve())
 
         self._refresh_previews(full_reset=True)
 
-        # 啟動非同步中繼資料預讀
         if self.entries:
             self.status_bar.showMessage(f"共 {len(self.entries)} 個檔案 | 背景讀取 EXIF/ID3 中繼資料中...")
             self.meta_worker = MetadataWorker(self.entries, self)
@@ -268,7 +330,6 @@ class MainWindow(QMainWindow):
                 self.entries[idx].metadata = meta
                 self.entries[idx].is_meta_loaded = True
 
-        # 僅局部計算與刷新
         self._refresh_previews(full_reset=False)
 
     def _on_metadata_finished(self):
