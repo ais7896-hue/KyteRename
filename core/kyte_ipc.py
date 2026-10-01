@@ -70,3 +70,21 @@ def trigger_kyteview_preview_async(file_path: object):
 
     t = threading.Thread(target=_do_send, daemon=True)
     t.start()
+
+def update_kyteview_preview_async(file_path: object):
+    """
+    當列表焦點上下切換時非同步送出更新 (僅在 KyteView 已顯示時更新，不搶焦點、不冷啟動)
+    """
+    path_str = str(file_path)
+
+    def _do_update():
+        socket = QLocalSocket()
+        socket.connectToServer(IPC_SERVER_NAME)
+        if socket.waitForConnected(20):
+            payload = f"PREVIEW_UPDATE:{path_str}\n".encode("utf-8")
+            socket.write(payload)
+            socket.waitForBytesWritten(40)
+            socket.disconnectFromServer()
+
+    t = threading.Thread(target=_do_update, daemon=True)
+    t.start()

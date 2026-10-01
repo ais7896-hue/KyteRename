@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import List, Set, Optional
 
 from PySide6.QtCore import (
+    QTimer,
     Qt, QAbstractTableModel, QModelIndex, QRect, QSortFilterProxyModel, Signal
 )
 from PySide6.QtGui import QColor, QBrush, QPainter, QCursor, QAction
@@ -16,6 +17,7 @@ from PySide6.QtWidgets import (
 )
 
 from rules.base_rule import FileEntry
+from core.kyte_ipc import update_kyteview_preview_async
 
 class HighlightDelegate(QStyledItemDelegate):
     """在原始檔名儲存格上動態繪製正則/搜尋命中區段的高亮標記"""
@@ -268,6 +270,13 @@ class PreviewTable(QTableView):
         self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.customContextMenuRequested.connect(self._show_context_menu)
 
+        # 游標行切換即時同步 KyteView (30ms Debounce 防抖，不失焦)
+        self.nav_timer = QTimer(self)
+        self.nav_timer.setSingleShot(True)
+        self.nav_timer.setInterval(30)
+        self.nav_timer.timeout.connect(self._on_nav_debounced)
+        self.selectionModel().currentChanged.connect(self._on_current_changed)
+
     def set_search_pattern(self, pattern: Optional[re.Pattern]):
         """更新高亮 Pattern 並觸發左欄重新繪製"""
         self.highlight_delegate.set_pattern(pattern)
@@ -388,6 +397,15 @@ class PreviewTable(QTableView):
         act_select_all.triggered.connect(self.selectAll)
 
         menu.exec(QCursor.pos())
+
+    def _on_current_changed(self, current, previous):
+        if current.isValid():
+            self.nav_timer.start()
+
+    def _on_nav_debounced(self):
+        entry = self.get_current_target_entry()
+        if entry:
+            update_kyteview_preview_async(entry.path)
 
     @staticmethod
     def _reveal_in_explorer(file_path: Path):
