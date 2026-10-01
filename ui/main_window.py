@@ -22,7 +22,14 @@ from rules.base_rule import FileEntry, BaseRule
 from ui.preview_table import PreviewTable
 from ui.rule_panel import RulePanel
 
-DARK_STYLE = """
+
+ASSETS_DIR = Path(__file__).resolve().parent.parent / "assets"
+ARROW_UP_PATH = str(ASSETS_DIR / "arrow_up.png").replace("\\", "/")
+ARROW_UP_HOVER_PATH = str(ASSETS_DIR / "arrow_up_hover.png").replace("\\", "/")
+ARROW_DOWN_PATH = str(ASSETS_DIR / "arrow_down.png").replace("\\", "/")
+ARROW_DOWN_HOVER_PATH = str(ASSETS_DIR / "arrow_down_hover.png").replace("\\", "/")
+
+DARK_STYLE_TEMPLATE = """
 /* 全域底色與字體 */
 QMainWindow, QDialog, QMessageBox {
     background-color: #121315;
@@ -111,14 +118,12 @@ QComboBox::drop-down:hover {
     background-color: #177DDC;
 }
 QComboBox::down-arrow {
-    width: 0px;
-    height: 0px;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 5px solid #D0D7DE;
+    image: url("__ARROW_DOWN__");
+    width: 11px;
+    height: 11px;
 }
 QComboBox::down-arrow:hover {
-    border-top-color: #FFFFFF;
+    image: url("__ARROW_DOWN_HOVER__");
 }
 
 /* 數字調節框 (QSpinBox) — 高對比立體上下箭頭按鈕 */
@@ -160,22 +165,20 @@ QSpinBox::up-button:pressed, QSpinBox::down-button:pressed {
     background-color: #125EA6;
 }
 QSpinBox::up-arrow {
-    width: 0px;
-    height: 0px;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-bottom: 5px solid #E6EDF3;
+    image: url("__ARROW_UP__");
+    width: 10px;
+    height: 10px;
+}
+QSpinBox::up-arrow:hover {
+    image: url("__ARROW_UP_HOVER__");
 }
 QSpinBox::down-arrow {
-    width: 0px;
-    height: 0px;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 5px solid #E6EDF3;
+    image: url("__ARROW_DOWN__");
+    width: 10px;
+    height: 10px;
 }
-QSpinBox::up-arrow:hover, QSpinBox::down-arrow:hover {
-    border-bottom-color: #FFFFFF;
-    border-top-color: #FFFFFF;
+QSpinBox::down-arrow:hover {
+    image: url("__ARROW_DOWN_HOVER__");
 }
 
 /* 按鈕美化 */
@@ -305,6 +308,14 @@ QProgressBar::chunk {
     border-radius: 4px;
 }
 """
+
+DARK_STYLE = (
+    DARK_STYLE_TEMPLATE
+    .replace("__ARROW_UP__", ARROW_UP_PATH)
+    .replace("__ARROW_UP_HOVER__", ARROW_UP_HOVER_PATH)
+    .replace("__ARROW_DOWN__", ARROW_DOWN_PATH)
+    .replace("__ARROW_DOWN_HOVER__", ARROW_DOWN_HOVER_PATH)
+)
 
 class MainWindow(QMainWindow):
     def __init__(self):
