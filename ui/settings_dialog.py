@@ -73,40 +73,48 @@ class SettingsDialog(QDialog):
 
         # 底部操作列：左側支援連結與診斷資訊，右側取消與儲存按鈕
         bottom_bar = QHBoxLayout()
-        bottom_bar.setContentsMargins(2, 2, 2, 2)
+        bottom_bar.setContentsMargins(0, 8, 0, 0)
+        bottom_bar.setSpacing(12)
 
+        # 支援連結 (KyteView 同款樣式)
         mailto_support = (
-            "mailto:support@aisming.com?subject=%5B%E5%95%8F%E9%A1%8C%E5%9B%9E%E5%A0%B1%5D%20KyteRename%20%E4%BD%BF%E7%94%A8%E8%AB%AE%E8%A9%A2"
+            "mailto:support@aisming.com?subject=%5B%E5%95%8F%E9%A1%8C%E5%9B%9E%E5%A0%B1%5D%20KyteRename%20%E4%BD%BF%E7%94%A8%E8%AB%AE%E8%A9%A2%20-%20%E8%A8%82%E5%96%AE/%E5%BA%8F%E8%99%9F%EF%BC%9A(%E8%8B%A5%E6%9C%89%E8%AB%8B%E5%A1%AB%E5%AF%AB)"
             "&body=1.%20%E4%BD%9C%E6%A5%AD%E7%B3%BB%E7%B5%B1%E7%89%88%E6%9C%AC%EF%BC%9A%0A"
-            "2.%20%E5%95%8F%E9%A1%8C%E6%8F%8F%E8%BF%B0%EF%BC%9A%0A"
+            "2.%20%E7%99%BC%E7%94%9F%E7%9A%84%E5%95%8F%E9%A1%8C%E6%8F%8F%E8%BF%B0%EF%BC%9A%0A"
             "3.%20%E8%A8%BA%E6%96%B7%E8%B3%87%E8%A8%8A%EF%BC%88%E8%AB%8B%E8%B2%BC%E4%B8%8A%E9%BB%9E%E6%93%8A%E3%80%8C%E8%A4%87%E8%A3%BD%E7%B3%BB%E7%B5%B1%E8%A8%BA%E6%96%B7%E8%B3%87%E8%A8%8A%E3%80%8D%E5%BE%8C%E7%9A%84%E5%85%A7%E5%AE%B9%EF%BC%89%EF%BC%9A%0A"
         )
-        self.lbl_support = QLabel(f"<a href='{mailto_support}' style='color: #58A6FF; text-decoration: none;'>✉ 聯絡技術支援</a>")
+        self.lbl_support = QLabel(f"<a href='{mailto_support}' style='color: #818cf8; text-decoration: none;'>✉ 聯絡技術支援</a>")
         self.lbl_support.setOpenExternalLinks(True)
         self.lbl_support.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.lbl_support.setStyleSheet("font-size: 12px;")
+        self.lbl_support.setStyleSheet("font-size: 11px;")
         bottom_bar.addWidget(self.lbl_support)
 
         # 垂直分隔線
         v_sep = QFrame()
         v_sep.setFrameShape(QFrame.Shape.VLine)
-        v_sep.setFrameShadow(QFrame.Shadow.Sunken)
-        v_sep.setStyleSheet("color: #333842; margin: 0 4px;")
+        v_sep.setFrameShadow(QFrame.Shadow.Plain)
+        v_sep.setFixedHeight(18)
+        v_sep.setStyleSheet("background-color: #3f3f46; border: none; width: 1px; margin: 0 4px;")
         bottom_bar.addWidget(v_sep)
 
-        # 複製系統診斷資訊按鈕
+        # 複製系統診斷資訊按鈕 (KyteView 同款虛線樣式)
         self.btn_diag = QPushButton("📋 複製系統診斷資訊")
+        self.btn_diag.setObjectName("btn_dialog_diag")
+        self.btn_diag.setFixedHeight(30)
         self.btn_diag.setStyleSheet("""
-            QPushButton {
-                background: transparent;
-                border: none;
-                color: #A0AEC0;
-                font-size: 12px;
-                padding: 4px 6px;
+            QPushButton#btn_dialog_diag {
+                background-color: transparent;
+                color: #a1a1aa;
+                border: 1px dashed #3f3f46;
+                border-radius: 6px;
+                padding: 4px 10px;
+                font-size: 11px;
+                font-weight: 500;
             }
-            QPushButton:hover {
-                color: #FFFFFF;
-                text-decoration: underline;
+            QPushButton#btn_dialog_diag:hover {
+                background-color: rgba(99, 102, 241, 0.14);
+                color: #818cf8;
+                border: 1px solid #818cf8;
             }
         """)
         self.btn_diag.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -288,10 +296,36 @@ class SettingsDialog(QDialog):
         QApplication.clipboard().setText(diag_text)
 
         self.btn_diag.setText("✓ 已複製診斷資訊！")
-        self.btn_diag.setStyleSheet("color: #10B981; font-size: 12px; font-weight: bold; border: none; background: transparent;")
+        self.btn_diag.setStyleSheet("""
+            QPushButton#btn_dialog_diag {
+                background-color: rgba(16, 185, 129, 0.14);
+                color: #10b981;
+                border: 1px solid #10b981;
+                border-radius: 6px;
+                padding: 4px 10px;
+                font-size: 11px;
+                font-weight: bold;
+            }
+        """)
+        diag_default_qss = """
+            QPushButton#btn_dialog_diag {
+                background-color: transparent;
+                color: #a1a1aa;
+                border: 1px dashed #3f3f46;
+                border-radius: 6px;
+                padding: 4px 10px;
+                font-size: 11px;
+                font-weight: 500;
+            }
+            QPushButton#btn_dialog_diag:hover {
+                background-color: rgba(99, 102, 241, 0.14);
+                color: #818cf8;
+                border: 1px solid #818cf8;
+            }
+        """
         QTimer.singleShot(2500, lambda: (
             self.btn_diag.setText("📋 複製系統診斷資訊"),
-            self.btn_diag.setStyleSheet("color: #A0AEC0; font-size: 12px; border: none; background: transparent;")
+            self.btn_diag.setStyleSheet(diag_default_qss)
         ))
 
     def _clear_snapshots(self):
