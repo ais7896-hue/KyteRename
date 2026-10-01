@@ -1,20 +1,22 @@
 """
-KyteRename - Settings Dialog (卡片分頁式設定對話框，具備明確的儲存按鈕與成功回饋)
+KyteRename - Settings Dialog (卡片分頁式設定對話框，含聯絡技術支援與系統診斷資訊複製)
 """
+import sys
+import platform
 from pathlib import Path
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QTabWidget, QWidget,
     QCheckBox, QComboBox, QSpinBox, QLabel, QPushButton,
-    QMessageBox, QFormLayout, QGroupBox
+    QMessageBox, QFormLayout, QGroupBox, QFrame, QApplication
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from config.settings import SettingsManager
 
 class SettingsDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("KyteRename 設定")
-        self.setFixedSize(490, 450)
+        self.setFixedSize(530, 460)
         self.mgr = SettingsManager()
         self._init_ui()
         self._load_current_values()
@@ -69,20 +71,61 @@ class SettingsDialog(QDialog):
 
         layout.addWidget(self.tabs)
 
-        # 底部操作按鈕：提供「取消」與「💾 儲存設定」
-        btn_layout = QHBoxLayout()
-        btn_layout.addStretch()
+        # 底部操作列：左側支援連結與診斷資訊，右側取消與儲存按鈕
+        bottom_bar = QHBoxLayout()
+        bottom_bar.setContentsMargins(2, 2, 2, 2)
+
+        mailto_support = (
+            "mailto:support@aisming.com?subject=%5B%E5%95%8F%E9%A1%8C%E5%9B%9E%E5%A0%B1%5D%20KyteRename%20%E4%BD%BF%E7%94%A8%E8%AB%AE%E8%A9%A2"
+            "&body=1.%20%E4%BD%9C%E6%A5%AD%E7%B3%BB%E7%B5%B1%E7%89%88%E6%9C%AC%EF%BC%9A%0A"
+            "2.%20%E5%95%8F%E9%A1%8C%E6%8F%8F%E8%BF%B0%EF%BC%9A%0A"
+            "3.%20%E8%A8%BA%E6%96%B7%E8%B3%87%E8%A8%8A%EF%BC%88%E8%AB%8B%E8%B2%BC%E4%B8%8A%E9%BB%9E%E6%93%8A%E3%80%8C%E8%A4%87%E8%A3%BD%E7%B3%BB%E7%B5%B1%E8%A8%BA%E6%96%B7%E8%B3%87%E8%A8%8A%E3%80%8D%E5%BE%8C%E7%9A%84%E5%85%A7%E5%AE%B9%EF%BC%89%EF%BC%9A%0A"
+        )
+        self.lbl_support = QLabel(f"<a href='{mailto_support}' style='color: #58A6FF; text-decoration: none;'>✉ 聯絡技術支援</a>")
+        self.lbl_support.setOpenExternalLinks(True)
+        self.lbl_support.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.lbl_support.setStyleSheet("font-size: 12px;")
+        bottom_bar.addWidget(self.lbl_support)
+
+        # 垂直分隔線
+        v_sep = QFrame()
+        v_sep.setFrameShape(QFrame.Shape.VLine)
+        v_sep.setFrameShadow(QFrame.Shadow.Sunken)
+        v_sep.setStyleSheet("color: #333842; margin: 0 4px;")
+        bottom_bar.addWidget(v_sep)
+
+        # 複製系統診斷資訊按鈕
+        self.btn_diag = QPushButton("📋 複製系統診斷資訊")
+        self.btn_diag.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                border: none;
+                color: #A0AEC0;
+                font-size: 12px;
+                padding: 4px 6px;
+            }
+            QPushButton:hover {
+                color: #FFFFFF;
+                text-decoration: underline;
+            }
+        """)
+        self.btn_diag.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.btn_diag.setToolTip("收集當前作業系統、軟體版本、螢幕解析度與配置設定複製至剪貼簿，方便回報問題")
+        self.btn_diag.clicked.connect(self._copy_diagnostic_info)
+        bottom_bar.addWidget(self.btn_diag)
+
+        bottom_bar.addStretch()
 
         self.btn_cancel = QPushButton("取消")
         self.btn_cancel.clicked.connect(self.reject)
-        btn_layout.addWidget(self.btn_cancel)
+        bottom_bar.addWidget(self.btn_cancel)
 
         self.btn_save = QPushButton("💾 儲存設定")
         self.btn_save.setObjectName("btn_primary")
         self.btn_save.clicked.connect(self._on_save_clicked)
-        btn_layout.addWidget(self.btn_save)
+        bottom_bar.addWidget(self.btn_save)
 
-        layout.addLayout(btn_layout)
+        layout.addLayout(bottom_bar)
 
     def _build_behavior_tab(self) -> QWidget:
         widget = QWidget()
@@ -186,7 +229,6 @@ class SettingsDialog(QDialog):
 
     def _on_save_clicked(self):
         """點擊儲存按鈕：驗證、遷移資料、寫入設定並回報成功"""
-        # 1. 處理快照模式遷移
         new_mode = self.combo_mode.currentData()
         old_mode = self.mgr.get("snapshot_dir_mode", "appdata")
 
@@ -203,7 +245,6 @@ class SettingsDialog(QDialog):
                 if moved > 0:
                     QMessageBox.information(self, "遷移成功", f"已成功遷移 {moved} 筆歷史快照至新目錄。")
 
-        # 2. 批次寫入設定
         self.mgr.set("recursive_scan", self.chk_recursive.isChecked())
         self.mgr.set("conflict_policy", self.combo_conflict.currentData())
         self.mgr.set("auto_sanitize_illegal", self.chk_sanitize.isChecked())
@@ -216,9 +257,42 @@ class SettingsDialog(QDialog):
         self.mgr.set("remember_last_rules", self.chk_rules.isChecked())
         self.mgr.set("enable_space_preview", self.chk_preview.isChecked())
 
-        # 3. 彈出明確的成功提示回饋
         QMessageBox.information(self, "設定已儲存", "✓ 偏好設定已成功更新並儲存！")
         self.accept()
+
+    def _copy_diagnostic_info(self):
+        """收集軟硬體環境資訊複製至剪貼簿"""
+        lines = [
+            "```yaml",
+            "# KyteRename 系統環境診斷資訊",
+            "Software: KyteRename v1.0.0 (64-bit)",
+            f"Python_Version: {platform.python_version()} ({platform.architecture()[0]})",
+            f"OS: {platform.system()} {sys.getwindowsversion().major}.{sys.getwindowsversion().minor} (Build {sys.getwindowsversion().build})",
+        ]
+
+        screen = QApplication.primaryScreen()
+        if screen:
+            geo = screen.geometry()
+            dpr = screen.devicePixelRatio()
+            lines.append(f"Screen_Primary: {geo.width()}x{geo.height()} @ DPR {dpr:.2f} ({int(dpr * 100)}%)")
+            lines.append(f"Screen_Count: {len(QApplication.screens())}")
+
+        lines.append(f"Config_Directory: {str(self.mgr.config_dir)}")
+        lines.append(f"Snapshot_Mode: {self.mgr.get('snapshot_dir_mode', 'appdata')}")
+        lines.append(f"Recursive_Scan: {self.mgr.get('recursive_scan', False)}")
+        lines.append(f"Conflict_Policy: {self.mgr.get('conflict_policy', 'ask')}")
+        lines.append(f"Space_Preview_Enabled: {self.mgr.get('enable_space_preview', True)}")
+        lines.append("```")
+
+        diag_text = "\n".join(lines)
+        QApplication.clipboard().setText(diag_text)
+
+        self.btn_diag.setText("✓ 已複製診斷資訊！")
+        self.btn_diag.setStyleSheet("color: #10B981; font-size: 12px; font-weight: bold; border: none; background: transparent;")
+        QTimer.singleShot(2500, lambda: (
+            self.btn_diag.setText("📋 複製系統診斷資訊"),
+            self.btn_diag.setStyleSheet("color: #A0AEC0; font-size: 12px; border: none; background: transparent;")
+        ))
 
     def _clear_snapshots(self):
         ret = QMessageBox.question(
