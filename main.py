@@ -26,7 +26,7 @@ def main():
     # 全域套用深色主題，確保對話框與全體組件無縫暗黑化
     app.setStyleSheet(DARK_STYLE)
 
-    window = MainWindow()
+    window = MainWindow(initial_paths=sys.argv[1:])
     window.show()
 
     sys.exit(app.exec())

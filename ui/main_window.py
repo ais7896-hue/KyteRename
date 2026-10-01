@@ -22,6 +22,7 @@ from core.snapshot_manager import SnapshotManager
 from core.kyte_ipc import trigger_kyteview_preview_async
 from rules.base_rule import FileEntry, BaseRule
 from ui.preview_table import PreviewTable
+from ui.search_bar import SearchBar
 from ui.rule_panel import RulePanel
 from ui.settings_dialog import SettingsDialog
 
@@ -338,7 +339,7 @@ DARK_STYLE = (
 )
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, initial_paths: List[str] = None):
         super().__init__()
         self.setWindowTitle("KyteRename — 規則式即時預覽批次重新命名")
         self.resize(1180, 760)
@@ -363,6 +364,9 @@ class MainWindow(QMainWindow):
 
         # 監聽快照目錄變更
         self.settings.settings_changed.connect(self._on_settings_changed)
+
+        if initial_paths:
+            self._load_paths(initial_paths)
 
     def _init_ui(self):
         central_widget = QWidget(self)
@@ -396,10 +400,21 @@ class MainWindow(QMainWindow):
 
         # 中間 Splitter
         self.main_splitter = QSplitter(Qt.Orientation.Horizontal)
-        self.table = PreviewTable(self)
+
+        # 左側表格容器 (含即時搜尋列與雙欄預覽)
+        table_container = QWidget()
+        table_layout = QVBoxLayout(table_container)
+        table_layout.setContentsMargins(0, 0, 0, 0)
+        table_layout.setSpacing(6)
+
+        self.search_bar = SearchBar(table_container)
+        self.table = PreviewTable(table_container)
+        table_layout.addWidget(self.search_bar)
+        table_layout.addWidget(self.table, stretch=1)
+
         self.rule_panel = RulePanel(self)
 
-        self.main_splitter.addWidget(self.table)
+        self.main_splitter.addWidget(table_container)
         self.main_splitter.addWidget(self.rule_panel)
         self.main_splitter.setStretchFactor(0, 62)
         self.main_splitter.setStretchFactor(1, 38)
@@ -421,9 +436,20 @@ class MainWindow(QMainWindow):
         self.rule_panel.rules_changed.connect(self._on_rules_changed)
         self.rule_panel.pattern_changed.connect(self.table.set_search_pattern)
 
+        # 搜尋列與表格連動
+        self.search_bar.search_changed.connect(self._on_search_changed)
+        self.search_bar.filter_mode_changed.connect(self._on_filter_mode_changed)
+
+        # 表格預覽與移除連動
+        self.table.request_preview.connect(self._preview_file)
+        self.table.request_remove.connect(self._remove_entries_by_indices)
+
     def _init_shortcuts(self):
         shortcut_undo = QShortcut(QKeySequence("Ctrl+Z"), self)
         shortcut_undo.activated.connect(self._on_undo_clicked)
+
+        shortcut_find = QShortcut(QKeySequence("Ctrl+F"), self)
+        shortcut_find.activated.connect(self.search_bar.focus_search)
 
     def _restore_settings_state(self):
         if self.settings.get("remember_window_size"):
@@ -546,14 +572,38 @@ class MainWindow(QMainWindow):
         self.rule_engine.set_rules(rules)
         self._refresh_previews(full_reset=False)
 
+    def _on_search_changed(self, text: str):
+        self.table.proxy_model.set_search_text(text)
+        self._update_search_counts()
+
+    def _on_filter_mode_changed(self, mode: str):
+        self.table.proxy_model.set_filter_mode(mode)
+        self._update_search_counts()
+
+    def _preview_file(self, target_path: Path):
+        """呼叫 KyteView 快速預覽指定檔案"""
+        if self.settings.get("enable_space_preview"):
+            trigger_kyteview_preview_async(target_path)
+
+    def _remove_entries_by_indices(self, indices: List[int]):
+        """從列表中批次移除指定檔案 (依降序索引安全刪除)"""
+        for idx in sorted(indices, reverse=True):
+            if 0 <= idx < len(self.entries):
+                del self.entries[idx]
+        self._refresh_previews(full_reset=True)
+
     def _refresh_previews(self, full_reset: bool = False):
         if not self.entries:
             self.table.table_model.update_data([], [], set(), set())
             self._update_status()
+            self._update_search_counts()
             return
 
-        new_names = self.rule_engine.preview_all(self.entries)
-        duplicates, disk_conflicts = RuleEngine.detect_conflicts(self.entries, new_names)
+        raw_new_names = self.rule_engine.preview_all(self.entries)
+        policy = self.settings.get("conflict_policy", "ask")
+        new_names, duplicates, disk_conflicts = RuleEngine.apply_conflict_policy(
+            self.entries, raw_new_names, policy=policy
+        )
 
         if full_reset:
             self.table.table_model.update_data(self.entries, new_names, duplicates, disk_conflicts)
@@ -561,6 +611,20 @@ class MainWindow(QMainWindow):
             self.table.table_model.update_previews(new_names, duplicates, disk_conflicts)
 
         self._update_status(duplicates, disk_conflicts)
+        self._update_search_counts()
+
+    def _update_search_counts(self):
+        total_count = len(self.entries)
+        visible_count = self.table.proxy_model.rowCount()
+        previews = self.table.table_model.preview_names
+        changed_count = sum(1 for e, n in zip(self.entries, previews) if e.original_name != n)
+        conflict_count = len(self.table.table_model.duplicate_indices) + len(self.table.table_model.disk_conflict_indices)
+        self.search_bar.update_counts(
+            visible_count=visible_count,
+            total_count=total_count,
+            conflict_count=conflict_count,
+            changed_count=changed_count
+        )
 
     def _update_status(self, duplicates=None, disk_conflicts=None):
         count = len(self.entries)
@@ -580,7 +644,7 @@ class MainWindow(QMainWindow):
 
         msg = f"共 {count} 個檔案 | {changed_count} 個待更名"
         if duplicates:
-            msg += f" | ⚠️ {len(duplicates)} 個名稱衝突（請修正規則）"
+            msg += f" | ⚠️ {len(duplicates)} 個名稱衝突"
         if disk_conflicts:
             msg += f" | ⚠️ {len(disk_conflicts)} 個目標檔案已存在於磁碟"
 
