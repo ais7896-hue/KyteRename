@@ -1,27 +1,29 @@
 """
-KyteRename - Main Window (雙欄預覽、安全拓撲改名、進度對話框與 Ctrl+Z 快照復原)
+KyteRename - Main Window (雙欄預覽、安全拓撲改名、設定對話框與 KyteView Space 聯動)
 """
 import os
 from pathlib import Path
 from typing import List, Tuple
 
 from PySide6.QtCore import Qt, QUrl
-from PySide6.QtGui import QDragEnterEvent, QDropEvent, QIcon, QFont, QKeySequence, QShortcut
+from PySide6.QtGui import QDragEnterEvent, QDropEvent, QIcon, QFont, QKeySequence, QShortcut, QKeyEvent
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton,
     QLabel, QFileDialog, QSplitter, QMessageBox, QStatusBar, QDialog,
     QProgressDialog
 )
 
+from config.settings import SettingsManager
 from core.file_scanner import scan_path
 from core.rule_engine import RuleEngine
 from core.metadata_worker import MetadataWorker
 from core.rename_executor import RenameWorker
 from core.snapshot_manager import SnapshotManager
+from core.kyte_ipc import trigger_kyteview_preview_async
 from rules.base_rule import FileEntry, BaseRule
 from ui.preview_table import PreviewTable
 from ui.rule_panel import RulePanel
-
+from ui.settings_dialog import SettingsDialog
 
 ASSETS_DIR = Path(__file__).resolve().parent.parent / "assets"
 ARROW_UP_PATH = str(ASSETS_DIR / "arrow_up.png").replace("\\", "/")
@@ -143,7 +145,7 @@ QComboBox::down-arrow:hover {
     image: url("__ARROW_DOWN_HOVER__");
 }
 
-/* 數字調節框 (QSpinBox) — 高對比立體上下箭頭按鈕 */
+/* 數字調節框 (QSpinBox) */
 QSpinBox {
     background-color: #21252B;
     border: 1px solid #333842;
@@ -344,16 +346,23 @@ class MainWindow(QMainWindow):
         self.setAcceptDrops(True)
         self.setStyleSheet(DARK_STYLE)
 
+        self.settings = SettingsManager()
         self.entries: List[FileEntry] = []
         self.rule_engine = RuleEngine()
         self.current_rules: List[BaseRule] = []
         self.meta_worker: MetadataWorker = None
         self.rename_worker: RenameWorker = None
-        self.snapshot_manager = SnapshotManager()
+
+        # 快照目錄連動 Settings
+        self.snapshot_manager = SnapshotManager(self.settings.get_snapshot_dir())
 
         self._init_ui()
         self._init_shortcuts()
+        self._restore_settings_state()
         self._update_undo_button_state()
+
+        # 監聽快照目錄變更
+        self.settings.settings_changed.connect(self._on_settings_changed)
 
     def _init_ui(self):
         central_widget = QWidget(self)
@@ -369,11 +378,13 @@ class MainWindow(QMainWindow):
         self.btn_clear = QPushButton("🗑️ 清空列表")
         self.btn_undo = QPushButton("↩️ 復原上次改名 (Ctrl+Z)")
         self.btn_undo.setObjectName("btn_undo")
+        self.btn_settings = QPushButton("⚙️ 設定")
 
         top_bar.addWidget(self.btn_open_folder)
         top_bar.addWidget(self.btn_open_files)
         top_bar.addWidget(self.btn_clear)
         top_bar.addWidget(self.btn_undo)
+        top_bar.addWidget(self.btn_settings)
         top_bar.addStretch()
 
         self.btn_apply = QPushButton("🚀 執行重新命名")
@@ -384,34 +395,83 @@ class MainWindow(QMainWindow):
         main_layout.addLayout(top_bar)
 
         # 中間 Splitter
-        splitter = QSplitter(Qt.Orientation.Horizontal)
+        self.main_splitter = QSplitter(Qt.Orientation.Horizontal)
         self.table = PreviewTable(self)
         self.rule_panel = RulePanel(self)
 
-        splitter.addWidget(self.table)
-        splitter.addWidget(self.rule_panel)
-        splitter.setStretchFactor(0, 62)
-        splitter.setStretchFactor(1, 38)
-        main_layout.addWidget(splitter, stretch=1)
+        self.main_splitter.addWidget(self.table)
+        self.main_splitter.addWidget(self.rule_panel)
+        self.main_splitter.setStretchFactor(0, 62)
+        self.main_splitter.setStretchFactor(1, 38)
+        main_layout.addWidget(self.main_splitter, stretch=1)
 
         # 狀態列
         self.status_bar = QStatusBar(self)
         self.setStatusBar(self.status_bar)
-        self.status_bar.showMessage("就緒：請拖入檔案或資料夾開始重新命名")
+        self.status_bar.showMessage("就緒：請拖入檔案或資料夾開始重新命名（支援按 Space 鍵快速預覽）")
 
         # 事件連接
         self.btn_open_folder.clicked.connect(self._on_open_folder)
         self.btn_open_files.clicked.connect(self._on_open_files)
         self.btn_clear.clicked.connect(self._on_clear)
         self.btn_undo.clicked.connect(self._on_undo_clicked)
+        self.btn_settings.clicked.connect(self._on_settings_clicked)
         self.btn_apply.clicked.connect(self._on_apply_clicked)
+
         self.rule_panel.rules_changed.connect(self._on_rules_changed)
         self.rule_panel.pattern_changed.connect(self.table.set_search_pattern)
 
     def _init_shortcuts(self):
-        # 註冊 Ctrl+Z 快速復原
         shortcut_undo = QShortcut(QKeySequence("Ctrl+Z"), self)
         shortcut_undo.activated.connect(self._on_undo_clicked)
+
+    def _restore_settings_state(self):
+        if self.settings.get("remember_window_size"):
+            geo = self.settings.get("window_geometry")
+            if geo:
+                try:
+                    self.restoreGeometry(bytes.fromhex(geo))
+                except Exception:
+                    pass
+
+            splitter_sizes = self.settings.get("splitter_sizes")
+            if splitter_sizes and isinstance(splitter_sizes, list):
+                try:
+                    self.main_splitter.setSizes(splitter_sizes)
+                except Exception:
+                    pass
+
+    def closeEvent(self, event):
+        if self.settings.get("remember_window_size"):
+            self.settings.set("window_geometry", self.saveGeometry().toHex().data().decode())
+            if hasattr(self, "main_splitter"):
+                self.settings.set("splitter_sizes", self.main_splitter.sizes())
+        super().closeEvent(event)
+
+    def keyPressEvent(self, event: QKeyEvent):
+        # 按 Space 鍵呼叫 KyteView 快速預覽
+        if event.key() == Qt.Key.Key_Space:
+            if self.settings.get("enable_space_preview"):
+                selected_indexes = self.table.selectionModel().selectedRows()
+                if selected_indexes:
+                    row = selected_indexes[0].row()
+                    if 0 <= row < len(self.entries):
+                        target_file = self.entries[row].path
+                        trigger_kyteview_preview_async(target_file)
+                        event.accept()
+                        return
+        super().keyPressEvent(event)
+
+    def _on_settings_changed(self, key: str, val: object):
+        if key == "snapshot_dir_mode":
+            self.snapshot_manager = SnapshotManager(self.settings.get_snapshot_dir())
+            self._update_undo_button_state()
+        elif key == "max_snapshot_history":
+            self.snapshot_manager.max_snapshots = int(val)
+
+    def _on_settings_clicked(self):
+        dlg = SettingsDialog(self)
+        dlg.exec()
 
     def _update_undo_button_state(self):
         has_snapshot = (self.snapshot_manager.get_latest_snapshot() is not None)
@@ -450,9 +510,10 @@ class MainWindow(QMainWindow):
             self.meta_worker.cancel()
             self.meta_worker.wait()
 
+        recursive = bool(self.settings.get("recursive_scan", False))
         loaded_entries: List[FileEntry] = []
         for p in paths:
-            loaded_entries.extend(scan_path(p, recursive=False))
+            loaded_entries.extend(scan_path(p, recursive=recursive))
 
         existing_paths = {e.path.resolve() for e in self.entries}
         for e in loaded_entries:
@@ -507,7 +568,7 @@ class MainWindow(QMainWindow):
         disk_conflicts = disk_conflicts or set()
 
         if count == 0:
-            self.status_bar.showMessage("就緒：請拖入檔案或資料夾開始重新命名")
+            self.status_bar.showMessage("就緒：請拖入檔案或資料夾開始重新命名（支援按 Space 鍵快速預覽）")
             self.btn_apply.setEnabled(False)
             return
 
@@ -537,18 +598,17 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "提示", "目前沒有需要更名的檔案。")
             return
 
-        reply = QMessageBox.question(
-            self,
-            "確認執行重新命名",
-            f"即將對 {len(changed_ops)} 個檔案執行重新命名。\n\n改名完成後會自動產生安全快照，隨時可按 Ctrl+Z 完整還原。\n是否確定執行？",
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-            QMessageBox.StandardButton.Yes
-        )
+        if self.settings.get("confirm_before_apply", True):
+            reply = QMessageBox.question(
+                self,
+                "確認執行重新命名",
+                f"即將對 {len(changed_ops)} 個檔案執行重新命名。\n\n改名完成後會自動產生安全快照，隨時可按 Ctrl+Z 完整還原。\n是否確定執行？",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.Yes
+            )
+            if reply != QMessageBox.StandardButton.Yes:
+                return
 
-        if reply != QMessageBox.StandardButton.Yes:
-            return
-
-        # 建立進度對話框
         progress_dialog = QProgressDialog("正在執行安全批次改名...", "取消", 0, len(changed_ops), self)
         progress_dialog.setWindowTitle("處理中")
         progress_dialog.setWindowModality(Qt.WindowModality.WindowModal)
@@ -566,15 +626,12 @@ class MainWindow(QMainWindow):
         def _on_rename_finished(result: dict):
             progress_dialog.close()
 
-            # 儲存快照
             if result["success_ops"]:
                 self.snapshot_manager.save_snapshot(result["success_ops"])
 
             self._update_undo_button_state()
 
-            # 重新掃描並更新當前列表的檔案資訊
             updated_paths = [op["renamed_path"] for op in result["success_ops"]]
-            # 加上未變更的檔案
             for e, n in zip(self.entries, previews):
                 if e.original_name == n and e.path.exists():
                     updated_paths.append(str(e.path.resolve()))
@@ -608,7 +665,6 @@ class MainWindow(QMainWindow):
         self._update_undo_button_state()
 
         if undo_result["success"]:
-            # 重新載入列表
             current_dirs = list({str(e.parent_dir) for e in self.entries if e.parent_dir.exists()})
             self.entries.clear()
             if current_dirs:
