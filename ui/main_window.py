@@ -50,7 +50,7 @@ QScrollArea > QWidget > QWidget {
     background-color: #16181B;
 }
 
-/* 捲動條微調 */
+/* 垂直與水平捲動條微調（極簡沉浸深色風格） */
 QScrollBar:vertical {
     background-color: #16181B;
     width: 7px;
@@ -66,6 +66,23 @@ QScrollBar::handle:vertical:hover {
 }
 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
     height: 0px;
+}
+
+QScrollBar:horizontal {
+    background-color: #16181B;
+    height: 7px;
+    margin: 0;
+}
+QScrollBar::handle:horizontal {
+    background-color: #2E3238;
+    border-radius: 3px;
+    min-width: 25px;
+}
+QScrollBar::handle:horizontal:hover {
+    background-color: #434952;
+}
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    width: 0px;
 }
 
 /* 精緻卡片式 GroupBox */
@@ -322,6 +339,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("KyteRename — 規則式即時預覽批次重新命名")
         self.resize(1180, 760)
+        self.setMinimumSize(780, 520)
         self.setAcceptDrops(True)
         self.setStyleSheet(DARK_STYLE)
 

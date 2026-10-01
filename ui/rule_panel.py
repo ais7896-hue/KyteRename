@@ -1,11 +1,11 @@
 """
-KyteRename - Rule Panel (全功能規則面板，直覺易懂的人性化設計)
+KyteRename - Rule Panel (緊湊高適應排版，支援水平捲動與縮小尺寸)
 """
 from PySide6.QtCore import Qt, Signal, QTimer
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QLineEdit,
     QCheckBox, QRadioButton, QButtonGroup, QGroupBox, QSpinBox,
-    QComboBox, QPushButton, QScrollArea, QFrame
+    QComboBox, QPushButton, QScrollArea, QFrame, QSizePolicy
 )
 from rules.base_rule import TargetScope, BaseRule
 from rules.replace_rule import ReplaceRule
@@ -28,23 +28,28 @@ class RulePanel(QWidget):
         outer_layout.setContentsMargins(0, 0, 0, 0)
         outer_layout.setSpacing(0)
 
-        # 滾動區域包覆
+        # 滾動區域：啟用水平與垂直雙向捲動
         scroll = QScrollArea(self)
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.Shape.NoFrame)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         scroll.setObjectName("rule_scroll_area")
 
         content = QWidget()
         content.setObjectName("rule_panel_content")
+        # 設定內容區的合理最小寬度，小於此寬度時即觸發底部水平滾動條
+        content.setMinimumWidth(290)
+
         layout = QVBoxLayout(content)
-        layout.setContentsMargins(12, 12, 14, 16)
-        layout.setSpacing(14)
+        layout.setContentsMargins(10, 8, 10, 12)
+        layout.setSpacing(10)
 
         # 1. 作用目標 (Target Scope)
         scope_box = QGroupBox("作用目標")
         scope_layout = QHBoxLayout(scope_box)
-        scope_layout.setContentsMargins(10, 14, 10, 10)
+        scope_layout.setContentsMargins(8, 12, 8, 8)
+        scope_layout.setSpacing(8)
         self.btn_scope_base = QRadioButton("僅主檔名")
         self.btn_scope_ext = QRadioButton("僅副檔名")
         self.btn_scope_full = QRadioButton("完整檔名")
@@ -63,13 +68,12 @@ class RulePanel(QWidget):
         # 2. 相片與音樂資訊（智慧標籤）
         meta_box = QGroupBox("相片與音樂資訊（智慧標籤）")
         meta_layout = QVBoxLayout(meta_box)
-        meta_layout.setContentsMargins(10, 14, 10, 10)
-        meta_layout.setSpacing(8)
+        meta_layout.setContentsMargins(8, 12, 8, 8)
+        meta_layout.setSpacing(6)
 
         self.chk_meta = QCheckBox("啟用相片/音樂資訊命名")
         meta_layout.addWidget(self.chk_meta)
 
-        # 常用情境快捷範本下拉選單
         row_preset = QHBoxLayout()
         row_preset.addWidget(QLabel("情境範本:"))
         self.combo_presets = QComboBox()
@@ -80,23 +84,22 @@ class RulePanel(QWidget):
         self.combo_presets.addItem("🎵 音樂：音軌_歌手_專輯", "{track}_{artist}_{album}")
         self.combo_presets.addItem("📁 備份：資料夾名_修改日期", "{parent}_{date}_{original}")
         self.combo_presets.setEnabled(False)
-        row_preset.addWidget(self.combo_presets)
+        row_preset.addWidget(self.combo_presets, stretch=1)
         meta_layout.addLayout(row_preset)
 
-        # 自訂模板輸入框
         self.edit_template = QLineEdit()
         self.edit_template.setPlaceholderText("例如: {exif_date}_{original}")
         self.edit_template.setText("{original}")
         self.edit_template.setEnabled(False)
         meta_layout.addWidget(self.edit_template)
 
-        # 點擊快速插入的按鈕群（附中文名稱與圖示）
-        lbl_insert = QLabel("點擊下方標籤插入：")
+        lbl_insert = QLabel("點擊標籤快速插入：")
         lbl_insert.setStyleSheet("color: #8C94A0; font-size: 11px;")
         meta_layout.addWidget(lbl_insert)
 
+        # 標籤按鈕採 3 欄緊湊排版，在窄螢幕下完全不截斷
         tag_grid = QGridLayout()
-        tag_grid.setSpacing(6)
+        tag_grid.setSpacing(5)
 
         tags = [
             ("📷 拍攝日期", "{exif_date}"),
@@ -106,7 +109,8 @@ class RulePanel(QWidget):
             ("🎤 歌手", "{artist}"),
             ("💿 專輯", "{album}"),
             ("🎵 音軌號", "{track}"),
-            ("📄 原檔名", "{original}")
+            ("📄 原檔名", "{original}"),
+            ("🔢 流水號", "{n}")
         ]
 
         for i, (text, tag_val) in enumerate(tags):
@@ -114,51 +118,54 @@ class RulePanel(QWidget):
             btn.setProperty("class", "tag_btn")
             btn.setCursor(Qt.CursorShape.PointingHandCursor)
             btn.clicked.connect(lambda _, t=tag_val: self._insert_template_tag(t))
-            tag_grid.addWidget(btn, i // 4, i % 4)
+            tag_grid.addWidget(btn, i // 3, i % 3)
 
         meta_layout.addLayout(tag_grid)
 
-        # 底部說明文字
-        lbl_meta_hint = QLabel("💡 提示：自動讀取相機拍攝時間 (EXIF) 或 MP3 歌手資訊帶入檔名")
+        lbl_meta_hint = QLabel("💡 提示：自動讀取相機拍攝時間 (EXIF) 或 MP3 歌手資訊")
         lbl_meta_hint.setWordWrap(True)
-        lbl_meta_hint.setStyleSheet("color: #6C757D; font-size: 11px; margin-top: 4px;")
+        lbl_meta_hint.setStyleSheet("color: #6C757D; font-size: 11px;")
         meta_layout.addWidget(lbl_meta_hint)
 
         layout.addWidget(meta_box)
 
-        # 3. 流水號 (Serial)
+        # 3. 流水號 (Serial) - 緊湊數值框與適當尺寸縮小
         serial_box = QGroupBox("重新編號（流水號）")
         serial_layout = QVBoxLayout(serial_box)
-        serial_layout.setContentsMargins(10, 14, 10, 10)
-        serial_layout.setSpacing(8)
+        serial_layout.setContentsMargins(8, 12, 8, 8)
+        serial_layout.setSpacing(6)
 
         self.chk_serial = QCheckBox("啟用流水號編號")
         serial_layout.addWidget(self.chk_serial)
 
         grid_serial = QGridLayout()
-        grid_serial.setHorizontalSpacing(10)
-        grid_serial.setVerticalSpacing(8)
+        grid_serial.setHorizontalSpacing(8)
+        grid_serial.setVerticalSpacing(6)
 
         grid_serial.addWidget(QLabel("起始值:"), 0, 0)
         self.spin_serial_start = QSpinBox()
         self.spin_serial_start.setRange(0, 999999)
         self.spin_serial_start.setValue(1)
+        self.spin_serial_start.setMaximumWidth(75)
         grid_serial.addWidget(self.spin_serial_start, 0, 1)
 
         grid_serial.addWidget(QLabel("步長:"), 0, 2)
         self.spin_serial_step = QSpinBox()
         self.spin_serial_step.setRange(1, 100)
         self.spin_serial_step.setValue(1)
+        self.spin_serial_step.setMaximumWidth(65)
         grid_serial.addWidget(self.spin_serial_step, 0, 3)
 
         grid_serial.addWidget(QLabel("補零位數:"), 1, 0)
         self.spin_serial_padding = QSpinBox()
         self.spin_serial_padding.setRange(1, 10)
         self.spin_serial_padding.setValue(3)
+        self.spin_serial_padding.setMaximumWidth(75)
         grid_serial.addWidget(self.spin_serial_padding, 1, 1)
 
         grid_serial.addWidget(QLabel("分隔符:"), 1, 2)
         self.edit_serial_sep = QLineEdit("_")
+        self.edit_serial_sep.setMaximumWidth(65)
         grid_serial.addWidget(self.edit_serial_sep, 1, 3)
 
         grid_serial.addWidget(QLabel("位置:"), 2, 0)
@@ -174,12 +181,12 @@ class RulePanel(QWidget):
         # 4. 文字搜尋與取代
         replace_box = QGroupBox("文字搜尋與取代")
         replace_layout = QVBoxLayout(replace_box)
-        replace_layout.setContentsMargins(10, 14, 10, 10)
-        replace_layout.setSpacing(8)
+        replace_layout.setContentsMargins(8, 12, 8, 8)
+        replace_layout.setSpacing(6)
 
         grid_rep = QGridLayout()
-        grid_rep.setHorizontalSpacing(8)
-        grid_rep.setVerticalSpacing(8)
+        grid_rep.setHorizontalSpacing(6)
+        grid_rep.setVerticalSpacing(6)
 
         grid_rep.addWidget(QLabel("搜尋："), 0, 0)
         self.edit_find = QLineEdit()
@@ -205,9 +212,9 @@ class RulePanel(QWidget):
         # 5. 前後綴增刪
         prefix_box = QGroupBox("前後綴增刪")
         prefix_layout = QGridLayout(prefix_box)
-        prefix_layout.setContentsMargins(10, 14, 10, 10)
-        prefix_layout.setHorizontalSpacing(8)
-        prefix_layout.setVerticalSpacing(8)
+        prefix_layout.setContentsMargins(8, 12, 8, 8)
+        prefix_layout.setHorizontalSpacing(6)
+        prefix_layout.setVerticalSpacing(6)
 
         prefix_layout.addWidget(QLabel("加前綴："), 0, 0)
         self.edit_prefix = QLineEdit()
@@ -224,8 +231,8 @@ class RulePanel(QWidget):
         # 6. 大小寫轉換與空白修剪
         format_box = QGroupBox("大小寫與空白修剪")
         format_layout = QVBoxLayout(format_box)
-        format_layout.setContentsMargins(10, 14, 10, 10)
-        format_layout.setSpacing(8)
+        format_layout.setContentsMargins(8, 12, 8, 8)
+        format_layout.setSpacing(6)
 
         row_case = QHBoxLayout()
         row_case.addWidget(QLabel("轉換模式："))
@@ -235,7 +242,7 @@ class RulePanel(QWidget):
         self.combo_case.addItem("全部大寫 (UPPER)", CaseMode.UPPER)
         self.combo_case.addItem("詞首大寫 (Title Case)", CaseMode.TITLE)
         self.combo_case.addItem("句首大寫 (Capitalize)", CaseMode.CAPITALIZE)
-        row_case.addWidget(self.combo_case)
+        row_case.addWidget(self.combo_case, stretch=1)
         format_layout.addLayout(row_case)
 
         row_trim = QHBoxLayout()
