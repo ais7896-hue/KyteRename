@@ -146,10 +146,11 @@ class RulePanel(QWidget):
         self.spin_serial_start = QSpinBox()
         self.spin_serial_start.setRange(0, 999999)
         self.spin_serial_start.setValue(1)
-        self.spin_serial_start.setMaximumWidth(75)
+        self.spin_serial_start.setMinimumWidth(65)
+        self.spin_serial_start.setAlignment(Qt.AlignmentFlag.AlignCenter)
         grid_serial.addWidget(self.spin_serial_start, 0, 1)
 
-        grid_serial.addWidget(QLabel("步長:"), 0, 2)
+        grid_serial.addWidget(QLabel("每次遞增:"), 0, 2)
         self.spin_serial_step = QSpinBox()
         self.spin_serial_step.setRange(1, 100)
         self.spin_serial_step.setValue(1)
@@ -160,12 +161,14 @@ class RulePanel(QWidget):
         self.spin_serial_padding = QSpinBox()
         self.spin_serial_padding.setRange(1, 10)
         self.spin_serial_padding.setValue(3)
-        self.spin_serial_padding.setMaximumWidth(75)
+        self.spin_serial_padding.setMinimumWidth(65)
+        self.spin_serial_padding.setAlignment(Qt.AlignmentFlag.AlignCenter)
         grid_serial.addWidget(self.spin_serial_padding, 1, 1)
 
         grid_serial.addWidget(QLabel("分隔符:"), 1, 2)
         self.edit_serial_sep = QLineEdit("_")
-        self.edit_serial_sep.setMaximumWidth(65)
+        self.edit_serial_sep.setMinimumWidth(65)
+        self.edit_serial_sep.setAlignment(Qt.AlignmentFlag.AlignCenter)
         grid_serial.addWidget(self.edit_serial_sep, 1, 3)
 
         grid_serial.addWidget(QLabel("位置:"), 2, 0)
@@ -176,6 +179,10 @@ class RulePanel(QWidget):
         grid_serial.addWidget(self.combo_serial_pos, 2, 1, 1, 3)
 
         serial_layout.addLayout(grid_serial)
+
+        lbl_serial_hint = QLabel("💡 預覽效果: photo_001.jpg, photo_002.jpg ...")
+        lbl_serial_hint.setStyleSheet("color: #6C757D; font-size: 11px;")
+        serial_layout.addWidget(lbl_serial_hint)
         layout.addWidget(serial_box)
 
         # 4. 文字搜尋與取代

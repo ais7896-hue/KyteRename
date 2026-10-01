@@ -148,9 +148,10 @@ QSpinBox {
     background-color: #21252B;
     border: 1px solid #333842;
     border-radius: 5px;
-    padding: 4px 6px;
-    padding-right: 24px;
+    padding: 2px 2px;
+    padding-right: 20px;
     color: #F0F2F5;
+    font-weight: 500;
     selection-background-color: #177DDC;
 }
 QSpinBox:focus {
@@ -159,8 +160,8 @@ QSpinBox:focus {
 QSpinBox::up-button {
     subcontrol-origin: border;
     subcontrol-position: top right;
-    width: 22px;
-    height: 14px;
+    width: 18px;
+    height: 13px;
     background-color: #2C323B;
     border-left: 1px solid #3E4654;
     border-bottom: 1px solid #3E4654;
@@ -169,8 +170,8 @@ QSpinBox::up-button {
 QSpinBox::down-button {
     subcontrol-origin: border;
     subcontrol-position: bottom right;
-    width: 22px;
-    height: 14px;
+    width: 18px;
+    height: 13px;
     background-color: #2C323B;
     border-left: 1px solid #3E4654;
     border-bottom-right-radius: 4px;
