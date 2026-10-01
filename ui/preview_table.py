@@ -283,6 +283,18 @@ class PreviewTable(QTableView):
                 source_indices.append(s_idx.row())
         return sorted(list(set(source_indices)), reverse=True)
 
+    def get_current_target_entry(self) -> Optional[FileEntry]:
+        """精確獲取當前選中或焦點所在的 FileEntry (自動處理 Proxy 與 Source 映射)"""
+        indices = self.get_selected_source_indices()
+        if indices and 0 <= indices[-1] < len(self.table_model.entries):
+            return self.table_model.entries[indices[-1]]
+        curr = self.currentIndex()
+        if curr.isValid():
+            s_idx = self.proxy_model.mapToSource(curr)
+            if s_idx.isValid() and 0 <= s_idx.row() < len(self.table_model.entries):
+                return self.table_model.entries[s_idx.row()]
+        return None
+
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_Delete:
             indices = self.get_selected_source_indices()
@@ -291,11 +303,9 @@ class PreviewTable(QTableView):
                 event.accept()
                 return
         elif event.key() == Qt.Key.Key_Space:
-            indices = self.get_selected_source_indices()
-            if indices:
-                # 倒序的第一個即最後選中的行，取其對應的 FileEntry
-                target_entry = self.table_model.entries[indices[-1]]
-                self.request_preview.emit(target_entry.path)
+            entry = self.get_current_target_entry()
+            if entry:
+                self.request_preview.emit(entry.path)
                 event.accept()
                 return
 

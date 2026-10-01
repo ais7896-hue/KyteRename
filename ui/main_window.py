@@ -478,14 +478,11 @@ class MainWindow(QMainWindow):
         # 按 Space 鍵呼叫 KyteView 快速預覽
         if event.key() == Qt.Key.Key_Space:
             if self.settings.get("enable_space_preview"):
-                selected_indexes = self.table.selectionModel().selectedRows()
-                if selected_indexes:
-                    row = selected_indexes[0].row()
-                    if 0 <= row < len(self.entries):
-                        target_file = self.entries[row].path
-                        trigger_kyteview_preview_async(target_file)
-                        event.accept()
-                        return
+                entry = self.table.get_current_target_entry()
+                if entry:
+                    self._preview_file(entry.path)
+                    event.accept()
+                    return
         super().keyPressEvent(event)
 
     def _on_settings_changed(self, key: str, val: object):

@@ -1,21 +1,72 @@
 """
-KyteRename - KyteView IPC (透過 Windows 原生 Named Pipe 聯動預覽)
-具備非阻塞極短超時保護 (15ms)，未開啟 KyteView 時絕不卡頓 UI
+KyteRename - KyteView IPC 跨進程預覽通訊
+- 優先使用 Qt 原生 QLocalSocket 通訊 (連線超時 25ms，極致低延遲非阻塞)
+- 協議對齊 KyteView Single Instance: 'PREVIEW:<path>\n'
+- 若 KyteView 尚未啟動，自動嘗試在背景喚起 KyteView 並直接預覽
 """
+import sys
+import subprocess
 import threading
-from multiprocessing.connection import Client
+from pathlib import Path
+from PySide6.QtNetwork import QLocalSocket
 
-PIPE_ADDRESS = r"\\.\pipe\KyteView"
+IPC_SERVER_NAME = "KyteView_SingleInstance_IPC"
 
-def trigger_kyteview_preview_async(file_path: str):
-    """非同步送出檔案預覽請求至 KyteView，完全不阻塞主執行緒"""
-    def _send():
-        try:
-            # 建立連線，若 KyteView 未啟動會立即拋出 FileNotFoundError
-            with Client(PIPE_ADDRESS, family="AF_PIPE") as conn:
-                conn.send({"action": "preview", "path": str(file_path)})
-        except (FileNotFoundError, ConnectionRefusedError, OSError):
-            pass
+def _find_kyteview_launcher() -> tuple:
+    """嘗試尋找本機 KyteView 的啟動途徑 (執行檔或原始碼)"""
+    kyte_rename_root = Path(__file__).resolve().parent.parent
+    workspace_root = kyte_rename_root.parent
 
-    t = threading.Thread(target=_send, daemon=True)
+    # 1. 尋找相鄰同目錄下的 KyteView 專案
+    kyteview_dir = workspace_root / "KyteView"
+    if kyteview_dir.exists():
+        # 檢查是否有編譯好的 dist/KyteView.exe
+        dist_exe = kyteview_dir / "dist" / "KyteView.exe"
+        if dist_exe.exists():
+            return (str(dist_exe), [])
+
+        # 檢查原始碼 main.py 與虛擬環境
+        main_py = kyteview_dir / "main.py"
+        venv_py = kyteview_dir / ".venv" / "Scripts" / "python.exe"
+        if main_py.exists():
+            py_exe = str(venv_py) if venv_py.exists() else sys.executable
+            return (py_exe, [str(main_py)])
+
+    return (None, [])
+
+def trigger_kyteview_preview_async(file_path: object):
+    """
+    非同步發送檔案預覽請求至 KyteView
+    1. 嘗試連線至執行中的 KyteView (極短超時保護 25ms)
+    2. 若未啟動，自動在背景喚醒 KyteView
+    """
+    path_str = str(file_path)
+
+    def _do_send():
+        # 1. 嘗試連線已在運行的 KyteView
+        socket = QLocalSocket()
+        socket.connectToServer(IPC_SERVER_NAME)
+        if socket.waitForConnected(25):
+            payload = f"PREVIEW:{path_str}\n".encode("utf-8")
+            socket.write(payload)
+            socket.waitForBytesWritten(50)
+            socket.disconnectFromServer()
+            return
+
+        # 2. 連線失敗 (代表 KyteView 未啟動)，自動嘗試喚醒
+        launcher, args = _find_kyteview_launcher()
+        if launcher:
+            try:
+                cmd = [launcher] + args + [path_str]
+                # Windows 背景靜默啟動 (DETACHED_PROCESS 或 CREATE_NO_WINDOW)
+                CREATE_NO_WINDOW = 0x08000000
+                subprocess.Popen(
+                    cmd,
+                    creationflags=CREATE_NO_WINDOW,
+                    close_fds=True
+                )
+            except Exception:
+                pass
+
+    t = threading.Thread(target=_do_send, daemon=True)
     t.start()
