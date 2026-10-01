@@ -406,6 +406,7 @@ class MainWindow(QMainWindow):
         self.btn_undo.clicked.connect(self._on_undo_clicked)
         self.btn_apply.clicked.connect(self._on_apply_clicked)
         self.rule_panel.rules_changed.connect(self._on_rules_changed)
+        self.rule_panel.pattern_changed.connect(self.table.set_search_pattern)
 
     def _init_shortcuts(self):
         # 註冊 Ctrl+Z 快速復原

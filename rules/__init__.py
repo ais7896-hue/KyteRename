@@ -5,10 +5,13 @@ from .metadata_rule import MetadataRule
 from .serial_rule import SerialRule, SerialPosition
 from .case_rule import CaseRule, CaseMode
 from .trim_rule import TrimRule
+from .sanitize_rule import SanitizeRule
+from .pinyin_rule import PinyinRule, PinyinMode
 
 __all__ = [
     "TargetScope", "FileEntry", "BaseRule",
     "ReplaceRule", "PrefixSuffixRule",
     "MetadataRule", "SerialRule", "SerialPosition",
-    "CaseRule", "CaseMode", "TrimRule"
+    "CaseRule", "CaseMode", "TrimRule",
+    "SanitizeRule", "PinyinRule", "PinyinMode"
 ]

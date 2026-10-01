@@ -1,6 +1,7 @@
 """
-KyteRename - Rule Panel (緊湊高適應排版，支援水平捲動與縮小尺寸)
+KyteRename - Rule Panel (支援正則群組高亮、中文轉拼音與非法字元清洗)
 """
+import re
 from PySide6.QtCore import Qt, Signal, QTimer
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QLineEdit,
@@ -14,9 +15,13 @@ from rules.metadata_rule import MetadataRule
 from rules.serial_rule import SerialRule, SerialPosition
 from rules.case_rule import CaseRule, CaseMode
 from rules.trim_rule import TrimRule
+from rules.sanitize_rule import SanitizeRule
+from rules.pinyin_rule import PinyinRule, PinyinMode
 
 class RulePanel(QWidget):
     rules_changed = Signal(list)
+    # 傳遞當前搜尋的 pattern 供左欄即時高亮: Optional[re.Pattern]
+    pattern_changed = Signal(object)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -28,7 +33,6 @@ class RulePanel(QWidget):
         outer_layout.setContentsMargins(0, 0, 0, 0)
         outer_layout.setSpacing(0)
 
-        # 滾動區域：啟用水平與垂直雙向捲動
         scroll = QScrollArea(self)
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.Shape.NoFrame)
@@ -38,7 +42,6 @@ class RulePanel(QWidget):
 
         content = QWidget()
         content.setObjectName("rule_panel_content")
-        # 設定內容區的合理最小寬度，小於此寬度時即觸發底部水平滾動條
         content.setMinimumWidth(290)
 
         layout = QVBoxLayout(content)
@@ -49,7 +52,6 @@ class RulePanel(QWidget):
         scope_box = QGroupBox("作用目標")
         scope_layout = QHBoxLayout(scope_box)
         scope_layout.setContentsMargins(8, 12, 8, 8)
-        scope_layout.setSpacing(8)
         self.btn_scope_base = QRadioButton("僅主檔名")
         self.btn_scope_ext = QRadioButton("僅副檔名")
         self.btn_scope_full = QRadioButton("完整檔名")
@@ -65,7 +67,7 @@ class RulePanel(QWidget):
         scope_layout.addWidget(self.btn_scope_full)
         layout.addWidget(scope_box)
 
-        # 2. 相片與音樂資訊（智慧標籤）
+        # 2. 智慧標籤
         meta_box = QGroupBox("相片與音樂資訊（智慧標籤）")
         meta_layout = QVBoxLayout(meta_box)
         meta_layout.setContentsMargins(8, 12, 8, 8)
@@ -97,7 +99,6 @@ class RulePanel(QWidget):
         lbl_insert.setStyleSheet("color: #8C94A0; font-size: 11px;")
         meta_layout.addWidget(lbl_insert)
 
-        # 標籤按鈕採 3 欄緊湊排版，在窄螢幕下完全不截斷
         tag_grid = QGridLayout()
         tag_grid.setSpacing(5)
 
@@ -121,15 +122,9 @@ class RulePanel(QWidget):
             tag_grid.addWidget(btn, i // 3, i % 3)
 
         meta_layout.addLayout(tag_grid)
-
-        lbl_meta_hint = QLabel("💡 提示：自動讀取相機拍攝時間 (EXIF) 或 MP3 歌手資訊")
-        lbl_meta_hint.setWordWrap(True)
-        lbl_meta_hint.setStyleSheet("color: #6C757D; font-size: 11px;")
-        meta_layout.addWidget(lbl_meta_hint)
-
         layout.addWidget(meta_box)
 
-        # 3. 流水號 (Serial) - 緊湊數值框與適當尺寸縮小
+        # 3. 流水號 (Serial)
         serial_box = QGroupBox("重新編號（流水號）")
         serial_layout = QVBoxLayout(serial_box)
         serial_layout.setContentsMargins(8, 12, 8, 8)
@@ -154,7 +149,8 @@ class RulePanel(QWidget):
         self.spin_serial_step = QSpinBox()
         self.spin_serial_step.setRange(1, 100)
         self.spin_serial_step.setValue(1)
-        self.spin_serial_step.setMaximumWidth(65)
+        self.spin_serial_step.setMinimumWidth(65)
+        self.spin_serial_step.setAlignment(Qt.AlignmentFlag.AlignCenter)
         grid_serial.addWidget(self.spin_serial_step, 0, 3)
 
         grid_serial.addWidget(QLabel("補零位數:"), 1, 0)
@@ -179,14 +175,14 @@ class RulePanel(QWidget):
         grid_serial.addWidget(self.combo_serial_pos, 2, 1, 1, 3)
 
         serial_layout.addLayout(grid_serial)
-
         lbl_serial_hint = QLabel("💡 預覽效果: photo_001.jpg, photo_002.jpg ...")
         lbl_serial_hint.setStyleSheet("color: #6C757D; font-size: 11px;")
         serial_layout.addWidget(lbl_serial_hint)
+
         layout.addWidget(serial_box)
 
-        # 4. 文字搜尋與取代
-        replace_box = QGroupBox("文字搜尋與取代")
+        # 4. 文字搜尋與取代 (含正則即時驗證與高亮)
+        replace_box = QGroupBox("文字搜尋與取代 (支援正則)")
         replace_layout = QVBoxLayout(replace_box)
         replace_layout.setContentsMargins(8, 12, 8, 8)
         replace_layout.setSpacing(6)
@@ -197,12 +193,12 @@ class RulePanel(QWidget):
 
         grid_rep.addWidget(QLabel("搜尋："), 0, 0)
         self.edit_find = QLineEdit()
-        self.edit_find.setPlaceholderText("要取代的文字")
+        self.edit_find.setPlaceholderText("要取代的文字或正則 (如: \\d+)")
         grid_rep.addWidget(self.edit_find, 0, 1)
 
         grid_rep.addWidget(QLabel("替換為："), 1, 0)
         self.edit_replace = QLineEdit()
-        self.edit_replace.setPlaceholderText("留空則為刪除")
+        self.edit_replace.setPlaceholderText("留空則為刪除，支援 $1 反向引用")
         grid_rep.addWidget(self.edit_replace, 1, 1)
 
         replace_layout.addLayout(grid_rep)
@@ -213,6 +209,11 @@ class RulePanel(QWidget):
         row_opts.addWidget(self.chk_case)
         row_opts.addWidget(self.chk_regex)
         replace_layout.addLayout(row_opts)
+
+        self.lbl_regex_error = QLabel("")
+        self.lbl_regex_error.setStyleSheet("color: #FF7875; font-size: 11px;")
+        self.lbl_regex_error.setVisible(False)
+        replace_layout.addWidget(self.lbl_regex_error)
 
         layout.addWidget(replace_box)
 
@@ -235,14 +236,41 @@ class RulePanel(QWidget):
 
         layout.addWidget(prefix_box)
 
-        # 6. 大小寫轉換與空白修剪
-        format_box = QGroupBox("大小寫與空白修剪")
-        format_layout = QVBoxLayout(format_box)
-        format_layout.setContentsMargins(8, 12, 8, 8)
-        format_layout.setSpacing(6)
+        # 6. 中文轉拼音 (Pinyin)
+        pinyin_box = QGroupBox("中文轉拼音")
+        pinyin_layout = QVBoxLayout(pinyin_box)
+        pinyin_layout.setContentsMargins(8, 12, 8, 8)
+        pinyin_layout.setSpacing(6)
+
+        self.chk_pinyin = QCheckBox("啟用中文轉拼音")
+        pinyin_layout.addWidget(self.chk_pinyin)
+
+        row_py = QHBoxLayout()
+        row_py.addWidget(QLabel("拼音格式:"))
+        self.combo_pinyin_mode = QComboBox()
+        self.combo_pinyin_mode.addItem("全拼小寫 (如: qing_tian)", PinyinMode.FULL)
+        self.combo_pinyin_mode.addItem("首字大寫 (如: Qing_Tian)", PinyinMode.CAPITALIZE)
+        self.combo_pinyin_mode.addItem("首字母簡拼 (如: qt)", PinyinMode.FIRST_LETTER)
+        row_py.addWidget(self.combo_pinyin_mode, stretch=1)
+        pinyin_layout.addLayout(row_py)
+
+        layout.addWidget(pinyin_box)
+
+        # 7. 字元清洗與大小寫修剪
+        clean_box = QGroupBox("安全清洗與樣式修剪")
+        clean_layout = QVBoxLayout(clean_box)
+        clean_layout.setContentsMargins(8, 12, 8, 8)
+        clean_layout.setSpacing(6)
+
+        self.chk_sanitize_illegal = QCheckBox(r'自動清理 Windows 非法字元 (\/:*?"<>|)')
+        self.chk_sanitize_illegal.setChecked(True)
+        clean_layout.addWidget(self.chk_sanitize_illegal)
+
+        self.chk_sanitize_symbols = QCheckBox("去除裝飾性符號 (如: 【】★☆◆等)")
+        clean_layout.addWidget(self.chk_sanitize_symbols)
 
         row_case = QHBoxLayout()
-        row_case.addWidget(QLabel("轉換模式："))
+        row_case.addWidget(QLabel("大小寫:"))
         self.combo_case = QComboBox()
         self.combo_case.addItem("維持原樣", None)
         self.combo_case.addItem("全部小寫 (lower)", CaseMode.LOWER)
@@ -250,16 +278,16 @@ class RulePanel(QWidget):
         self.combo_case.addItem("詞首大寫 (Title Case)", CaseMode.TITLE)
         self.combo_case.addItem("句首大寫 (Capitalize)", CaseMode.CAPITALIZE)
         row_case.addWidget(self.combo_case, stretch=1)
-        format_layout.addLayout(row_case)
+        clean_layout.addLayout(row_case)
 
         row_trim = QHBoxLayout()
         self.chk_trim_ends = QCheckBox("去除頭尾空白")
         self.chk_collapse_spaces = QCheckBox("壓縮連續空格")
         row_trim.addWidget(self.chk_trim_ends)
         row_trim.addWidget(self.chk_collapse_spaces)
-        format_layout.addLayout(row_trim)
+        clean_layout.addLayout(row_trim)
 
-        layout.addWidget(format_box)
+        layout.addWidget(clean_box)
 
         layout.addStretch()
         scroll.setWidget(content)
@@ -278,13 +306,19 @@ class RulePanel(QWidget):
         self.combo_serial_pos.currentIndexChanged.connect(self._on_input_changed)
         self.edit_serial_sep.textChanged.connect(self._on_input_changed)
 
-        self.edit_find.textChanged.connect(self._on_input_changed)
+        self.edit_find.textChanged.connect(self._on_find_changed)
         self.edit_replace.textChanged.connect(self._on_input_changed)
-        self.chk_case.stateChanged.connect(self._on_input_changed)
-        self.chk_regex.stateChanged.connect(self._on_input_changed)
+        self.chk_case.stateChanged.connect(self._on_find_changed)
+        self.chk_regex.stateChanged.connect(self._on_find_changed)
 
         self.edit_prefix.textChanged.connect(self._on_input_changed)
         self.edit_suffix.textChanged.connect(self._on_input_changed)
+
+        self.chk_pinyin.toggled.connect(self._on_input_changed)
+        self.combo_pinyin_mode.currentIndexChanged.connect(self._on_input_changed)
+
+        self.chk_sanitize_illegal.toggled.connect(self._on_input_changed)
+        self.chk_sanitize_symbols.toggled.connect(self._on_input_changed)
 
         self.combo_case.currentIndexChanged.connect(self._on_input_changed)
         self.chk_trim_ends.toggled.connect(self._on_input_changed)
@@ -298,6 +332,41 @@ class RulePanel(QWidget):
 
     def _on_input_changed(self):
         self.debounce_timer.start()
+
+    def _on_find_changed(self):
+        find_text = self.edit_find.text()
+        is_regex = self.chk_regex.isChecked()
+        case_sensitive = self.chk_case.isChecked()
+
+        # 正則語法即時驗證
+        pattern = None
+        if find_text:
+            if is_regex:
+                valid, err = ReplaceRule.validate_pattern(find_text, is_regex=True)
+                if not valid:
+                    self.lbl_regex_error.setText(f"⚠️ 正則表達式語法無效: {err}")
+                    self.lbl_regex_error.setVisible(True)
+                    self.edit_find.setStyleSheet("border: 1px solid #FF7875;")
+                else:
+                    self.lbl_regex_error.setVisible(False)
+                    self.edit_find.setStyleSheet("")
+                    flags = 0 if case_sensitive else re.IGNORECASE
+                    try:
+                        pattern = re.compile(find_text, flags)
+                    except re.error:
+                        pattern = None
+            else:
+                self.lbl_regex_error.setVisible(False)
+                self.edit_find.setStyleSheet("")
+                flags = 0 if case_sensitive else re.IGNORECASE
+                pattern = re.compile(re.escape(find_text), flags)
+        else:
+            self.lbl_regex_error.setVisible(False)
+            self.edit_find.setStyleSheet("")
+
+        # 廣播 pattern 供左欄即時高亮
+        self.pattern_changed.emit(pattern)
+        self._on_input_changed()
 
     def _on_meta_toggled(self, checked: bool):
         self.edit_template.setEnabled(checked)
@@ -327,12 +396,22 @@ class RulePanel(QWidget):
         scope = self.get_current_scope()
         rules: list[BaseRule] = []
 
+        # 1. 智慧標籤模板
         if self.chk_meta.isChecked() and self.edit_template.text():
             rules.append(MetadataRule(
                 template=self.edit_template.text(),
                 scope=scope
             ))
 
+        # 2. 中文轉拼音
+        if self.chk_pinyin.isChecked():
+            rules.append(PinyinRule(
+                mode=self.combo_pinyin_mode.currentData(),
+                separator="_",
+                scope=scope
+            ))
+
+        # 3. 搜尋取代 (含正則)
         find_text = self.edit_find.text()
         if find_text:
             rules.append(ReplaceRule(
@@ -343,6 +422,7 @@ class RulePanel(QWidget):
                 scope=scope
             ))
 
+        # 4. 前後綴規則
         prefix = self.edit_prefix.text()
         suffix = self.edit_suffix.text()
         if prefix or suffix:
@@ -352,6 +432,7 @@ class RulePanel(QWidget):
                 scope=scope
             ))
 
+        # 5. 流水號重新編號
         if self.chk_serial.isChecked():
             rules.append(SerialRule(
                 start=self.spin_serial_start.value(),
@@ -362,6 +443,17 @@ class RulePanel(QWidget):
                 scope=scope
             ))
 
+        # 6. 非法字元清洗
+        rem_illegal = self.chk_sanitize_illegal.isChecked()
+        rem_symbols = self.chk_sanitize_symbols.isChecked()
+        if rem_illegal or rem_symbols:
+            rules.append(SanitizeRule(
+                remove_illegal=rem_illegal,
+                remove_symbols=rem_symbols,
+                scope=scope
+            ))
+
+        # 7. 空白修剪
         trim_ends = self.chk_trim_ends.isChecked()
         collapse = self.chk_collapse_spaces.isChecked()
         if trim_ends or collapse:
@@ -371,6 +463,7 @@ class RulePanel(QWidget):
                 scope=scope
             ))
 
+        # 8. 大小寫轉換
         case_mode = self.combo_case.currentData()
         if case_mode is not None:
             rules.append(CaseRule(
