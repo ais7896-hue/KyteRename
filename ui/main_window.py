@@ -81,7 +81,7 @@ QGroupBox::title {
 }
 
 /* 輸入框、下拉選單、數字框 */
-QLineEdit, QSpinBox, QComboBox {
+QLineEdit, QComboBox {
     background-color: #21252B;
     border: 1px solid #333842;
     border-radius: 5px;
@@ -89,7 +89,7 @@ QLineEdit, QSpinBox, QComboBox {
     color: #F0F2F5;
     selection-background-color: #177DDC;
 }
-QLineEdit:focus, QSpinBox:focus, QComboBox:focus {
+QLineEdit:focus, QComboBox:focus {
     border: 1px solid #177DDC;
 }
 QComboBox QAbstractItemView {
@@ -98,13 +98,84 @@ QComboBox QAbstractItemView {
     selection-background-color: #177DDC;
     color: #F0F2F5;
 }
-QSpinBox::up-button, QSpinBox::down-button {
-    background-color: #282C34;
-    border: none;
-    width: 16px;
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 24px;
+    border-left: 1px solid #333842;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    background-color: #282D36;
+}
+QComboBox::drop-down:hover {
+    background-color: #177DDC;
+}
+QComboBox::down-arrow {
+    width: 0px;
+    height: 0px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid #D0D7DE;
+}
+QComboBox::down-arrow:hover {
+    border-top-color: #FFFFFF;
+}
+
+/* 數字調節框 (QSpinBox) — 高對比立體上下箭頭按鈕 */
+QSpinBox {
+    background-color: #21252B;
+    border: 1px solid #333842;
+    border-radius: 5px;
+    padding: 4px 6px;
+    padding-right: 24px;
+    color: #F0F2F5;
+    selection-background-color: #177DDC;
+}
+QSpinBox:focus {
+    border: 1px solid #177DDC;
+}
+QSpinBox::up-button {
+    subcontrol-origin: border;
+    subcontrol-position: top right;
+    width: 22px;
+    height: 14px;
+    background-color: #2C323B;
+    border-left: 1px solid #3E4654;
+    border-bottom: 1px solid #3E4654;
+    border-top-right-radius: 4px;
+}
+QSpinBox::down-button {
+    subcontrol-origin: border;
+    subcontrol-position: bottom right;
+    width: 22px;
+    height: 14px;
+    background-color: #2C323B;
+    border-left: 1px solid #3E4654;
+    border-bottom-right-radius: 4px;
 }
 QSpinBox::up-button:hover, QSpinBox::down-button:hover {
-    background-color: #353B45;
+    background-color: #177DDC;
+}
+QSpinBox::up-button:pressed, QSpinBox::down-button:pressed {
+    background-color: #125EA6;
+}
+QSpinBox::up-arrow {
+    width: 0px;
+    height: 0px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 5px solid #E6EDF3;
+}
+QSpinBox::down-arrow {
+    width: 0px;
+    height: 0px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid #E6EDF3;
+}
+QSpinBox::up-arrow:hover, QSpinBox::down-arrow:hover {
+    border-bottom-color: #FFFFFF;
+    border-top-color: #FFFFFF;
 }
 
 /* 按鈕美化 */
