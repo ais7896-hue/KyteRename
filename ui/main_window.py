@@ -9,7 +9,7 @@ from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QDragEnterEvent, QDropEvent, QIcon, QFont
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton,
-    QLabel, QFileDialog, QSplitter, QMessageBox, QStatusBar
+    QLabel, QFileDialog, QSplitter, QMessageBox, QStatusBar, QDialog
 )
 
 from core.file_scanner import scan_path
@@ -19,8 +19,9 @@ from ui.preview_table import PreviewTable
 from ui.rule_panel import RulePanel
 
 DARK_STYLE = """
-QMainWindow {
+QMainWindow, QDialog, QMessageBox {
     background-color: #141414;
+    color: #E6E6E6;
 }
 QWidget {
     color: #E6E6E6;
@@ -57,10 +58,12 @@ QPushButton {
     border-radius: 6px;
     padding: 6px 14px;
     font-weight: 500;
+    color: #E6E6E6;
 }
 QPushButton:hover {
     background-color: #2A2A2A;
     border: 1px solid #4A4A4A;
+    color: #FFFFFF;
 }
 QPushButton#btn_primary {
     background-color: #177DDC;
@@ -97,6 +100,34 @@ QStatusBar {
     background-color: #1A1A1A;
     border-top: 1px solid #262626;
     color: #8C8C8C;
+}
+QRadioButton, QCheckBox {
+    color: #E0E0E0;
+    spacing: 6px;
+}
+QRadioButton:hover, QCheckBox:hover {
+    color: #FFFFFF;
+}
+/* 對話框與彈跳視窗專用深色美化 */
+QMessageBox {
+    background-color: #1E1E1E;
+}
+QMessageBox QLabel {
+    color: #FFFFFF;
+    font-size: 13px;
+    background-color: transparent;
+}
+QMessageBox QPushButton {
+    background-color: #262626;
+    border: 1px solid #404040;
+    border-radius: 5px;
+    padding: 6px 18px;
+    color: #FFFFFF;
+    min-width: 65px;
+}
+QMessageBox QPushButton:hover {
+    background-color: #177DDC;
+    border-color: #177DDC;
 }
 """
 
@@ -253,5 +284,9 @@ class MainWindow(QMainWindow):
         self.status_bar.showMessage(msg)
 
     def _on_apply_clicked(self):
-        msg = "Phase 1 預覽架構運作正常！\n執行實體改名與快照復原功能將於 Phase 4 完整就緒。"
-        QMessageBox.information(self, "準備執行", msg)
+        box = QMessageBox(self)
+        box.setWindowTitle("準備執行")
+        box.setIcon(QMessageBox.Icon.Information)
+        box.setText("Phase 1 預覽架構運作正常！\n\n執行實體改名、拓撲防撞與快照復原功能將於 Phase 4 完整就緒。")
+        box.setStandardButtons(QMessageBox.StandardButton.Ok)
+        box.exec()
