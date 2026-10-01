@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, QTimer
 from config.settings import SettingsManager
+from ui.styles import get_theme_stylesheet
 
 class SettingsDialog(QDialog):
     def __init__(self, parent=None):
@@ -21,6 +22,7 @@ class SettingsDialog(QDialog):
         self.mgr = SettingsManager()
         self._init_ui()
         self._load_current_values()
+        self._apply_dialog_styles()
 
     def _init_ui(self):
         layout = QVBoxLayout(self)
@@ -28,35 +30,6 @@ class SettingsDialog(QDialog):
         layout.setSpacing(12)
 
         self.tabs = QTabWidget()
-        self.tabs.setStyleSheet("""
-            QTabWidget::pane {
-                border: 1px solid #282C34;
-                border-radius: 6px;
-                background-color: #1A1D21;
-                top: -1px;
-            }
-            QTabBar::tab {
-                background-color: #16181B;
-                color: #A0AEC0;
-                padding: 7px 16px;
-                border-top-left-radius: 6px;
-                border-top-right-radius: 6px;
-                border: 1px solid #282C34;
-                border-bottom: none;
-                margin-right: 2px;
-                font-weight: 500;
-            }
-            QTabBar::tab:selected {
-                background-color: #1A1D21;
-                color: #58A6FF;
-                font-weight: bold;
-                border-top: 2px solid #177DDC;
-            }
-            QTabBar::tab:hover:!selected {
-                background-color: #21252B;
-                color: #FFFFFF;
-            }
-        """)
 
         # 分頁 1：改名行為
         self.tab_behavior = self._build_behavior_tab()
@@ -92,10 +65,10 @@ class SettingsDialog(QDialog):
 
         # 垂直分隔線
         v_sep = QFrame()
+        v_sep.setObjectName("dialog_v_sep")
         v_sep.setFrameShape(QFrame.Shape.VLine)
         v_sep.setFrameShadow(QFrame.Shadow.Plain)
         v_sep.setFixedHeight(18)
-        v_sep.setStyleSheet("background-color: #3f3f46; border: none; width: 1px; margin: 0 4px;")
         bottom_bar.addWidget(v_sep)
 
         # 複製系統診斷資訊按鈕 (KyteView 同款虛線樣式)
@@ -256,65 +229,20 @@ class SettingsDialog(QDialog):
 
     def _apply_dialog_styles(self):
         is_dark = self.mgr.is_dark()
-        tab_pane_bg = "#1A1D21" if is_dark else "#FFFFFF"
-        tab_bg = "#16181B" if is_dark else "#F3F4F6"
-        tab_active_bg = "#21252B" if is_dark else "#FFFFFF"
-        text_c = "#E2E4E8" if is_dark else "#1F2937"
-        text_dim = "#8C94A0" if is_dark else "#6B7280"
-        border_c = "#333842" if is_dark else "#E5E7EB"
-        accent = "#177DDC" if is_dark else "#1677FF"
+        app = QApplication.instance()
+        if app:
+            app.setStyleSheet(get_theme_stylesheet(is_dark))
 
-        self.tabs.setStyleSheet(f"""
-            QTabWidget::pane {{
-                border: 1px solid {border_c};
-                border-radius: 8px;
-                background-color: {tab_pane_bg};
-                top: -1px;
-            }}
-            QTabBar::tab {{
-                background-color: {tab_bg};
-                color: {text_dim};
-                border: 1px solid {border_c};
-                border-bottom: none;
-                border-top-left-radius: 6px;
-                border-top-right-radius: 6px;
-                padding: 8px 18px;
-                margin-right: 4px;
-                font-weight: 500;
-            }}
-            QTabBar::tab:selected {{
-                background-color: {tab_active_bg};
-                color: {accent};
-                border-top: 2px solid {accent};
-                font-weight: bold;
-            }}
-            QTabBar::tab:hover:!selected {{
-                background-color: {'#282C34' if is_dark else '#E5E7EB'};
-                color: {text_c};
-            }}
-        """)
-
-        diag_border = "#3f3f46" if is_dark else "#D1D5DB"
-        diag_color = "#a1a1aa" if is_dark else "#4B5563"
-        diag_hover_bg = "rgba(99, 102, 241, 0.14)" if is_dark else "rgba(99, 102, 241, 0.08)"
-        diag_accent = "#818cf8" if is_dark else "#4F46E5"
-
-        self.btn_diag.setStyleSheet(f"""
-            QPushButton#btn_dialog_diag {{
-                background-color: transparent;
-                color: {diag_color};
-                border: 1px dashed {diag_border};
-                border-radius: 6px;
-                padding: 4px 10px;
-                font-size: 11px;
-                font-weight: 500;
-            }}
-            QPushButton#btn_dialog_diag:hover {{
-                background-color: {diag_hover_bg};
-                color: {diag_accent};
-                border: 1px solid {diag_accent};
-            }}
-        """)
+        # 更新支援信箱文字顏色
+        mail_color = "#818cf8" if is_dark else "#4f46e5"
+        mailto_support = (
+            "mailto:support@aisming.com?subject=%5B%E5%95%8F%E9%A1%8C%E5%9B%9E%E5%A0%B1%5D%20KyteRename%20%E4%BD%BF%E7%94%A8%E8%AB%AE%E8%A9%A2%20-%20%E8%A8%82%E5%96%AE/%E5%BA%8F%E8%99%9F%EF%BC%9A(%E8%8B%A5%E6%9C%89%E8%AB%8B%E5%A1%AB%E5%AF%AB)"
+            "&body=1.%20%E4%BD%9C%E6%A5%AD%E7%B3%BB%E7%B5%B1%E7%89%88%E6%9C%AC%EF%BC%9A%0A"
+            "2.%20%E7%99%BC%E7%94%9F%E7%9A%84%E5%95%8F%E9%A1%8C%E6%8F%8F%E8%BF%B0%EF%BC%9A%0A"
+            "3.%20%E8%A8%BA%E6%96%B7%E8%B3%87%E8%A8%8A%EF%BC%88%E8%AB%8B%E8%B2%BC%E4%B8%8A%E9%BB%9E%E6%93%8A%E3%80%8C%E8%A4%87%E8%A3%BD%E7%B3%BB%E7%B5%B1%E8%A8%BA%E6%96%B7%E8%B3%87%E8%A8%8A%E3%80%8D%E5%BE%8C%E7%9A%84%E5%85%A7%E5%AE%B9%EF%BC%89%EF%BC%9A%0A"
+        )
+        self.lbl_support.setText(f"<a href='{mailto_support}' style='color: {mail_color}; text-decoration: none;'>✉ 聯絡技術支援</a>")
+        return
 
     def _load_current_values(self):
         """讀取目前設定並載入至各個表單控制項"""
