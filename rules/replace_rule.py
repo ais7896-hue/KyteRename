@@ -20,7 +20,7 @@ class ReplaceRule(BaseRule):
         self.is_regex = is_regex
         self.case_sensitive = case_sensitive
 
-    def apply(self, text: str, entry: FileEntry) -> str:
+    def apply(self, text: str, entry: FileEntry, index: int = 0) -> str:
         if not self.is_enabled or not self.find_str:
             return text
 
@@ -29,7 +29,6 @@ class ReplaceRule(BaseRule):
                 flags = 0 if self.case_sensitive else re.IGNORECASE
                 return re.sub(self.find_str, self.replace_str, text, flags=flags)
             except re.error:
-                # 正則語法不合法時靜默略過，防止 UI 計算崩潰
                 return text
         else:
             if self.case_sensitive:

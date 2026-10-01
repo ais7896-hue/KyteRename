@@ -1,5 +1,5 @@
 """
-KyteRename - Main Window (雙欄預覽、拖曳資料夾、衝突防呆與批次操作)
+KyteRename - Main Window (雙欄預覽、拖曳資料夾、漸進式元資料預讀與衝突防呆)
 """
 import os
 from pathlib import Path
@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
 
 from core.file_scanner import scan_path
 from core.rule_engine import RuleEngine
+from core.metadata_worker import MetadataWorker
 from rules.base_rule import FileEntry, BaseRule
 from ui.preview_table import PreviewTable
 from ui.rule_panel import RulePanel
@@ -42,21 +43,26 @@ QGroupBox::title {
     left: 10px;
     padding: 0 4px;
 }
-QLineEdit {
+QLineEdit, QSpinBox, QComboBox {
     background-color: #1F1F1F;
     border: 1px solid #3A3A3A;
     border-radius: 5px;
     padding: 5px 8px;
     color: #FFFFFF;
 }
-QLineEdit:focus {
+QLineEdit:focus, QSpinBox:focus, QComboBox:focus {
     border: 1px solid #177DDC;
+}
+QComboBox QAbstractItemView {
+    background-color: #1F1F1F;
+    selection-background-color: #177DDC;
+    color: #FFFFFF;
 }
 QPushButton {
     background-color: #1F1F1F;
     border: 1px solid #3A3A3A;
     border-radius: 6px;
-    padding: 6px 14px;
+    padding: 6px 12px;
     font-weight: 500;
     color: #E6E6E6;
 }
@@ -108,7 +114,6 @@ QRadioButton, QCheckBox {
 QRadioButton:hover, QCheckBox:hover {
     color: #FFFFFF;
 }
-/* 對話框與彈跳視窗專用深色美化 */
 QMessageBox {
     background-color: #1E1E1E;
 }
@@ -129,19 +134,24 @@ QMessageBox QPushButton:hover {
     background-color: #177DDC;
     border-color: #177DDC;
 }
+QScrollArea {
+    background: transparent;
+    border: none;
+}
 """
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("KyteRename — 規則式即時預覽批次重新命名")
-        self.resize(1100, 720)
+        self.resize(1150, 750)
         self.setAcceptDrops(True)
         self.setStyleSheet(DARK_STYLE)
 
         self.entries: List[FileEntry] = []
         self.rule_engine = RuleEngine()
         self.current_rules: List[BaseRule] = []
+        self.meta_worker: MetadataWorker = None
 
         self._init_ui()
 
@@ -158,7 +168,7 @@ class MainWindow(QMainWindow):
         self.btn_open_files = QPushButton("📄 新增檔案")
         self.btn_clear = QPushButton("🗑️ 清空列表")
 
-        self.lbl_tip = QLabel("（亦可直接將檔案或資料夾拖曳至此視窗）")
+        self.lbl_tip = QLabel("（可直接將相片、音樂或資料夾拖曳至此視窗）")
         self.lbl_tip.setStyleSheet("color: #7A7A7A; font-size: 12px;")
 
         top_bar.addWidget(self.btn_open_folder)
@@ -181,8 +191,8 @@ class MainWindow(QMainWindow):
 
         splitter.addWidget(self.table)
         splitter.addWidget(self.rule_panel)
-        splitter.setStretchFactor(0, 7) # 表格佔 70%
-        splitter.setStretchFactor(1, 3) # 規則佔 30%
+        splitter.setStretchFactor(0, 65) # 表格佔 65%
+        splitter.setStretchFactor(1, 35) # 規則佔 35%
         main_layout.addWidget(splitter, stretch=1)
 
         # 狀態列
@@ -197,7 +207,6 @@ class MainWindow(QMainWindow):
         self.btn_apply.clicked.connect(self._on_apply_clicked)
         self.rule_panel.rules_changed.connect(self._on_rules_changed)
 
-    # 拖曳支援
     def dragEnterEvent(self, event: QDragEnterEvent):
         if event.mimeData().hasUrls():
             event.acceptProposedAction()
@@ -219,23 +228,51 @@ class MainWindow(QMainWindow):
             self._load_paths(files)
 
     def _on_clear(self):
+        if self.meta_worker and self.meta_worker.isRunning():
+            self.meta_worker.cancel()
+            self.meta_worker.wait()
         self.entries.clear()
         self.table.table_model.update_data([], [], set(), set())
         self._update_status()
 
     def _load_paths(self, paths: List[str]):
+        if self.meta_worker and self.meta_worker.isRunning():
+            self.meta_worker.cancel()
+            self.meta_worker.wait()
+
         loaded_entries: List[FileEntry] = []
         for p in paths:
             loaded_entries.extend(scan_path(p, recursive=False))
 
-        # 去除已重複載入的檔案路徑
         existing_paths = {e.path.resolve() for e in self.entries}
+        new_items: List[FileEntry] = []
         for e in loaded_entries:
             if e.path.resolve() not in existing_paths:
                 self.entries.append(e)
+                new_items.append(e)
                 existing_paths.add(e.path.resolve())
 
         self._refresh_previews(full_reset=True)
+
+        # 啟動非同步中繼資料預讀
+        if self.entries:
+            self.status_bar.showMessage(f"共 {len(self.entries)} 個檔案 | 背景讀取 EXIF/ID3 中繼資料中...")
+            self.meta_worker = MetadataWorker(self.entries, self)
+            self.meta_worker.batch_ready.connect(self._on_metadata_batch)
+            self.meta_worker.finished_all.connect(self._on_metadata_finished)
+            self.meta_worker.start()
+
+    def _on_metadata_batch(self, batch: list):
+        for idx, meta in batch:
+            if idx < len(self.entries):
+                self.entries[idx].metadata = meta
+                self.entries[idx].is_meta_loaded = True
+
+        # 僅局部計算與刷新
+        self._refresh_previews(full_reset=False)
+
+    def _on_metadata_finished(self):
+        self._update_status()
 
     def _on_rules_changed(self, rules: List[BaseRule]):
         self.current_rules = rules
@@ -268,7 +305,6 @@ class MainWindow(QMainWindow):
             self.btn_apply.setEnabled(False)
             return
 
-        # 計算有變更的數量
         previews = self.table.table_model.preview_names
         changed_count = sum(1 for e, n in zip(self.entries, previews) if e.original_name != n)
 
@@ -287,6 +323,6 @@ class MainWindow(QMainWindow):
         box = QMessageBox(self)
         box.setWindowTitle("準備執行")
         box.setIcon(QMessageBox.Icon.Information)
-        box.setText("Phase 1 預覽架構運作正常！\n\n執行實體改名、拓撲防撞與快照復原功能將於 Phase 4 完整就緒。")
+        box.setText("Phase 2 變數展開與流水號計算正常！\n\n執行實體改名、拓撲防撞與快照復原功能將於 Phase 4 完整就緒。")
         box.setStandardButtons(QMessageBox.StandardButton.Ok)
         box.exec()

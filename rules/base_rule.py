@@ -34,5 +34,5 @@ class BaseRule:
         self.scope = scope
         self.is_enabled = is_enabled
 
-    def apply(self, text: str, entry: FileEntry) -> str:
+    def apply(self, text: str, entry: FileEntry, index: int = 0) -> str:
         raise NotImplementedError("子類必須實作 apply 方法")

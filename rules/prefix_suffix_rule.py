@@ -15,7 +15,7 @@ class PrefixSuffixRule(BaseRule):
         self.prefix = prefix
         self.suffix = suffix
 
-    def apply(self, text: str, entry: FileEntry) -> str:
+    def apply(self, text: str, entry: FileEntry, index: int = 0) -> str:
         if not self.is_enabled:
             return text
         return f"{self.prefix}{text}{self.suffix}"
