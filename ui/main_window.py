@@ -8,7 +8,7 @@ from typing import List, Tuple
 from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QDragEnterEvent, QDropEvent, QIcon, QFont, QKeySequence, QShortcut, QKeyEvent
 from PySide6.QtWidgets import (
-    QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton,
+    QApplication, QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton,
     QLabel, QFileDialog, QSplitter, QMessageBox, QStatusBar, QDialog,
     QProgressDialog
 )
