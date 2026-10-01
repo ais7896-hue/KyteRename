@@ -4,6 +4,7 @@ KyteRename - Rule Panel (支援正則群組高亮、中文轉拼音與非法字�
 import re
 from PySide6.QtCore import Qt, Signal, QTimer
 from PySide6.QtWidgets import (
+    QMenu,
     QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QLineEdit,
     QCheckBox, QRadioButton, QButtonGroup, QGroupBox, QSpinBox,
     QComboBox, QPushButton, QScrollArea, QFrame, QSizePolicy
@@ -205,9 +206,14 @@ class RulePanel(QWidget):
 
         row_opts = QHBoxLayout()
         self.chk_case = QCheckBox("區分大小寫")
-        self.chk_regex = QCheckBox("正則表達式 (Regex)")
+        self.chk_regex = QCheckBox("進階規律匹配 (正則)")
         row_opts.addWidget(self.chk_case)
         row_opts.addWidget(self.chk_regex)
+
+        self.btn_regex_helper = QPushButton("💡 常用公式")
+        self.btn_regex_helper.setProperty("class", "tag_btn")
+        self.btn_regex_helper.setCursor(Qt.CursorShape.PointingHandCursor)
+        row_opts.addWidget(self.btn_regex_helper)
         replace_layout.addLayout(row_opts)
 
         self.lbl_regex_error = QLabel("")
@@ -310,6 +316,7 @@ class RulePanel(QWidget):
         self.edit_replace.textChanged.connect(self._on_input_changed)
         self.chk_case.stateChanged.connect(self._on_find_changed)
         self.chk_regex.stateChanged.connect(self._on_find_changed)
+        self.btn_regex_helper.clicked.connect(self._show_regex_helper_menu)
 
         self.edit_prefix.textChanged.connect(self._on_input_changed)
         self.edit_suffix.textChanged.connect(self._on_input_changed)
@@ -391,6 +398,48 @@ class RulePanel(QWidget):
         elif checked_id == 2:
             return TargetScope.FULL_NAME
         return TargetScope.BASE_ONLY
+
+    def _show_regex_helper_menu(self):
+        menu = QMenu(self)
+        menu.setStyleSheet("""
+            QMenu {
+                background-color: #21252B;
+                border: 1px solid #3A404D;
+                border-radius: 6px;
+                padding: 4px;
+                color: #E2E4E8;
+            }
+            QMenu::item {
+                padding: 6px 16px;
+                border-radius: 4px;
+            }
+            QMenu::item:selected {
+                background-color: #177DDC;
+                color: #FFFFFF;
+            }
+        """)
+
+        formulas = [
+            ("🔢 抓取所有數字 (\\d+)", r"\d+", ""),
+            ("🗑️ 刪除圓括號及內容 (\\(.*?\\))", r"\(.*?\)", ""),
+            ("🗑️ 刪除中括號及內容 (\\[.*?\\])", r"\[.*?\]", ""),
+            ("🔤 抓取英文字母 ([a-zA-Z]+)", r"[a-zA-Z]+", ""),
+            ("🧹 刪除底線與連續空格 ([\\s_]+)", r"[\s_]+", " "),
+            ("🔄 日期與名稱顛倒 ((\\d+)_(.*) -> $2_$1)", r"(\d+)_(.*)", "$2_$1")
+        ]
+
+        for label, pat, rep in formulas:
+            action = menu.addAction(label)
+            action.triggered.connect(lambda _, p=pat, r=rep: self._apply_regex_formula(p, r))
+
+        menu.exec(self.btn_regex_helper.mapToGlobal(self.btn_regex_helper.rect().bottomLeft()))
+
+    def _apply_regex_formula(self, pattern: str, replace: str):
+        self.chk_regex.setChecked(True)
+        self.edit_find.setText(pattern)
+        if replace:
+            self.edit_replace.setText(replace)
+        self.edit_find.setFocus()
 
     def _emit_rules(self):
         scope = self.get_current_scope()
