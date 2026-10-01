@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+.env
+
+# Distribution / packaging
+build/
+dist/
+*.spec
+*.egg-info/
+
+# Logs & temp
+*.log
+*.tmp
+*.bak
+.cache/
+.pytest_cache/
+
+# IDE & OS
+.vscode/
+.idea/
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+.DS_Store
