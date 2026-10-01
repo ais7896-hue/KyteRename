@@ -25,6 +25,10 @@ def main():
     app = QApplication(sys.argv)
     app.setApplicationName("KyteRename")
     app.setOrganizationName("KyteSuite")
+    ico_path = PROJECT_ROOT / "assets" / "icon.ico"
+    if ico_path.exists():
+        from PySide6.QtGui import QIcon
+        app.setWindowIcon(QIcon(str(ico_path)))
     settings = SettingsManager()
     app.setStyleSheet(get_theme_stylesheet(settings.is_dark()))
 
