@@ -1,7 +1,10 @@
-# build_installer.ps1
+﻿# build_installer.ps1
 # KyteRename 一鍵打包與安裝程式編譯腳本
 
 $ErrorActionPreference = "Stop"
+
+# 自動切換到當前腳本所在的目錄 (KyteRename 專案根目錄)
+Set-Location -Path $PSScriptRoot
 
 Write-Host "=============================================" -ForegroundColor Cyan
 Write-Host "   KyteRename 自動化編譯與安裝檔封裝程序   " -ForegroundColor Cyan
@@ -62,17 +65,19 @@ foreach ($cand in $isccCandidates) {
 }
 
 if ($foundIscc) {
-    Write-Host "找到 Inno Setup 編譯器: $foundIscc" -ForegroundColor Green
+    Write-Host "使用編譯器: $foundIscc" -ForegroundColor DarkCyan
     & $foundIscc setup.iss
+
     if ($LASTEXITCODE -eq 0) {
-        Write-Host "`n=======================================================" -ForegroundColor Cyan
-        Write-Host "   安裝包建置成功！檔案存放於 dist\ 目錄中   " -ForegroundColor Green
-        Write-Host "=======================================================" -ForegroundColor Cyan
+        Write-Host "`n=============================================" -ForegroundColor Green
+        Write-Host " [SUCCESS] 安裝精靈打包成功！ " -ForegroundColor Green
+        Write-Host " 安裝檔位置：dist\KyteRename_Setup_1.0.0.exe " -ForegroundColor Green
+        Write-Host "=============================================" -ForegroundColor Green
     } else {
-        Write-Host "`n[WARN] Inno Setup 封裝失敗，但綠色版 dist\KyteRename 已成功產生。" -ForegroundColor Yellow
+        Write-Host "`n[ERROR] Inno Setup 封裝失敗，請檢查 setup.iss 設定！ " -ForegroundColor Red
+        exit 1
     }
 } else {
-    Write-Host "`n[INFO] 未偵測到 Inno Setup (ISCC.exe)，跳過安裝包封裝。" -ForegroundColor Yellow
-    Write-Host "免安裝綠色版本已建置完成：dist\KyteRename\KyteRename.exe" -ForegroundColor Green
-    Write-Host "若需建立單檔安裝精靈，請安裝 Inno Setup 6+ 後重新執行此腳本。" -ForegroundColor Gray
+    Write-Host "`n[WARNING] 未偵測到 Inno Setup 編譯器 (ISCC.exe)。 " -ForegroundColor Yellow
+    Write-Host "免安裝綠色版本已建置完成：dist\KyteRename\KyteRename.exe " -ForegroundColor Green
 }
