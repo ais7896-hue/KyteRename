@@ -7,7 +7,8 @@ from pathlib import Path
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QTabWidget, QWidget,
     QCheckBox, QComboBox, QSpinBox, QLabel, QPushButton,
-    QMessageBox, QFormLayout, QGroupBox, QFrame, QApplication
+    QMessageBox, QFormLayout, QGroupBox, QFrame, QApplication,
+    QRadioButton, QButtonGroup
 )
 from PySide6.QtCore import Qt, QTimer
 from config.settings import SettingsManager
