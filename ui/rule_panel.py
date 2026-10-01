@@ -1,5 +1,5 @@
 """
-KyteRename - Rule Panel (全功能規則面板，精緻卡片式排版與深色主題)
+KyteRename - Rule Panel (全功能規則面板，直覺易懂的人性化設計)
 """
 from PySide6.QtCore import Qt, Signal, QTimer
 from PySide6.QtWidgets import (
@@ -60,36 +60,55 @@ class RulePanel(QWidget):
         scope_layout.addWidget(self.btn_scope_full)
         layout.addWidget(scope_box)
 
-        # 2. 中繼資料與變數模板 (Metadata)
-        meta_box = QGroupBox("中繼資料變數模板")
+        # 2. 相片與音樂資訊（智慧標籤）
+        meta_box = QGroupBox("相片與音樂資訊（智慧標籤）")
         meta_layout = QVBoxLayout(meta_box)
         meta_layout.setContentsMargins(10, 14, 10, 10)
         meta_layout.setSpacing(8)
 
-        self.chk_meta = QCheckBox("啟用變數命名模板")
+        self.chk_meta = QCheckBox("啟用相片/音樂資訊命名")
         meta_layout.addWidget(self.chk_meta)
 
+        # 常用情境快捷範本下拉選單
+        row_preset = QHBoxLayout()
+        row_preset.addWidget(QLabel("情境範本:"))
+        self.combo_presets = QComboBox()
+        self.combo_presets.addItem("自訂組合", "")
+        self.combo_presets.addItem("📷 相片：拍攝日期_原檔名", "{exif_date}_{original}")
+        self.combo_presets.addItem("📷 相片：拍攝日期_解析度_序號", "{exif_date}_{resolution}_{n}")
+        self.combo_presets.addItem("🎵 音樂：歌手 - 原檔名", "{artist} - {original}")
+        self.combo_presets.addItem("🎵 音樂：音軌_歌手_專輯", "{track}_{artist}_{album}")
+        self.combo_presets.addItem("📁 備份：資料夾名_修改日期", "{parent}_{date}_{original}")
+        self.combo_presets.setEnabled(False)
+        row_preset.addWidget(self.combo_presets)
+        meta_layout.addLayout(row_preset)
+
+        # 自訂模板輸入框
         self.edit_template = QLineEdit()
-        self.edit_template.setPlaceholderText("例如: {exif_date}_{resolution}_{original}")
+        self.edit_template.setPlaceholderText("例如: {exif_date}_{original}")
         self.edit_template.setText("{original}")
         self.edit_template.setEnabled(False)
         meta_layout.addWidget(self.edit_template)
 
-        # 快捷標籤（Tag Chips）
+        # 點擊快速插入的按鈕群（附中文名稱與圖示）
+        lbl_insert = QLabel("點擊下方標籤插入：")
+        lbl_insert.setStyleSheet("color: #8C94A0; font-size: 11px;")
+        meta_layout.addWidget(lbl_insert)
+
         tag_grid = QGridLayout()
         tag_grid.setSpacing(6)
-        
+
         tags = [
-            ("+ {date}", "{date}"),
-            ("+ {exif_date}", "{exif_date}"),
-            ("+ {resolution}", "{resolution}"),
-            ("+ {parent}", "{parent}"),
-            ("+ {artist}", "{artist}"),
-            ("+ {album}", "{album}"),
-            ("+ {track}", "{track}"),
-            ("+ {n}", "{n}")
+            ("📷 拍攝日期", "{exif_date}"),
+            ("📐 解析度", "{resolution}"),
+            ("📅 檔案日期", "{date}"),
+            ("📁 資料夾名", "{parent}"),
+            ("🎤 歌手", "{artist}"),
+            ("💿 專輯", "{album}"),
+            ("🎵 音軌號", "{track}"),
+            ("📄 原檔名", "{original}")
         ]
-        
+
         for i, (text, tag_val) in enumerate(tags):
             btn = QPushButton(text)
             btn.setProperty("class", "tag_btn")
@@ -98,9 +117,16 @@ class RulePanel(QWidget):
             tag_grid.addWidget(btn, i // 4, i % 4)
 
         meta_layout.addLayout(tag_grid)
+
+        # 底部說明文字
+        lbl_meta_hint = QLabel("💡 提示：自動讀取相機拍攝時間 (EXIF) 或 MP3 歌手資訊帶入檔名")
+        lbl_meta_hint.setWordWrap(True)
+        lbl_meta_hint.setStyleSheet("color: #6C757D; font-size: 11px; margin-top: 4px;")
+        meta_layout.addWidget(lbl_meta_hint)
+
         layout.addWidget(meta_box)
 
-        # 3. 流水號 (Serial) - 採用 QGridLayout 雙欄舒適排版
+        # 3. 流水號 (Serial)
         serial_box = QGroupBox("重新編號（流水號）")
         serial_layout = QVBoxLayout(serial_box)
         serial_layout.setContentsMargins(10, 14, 10, 10)
@@ -137,9 +163,9 @@ class RulePanel(QWidget):
 
         grid_serial.addWidget(QLabel("位置:"), 2, 0)
         self.combo_serial_pos = QComboBox()
-        self.combo_serial_pos.addItem("加在尾端 (Suffix)", SerialPosition.SUFFIX)
-        self.combo_serial_pos.addItem("加在開端 (Prefix)", SerialPosition.PREFIX)
-        self.combo_serial_pos.addItem("整名替換 (Replace)", SerialPosition.REPLACE)
+        self.combo_serial_pos.addItem("加在尾端 (如: photo_001)", SerialPosition.SUFFIX)
+        self.combo_serial_pos.addItem("加在開端 (如: 001_photo)", SerialPosition.PREFIX)
+        self.combo_serial_pos.addItem("整名替換 (如: 001)", SerialPosition.REPLACE)
         grid_serial.addWidget(self.combo_serial_pos, 2, 1, 1, 3)
 
         serial_layout.addLayout(grid_serial)
@@ -228,6 +254,7 @@ class RulePanel(QWidget):
         # 事件連接
         self.scope_group.idToggled.connect(self._on_input_changed)
         self.chk_meta.toggled.connect(self._on_meta_toggled)
+        self.combo_presets.currentIndexChanged.connect(self._on_preset_changed)
         self.edit_template.textChanged.connect(self._on_input_changed)
 
         self.chk_serial.toggled.connect(self._on_input_changed)
@@ -260,7 +287,13 @@ class RulePanel(QWidget):
 
     def _on_meta_toggled(self, checked: bool):
         self.edit_template.setEnabled(checked)
+        self.combo_presets.setEnabled(checked)
         self._on_input_changed()
+
+    def _on_preset_changed(self, index: int):
+        val = self.combo_presets.currentData()
+        if val:
+            self.edit_template.setText(val)
 
     def _insert_template_tag(self, tag: str):
         if not self.chk_meta.isChecked():
