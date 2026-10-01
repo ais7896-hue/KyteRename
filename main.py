@@ -12,7 +12,9 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import Qt
-from ui.main_window import MainWindow, DARK_STYLE
+from config.settings import SettingsManager
+from ui.styles import get_theme_stylesheet
+from ui.main_window import MainWindow
 
 def main():
     # 支援 High DPI
@@ -23,8 +25,8 @@ def main():
     app = QApplication(sys.argv)
     app.setApplicationName("KyteRename")
     app.setOrganizationName("KyteSuite")
-    # 全域套用深色主題，確保對話框與全體組件無縫暗黑化
-    app.setStyleSheet(DARK_STYLE)
+    settings = SettingsManager()
+    app.setStyleSheet(get_theme_stylesheet(settings.is_dark()))
 
     window = MainWindow(initial_paths=sys.argv[1:])
     window.show()

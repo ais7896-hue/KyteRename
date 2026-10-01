@@ -25,318 +25,9 @@ from ui.preview_table import PreviewTable
 from ui.search_bar import SearchBar
 from ui.rule_panel import RulePanel
 from ui.settings_dialog import SettingsDialog
+from ui.styles import get_theme_stylesheet, DARK_STYLE, LIGHT_STYLE
 
-ASSETS_DIR = Path(__file__).resolve().parent.parent / "assets"
-ARROW_UP_PATH = str(ASSETS_DIR / "arrow_up.png").replace("\\", "/")
-ARROW_UP_HOVER_PATH = str(ASSETS_DIR / "arrow_up_hover.png").replace("\\", "/")
-ARROW_DOWN_PATH = str(ASSETS_DIR / "arrow_down.png").replace("\\", "/")
-ARROW_DOWN_HOVER_PATH = str(ASSETS_DIR / "arrow_down_hover.png").replace("\\", "/")
 
-DARK_STYLE_TEMPLATE = """
-/* 全域底色與字體 */
-QMainWindow, QDialog, QMessageBox {
-    background-color: #121315;
-    color: #E6E8EA;
-}
-QWidget {
-    color: #E2E4E8;
-    font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
-    font-size: 13px;
-}
-
-/* 捲動區域與內部面板徹底深色化 */
-QScrollArea, #rule_scroll_area, #rule_panel_content {
-    background-color: #16181B;
-    border: none;
-}
-QScrollArea > QWidget > QWidget {
-    background-color: #16181B;
-}
-
-/* 垂直與水平捲動條微調（極簡沉浸深色風格） */
-QScrollBar:vertical {
-    background-color: #16181B;
-    width: 7px;
-    margin: 0;
-}
-QScrollBar::handle:vertical {
-    background-color: #2E3238;
-    border-radius: 3px;
-    min-height: 25px;
-}
-QScrollBar::handle:vertical:hover {
-    background-color: #434952;
-}
-QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
-    height: 0px;
-}
-
-QScrollBar:horizontal {
-    background-color: #16181B;
-    height: 7px;
-    margin: 0;
-}
-QScrollBar::handle:horizontal {
-    background-color: #2E3238;
-    border-radius: 3px;
-    min-width: 25px;
-}
-QScrollBar::handle:horizontal:hover {
-    background-color: #434952;
-}
-QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
-    width: 0px;
-}
-
-/* 精緻卡片式 GroupBox */
-QGroupBox {
-    border: 1px solid #282C34;
-    border-radius: 8px;
-    margin-top: 14px;
-    padding-top: 10px;
-    font-weight: 600;
-    color: #58A6FF;
-    background-color: #1A1D21;
-}
-QGroupBox::title {
-    subcontrol-origin: margin;
-    subcontrol-position: top left;
-    left: 12px;
-    padding: 0 6px;
-    background-color: #16181B;
-    border-radius: 4px;
-}
-
-/* 輸入框、下拉選單、數字框 */
-QLineEdit, QComboBox {
-    background-color: #21252B;
-    border: 1px solid #333842;
-    border-radius: 5px;
-    padding: 5px 8px;
-    color: #F0F2F5;
-    selection-background-color: #177DDC;
-}
-QLineEdit:focus, QComboBox:focus {
-    border: 1px solid #177DDC;
-}
-QComboBox QAbstractItemView {
-    background-color: #21252B;
-    border: 1px solid #333842;
-    selection-background-color: #177DDC;
-    color: #F0F2F5;
-}
-QComboBox::drop-down {
-    subcontrol-origin: padding;
-    subcontrol-position: top right;
-    width: 24px;
-    border-left: 1px solid #333842;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    background-color: #282D36;
-}
-QComboBox::drop-down:hover {
-    background-color: #177DDC;
-}
-QComboBox::down-arrow {
-    image: url("__ARROW_DOWN__");
-    width: 11px;
-    height: 11px;
-}
-QComboBox::down-arrow:hover {
-    image: url("__ARROW_DOWN_HOVER__");
-}
-
-/* 數字調節框 (QSpinBox) */
-QSpinBox {
-    background-color: #21252B;
-    border: 1px solid #333842;
-    border-radius: 5px;
-    padding: 2px 2px;
-    padding-right: 20px;
-    color: #F0F2F5;
-    font-weight: 500;
-    selection-background-color: #177DDC;
-}
-QSpinBox:focus {
-    border: 1px solid #177DDC;
-}
-QSpinBox::up-button {
-    subcontrol-origin: border;
-    subcontrol-position: top right;
-    width: 18px;
-    height: 13px;
-    background-color: #2C323B;
-    border-left: 1px solid #3E4654;
-    border-bottom: 1px solid #3E4654;
-    border-top-right-radius: 4px;
-}
-QSpinBox::down-button {
-    subcontrol-origin: border;
-    subcontrol-position: bottom right;
-    width: 18px;
-    height: 13px;
-    background-color: #2C323B;
-    border-left: 1px solid #3E4654;
-    border-bottom-right-radius: 4px;
-}
-QSpinBox::up-button:hover, QSpinBox::down-button:hover {
-    background-color: #177DDC;
-}
-QSpinBox::up-button:pressed, QSpinBox::down-button:pressed {
-    background-color: #125EA6;
-}
-QSpinBox::up-arrow {
-    image: url("__ARROW_UP__");
-    width: 10px;
-    height: 10px;
-}
-QSpinBox::up-arrow:hover {
-    image: url("__ARROW_UP_HOVER__");
-}
-QSpinBox::down-arrow {
-    image: url("__ARROW_DOWN__");
-    width: 10px;
-    height: 10px;
-}
-QSpinBox::down-arrow:hover {
-    image: url("__ARROW_DOWN_HOVER__");
-}
-
-/* 按鈕美化 */
-QPushButton {
-    background-color: #21252B;
-    border: 1px solid #333842;
-    border-radius: 6px;
-    padding: 6px 12px;
-    font-weight: 500;
-    color: #E2E4E8;
-}
-QPushButton:hover {
-    background-color: #282C34;
-    border: 1px solid #434952;
-    color: #FFFFFF;
-}
-QPushButton#btn_primary {
-    background-color: #177DDC;
-    border: 1px solid #177DDC;
-    color: #FFFFFF;
-    font-weight: bold;
-}
-QPushButton#btn_primary:hover {
-    background-color: #1668B8;
-}
-QPushButton#btn_primary:disabled {
-    background-color: #1F2833;
-    border: 1px solid #1F2833;
-    color: #556270;
-}
-QPushButton#btn_undo {
-    background-color: #262B33;
-    border: 1px solid #38404D;
-    color: #F0A020;
-    font-weight: 500;
-}
-QPushButton#btn_undo:hover {
-    background-color: #323A45;
-    border-color: #F0A020;
-}
-QPushButton#btn_undo:disabled {
-    background-color: #1C2026;
-    border-color: #272C33;
-    color: #555E6B;
-}
-
-/* 快捷標籤 Tag Chips */
-QPushButton[class="tag_btn"] {
-    background-color: #1B2635;
-    border: 1px solid #253A52;
-    border-radius: 4px;
-    padding: 4px 6px;
-    font-size: 11px;
-    color: #79BAF2;
-    font-weight: 500;
-}
-QPushButton[class="tag_btn"]:hover {
-    background-color: #177DDC;
-    border-color: #177DDC;
-    color: #FFFFFF;
-}
-
-/* 單選與核取方塊 */
-QRadioButton, QCheckBox {
-    color: #D1D5DB;
-    spacing: 7px;
-}
-QRadioButton:hover, QCheckBox:hover {
-    color: #FFFFFF;
-}
-
-/* 左側預覽表格 */
-QTableView {
-    background-color: #16181B;
-    alternate-background-color: #1A1D21;
-    border: 1px solid #282C34;
-    border-radius: 8px;
-    gridline-color: #22262C;
-    selection-background-color: #1B3854;
-}
-QHeaderView::section {
-    background-color: #1F2328;
-    color: #B0B8C4;
-    padding: 7px;
-    border: none;
-    border-right: 1px solid #282C34;
-    border-bottom: 1px solid #282C34;
-    font-weight: bold;
-}
-QStatusBar {
-    background-color: #16181B;
-    border-top: 1px solid #24282E;
-    color: #8C94A0;
-}
-
-/* 對話框樣式 */
-QMessageBox, QProgressDialog {
-    background-color: #1A1D21;
-}
-QMessageBox QLabel, QProgressDialog QLabel {
-    color: #F0F2F5;
-    font-size: 13px;
-    background-color: transparent;
-}
-QMessageBox QPushButton, QProgressDialog QPushButton {
-    background-color: #282C34;
-    border: 1px solid #3A404D;
-    border-radius: 5px;
-    padding: 6px 18px;
-    color: #FFFFFF;
-    min-width: 65px;
-}
-QMessageBox QPushButton:hover, QProgressDialog QPushButton:hover {
-    background-color: #177DDC;
-    border-color: #177DDC;
-}
-QProgressBar {
-    border: 1px solid #333842;
-    border-radius: 5px;
-    text-align: center;
-    background-color: #16181B;
-    color: #FFFFFF;
-    height: 18px;
-}
-QProgressBar::chunk {
-    background-color: #177DDC;
-    border-radius: 4px;
-}
-"""
-
-DARK_STYLE = (
-    DARK_STYLE_TEMPLATE
-    .replace("__ARROW_UP__", ARROW_UP_PATH)
-    .replace("__ARROW_UP_HOVER__", ARROW_UP_HOVER_PATH)
-    .replace("__ARROW_DOWN__", ARROW_DOWN_PATH)
-    .replace("__ARROW_DOWN_HOVER__", ARROW_DOWN_HOVER_PATH)
-)
 
 class MainWindow(QMainWindow):
     def __init__(self, initial_paths: List[str] = None):
@@ -345,9 +36,9 @@ class MainWindow(QMainWindow):
         self.resize(1180, 760)
         self.setMinimumSize(780, 520)
         self.setAcceptDrops(True)
-        self.setStyleSheet(DARK_STYLE)
-
         self.settings = SettingsManager()
+        self.apply_theme()
+        self.settings.theme_changed.connect(lambda t: self.apply_theme())
         self.entries: List[FileEntry] = []
         self.rule_engine = RuleEngine()
         self.current_rules: List[BaseRule] = []
@@ -485,12 +176,26 @@ class MainWindow(QMainWindow):
                     return
         super().keyPressEvent(event)
 
+
+    def apply_theme(self):
+        """根據 SettingsManager 的 effective_theme 即時動態切換深色 / 淺色風格"""
+        is_dark = self.settings.is_dark()
+        stylesheet = get_theme_stylesheet(is_dark)
+        self.setStyleSheet(stylesheet)
+        app = QApplication.instance()
+        if app:
+            app.setStyleSheet(stylesheet)
+        if hasattr(self, "table") and hasattr(self.table, "viewport"):
+            self.table.viewport().update()
+
     def _on_settings_changed(self, key: str, val: object):
         if key == "snapshot_dir_mode":
             self.snapshot_manager = SnapshotManager(self.settings.get_snapshot_dir())
             self._update_undo_button_state()
         elif key == "max_snapshot_history":
             self.snapshot_manager.max_snapshots = int(val)
+        elif key == "theme_mode":
+            self.apply_theme()
 
     def _on_settings_clicked(self):
         dlg = SettingsDialog(self)

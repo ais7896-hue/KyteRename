@@ -5,12 +5,28 @@ import os
 import json
 import sys
 import shutil
+import winreg
 from pathlib import Path
 from typing import Dict, Any, Optional
 from PySide6.QtCore import QObject, Signal
 
+def get_system_theme() -> str:
+    """讀取 Windows 系統深淺色外觀設定 (AppsUseLightTheme)"""
+    try:
+        key = winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER,
+            r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize",
+        )
+        val, _ = winreg.QueryValueEx(key, "AppsUseLightTheme")
+        winreg.CloseKey(key)
+        return "light" if val == 1 else "dark"
+    except Exception:
+        return "dark"
+
+
 class SettingsManager(QObject):
     settings_changed = Signal(str, object)
+    theme_changed = Signal(str)
     _instance = None
 
     DEFAULT_SETTINGS = {
@@ -23,6 +39,9 @@ class SettingsManager(QObject):
         # 快照防呆
         "max_snapshot_history": 15,
         "snapshot_dir_mode": "appdata",    # "appdata" | "portable"
+
+        # 外觀主題
+        "theme_mode": "system",            # "system" | "dark" | "light"
 
         # 介面記憶
         "remember_window_size": True,
@@ -122,8 +141,27 @@ class SettingsManager(QObject):
     def get(self, key: str, default=None):
         return self.settings.get(key, default)
 
+    @property
+    def theme_mode(self) -> str:
+        return self.get("theme_mode", "system")
+
+    @property
+    def effective_theme(self) -> str:
+        mode = self.theme_mode
+        if mode == "system":
+            return get_system_theme()
+        return mode
+
+    def is_dark(self) -> bool:
+        return self.effective_theme == "dark"
+
     def set(self, key: str, value):
         if self.settings.get(key) != value:
+            old_effective = self.effective_theme
             self.settings[key] = value
             self.save()
             self.settings_changed.emit(key, value)
+            if key == "theme_mode":
+                new_effective = self.effective_theme
+                if old_effective != new_effective:
+                    self.theme_changed.emit(new_effective)

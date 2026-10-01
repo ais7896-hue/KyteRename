@@ -199,6 +199,36 @@ class SettingsDialog(QDialog):
         layout.setContentsMargins(16, 16, 16, 16)
         layout.setSpacing(14)
 
+        # 1. 外觀模式 (Appearance Mode)
+        grp_theme = QGroupBox("外觀模式 (Appearance Mode)")
+        grp_theme_layout = QVBoxLayout(grp_theme)
+        grp_theme_layout.setSpacing(10)
+
+        theme_btn_row = QHBoxLayout()
+        self.rb_theme_system = QRadioButton("跟隨系統 (System)")
+        self.rb_theme_dark = QRadioButton("深色模式 (Dark)")
+        self.rb_theme_light = QRadioButton("淺色模式 (Light)")
+
+        self.theme_btn_group = QButtonGroup(self)
+        self.theme_btn_group.addButton(self.rb_theme_system, 0)
+        self.theme_btn_group.addButton(self.rb_theme_dark, 1)
+        self.theme_btn_group.addButton(self.rb_theme_light, 2)
+        self.theme_btn_group.idClicked.connect(self._on_theme_radio_clicked)
+
+        theme_btn_row.addWidget(self.rb_theme_system)
+        theme_btn_row.addWidget(self.rb_theme_dark)
+        theme_btn_row.addWidget(self.rb_theme_light)
+        theme_btn_row.addStretch()
+        grp_theme_layout.addLayout(theme_btn_row)
+
+        lbl_theme_hint = QLabel("💡 選擇跟隨系統將自動即時響應 Windows 11/10 的深淺色外觀。")
+        lbl_theme_hint.setStyleSheet("font-size: 11px; color: #71717a;")
+        grp_theme_layout.addWidget(lbl_theme_hint)
+        layout.addWidget(grp_theme)
+
+        # 2. 視窗與聯動偏好
+        grp_behavior = QGroupBox("視窗與生態聯動")
+        grp_behavior_layout = QVBoxLayout(grp_behavior)
         form = QFormLayout()
         form.setVerticalSpacing(12)
 
@@ -211,9 +241,79 @@ class SettingsDialog(QDialog):
         self.chk_preview = QCheckBox("選中清單項目按 Space 呼叫 KyteView 快速預覽")
         form.addRow("軟體聯動：", self.chk_preview)
 
-        layout.addLayout(form)
+        grp_behavior_layout.addLayout(form)
+        layout.addWidget(grp_behavior)
+
         layout.addStretch()
         return widget
+
+
+    def _on_theme_radio_clicked(self, btn_id: int):
+        theme_val = {0: "system", 1: "dark", 2: "light"}.get(btn_id, "system")
+        self.mgr.set("theme_mode", theme_val)
+        self._apply_dialog_styles()
+
+    def _apply_dialog_styles(self):
+        is_dark = self.mgr.is_dark()
+        tab_pane_bg = "#1A1D21" if is_dark else "#FFFFFF"
+        tab_bg = "#16181B" if is_dark else "#F3F4F6"
+        tab_active_bg = "#21252B" if is_dark else "#FFFFFF"
+        text_c = "#E2E4E8" if is_dark else "#1F2937"
+        text_dim = "#8C94A0" if is_dark else "#6B7280"
+        border_c = "#333842" if is_dark else "#E5E7EB"
+        accent = "#177DDC" if is_dark else "#1677FF"
+
+        self.tabs.setStyleSheet(f"""
+            QTabWidget::pane {{
+                border: 1px solid {border_c};
+                border-radius: 8px;
+                background-color: {tab_pane_bg};
+                top: -1px;
+            }}
+            QTabBar::tab {{
+                background-color: {tab_bg};
+                color: {text_dim};
+                border: 1px solid {border_c};
+                border-bottom: none;
+                border-top-left-radius: 6px;
+                border-top-right-radius: 6px;
+                padding: 8px 18px;
+                margin-right: 4px;
+                font-weight: 500;
+            }}
+            QTabBar::tab:selected {{
+                background-color: {tab_active_bg};
+                color: {accent};
+                border-top: 2px solid {accent};
+                font-weight: bold;
+            }}
+            QTabBar::tab:hover:!selected {{
+                background-color: {'#282C34' if is_dark else '#E5E7EB'};
+                color: {text_c};
+            }}
+        """)
+
+        diag_border = "#3f3f46" if is_dark else "#D1D5DB"
+        diag_color = "#a1a1aa" if is_dark else "#4B5563"
+        diag_hover_bg = "rgba(99, 102, 241, 0.14)" if is_dark else "rgba(99, 102, 241, 0.08)"
+        diag_accent = "#818cf8" if is_dark else "#4F46E5"
+
+        self.btn_diag.setStyleSheet(f"""
+            QPushButton#btn_dialog_diag {{
+                background-color: transparent;
+                color: {diag_color};
+                border: 1px dashed {diag_border};
+                border-radius: 6px;
+                padding: 4px 10px;
+                font-size: 11px;
+                font-weight: 500;
+            }}
+            QPushButton#btn_dialog_diag:hover {{
+                background-color: {diag_hover_bg};
+                color: {diag_accent};
+                border: 1px solid {diag_accent};
+            }}
+        """)
 
     def _load_current_values(self):
         """讀取目前設定並載入至各個表單控制項"""
@@ -231,6 +331,14 @@ class SettingsDialog(QDialog):
         self.combo_mode.setCurrentIndex(0 if cur_mode == "appdata" else 1)
 
         # 分頁 3
+        cur_theme = self.mgr.get("theme_mode", "system")
+        if cur_theme == "dark":
+            self.rb_theme_dark.setChecked(True)
+        elif cur_theme == "light":
+            self.rb_theme_light.setChecked(True)
+        else:
+            self.rb_theme_system.setChecked(True)
+
         self.chk_win_size.setChecked(bool(self.mgr.get("remember_window_size", True)))
         self.chk_rules.setChecked(bool(self.mgr.get("remember_last_rules", False)))
         self.chk_preview.setChecked(bool(self.mgr.get("enable_space_preview", True)))
@@ -260,6 +368,10 @@ class SettingsDialog(QDialog):
 
         self.mgr.set("max_snapshot_history", self.spin_history.value())
         self.mgr.set("snapshot_dir_mode", new_mode)
+
+        selected_theme_id = self.theme_btn_group.checkedId()
+        theme_val = {0: "system", 1: "dark", 2: "light"}.get(selected_theme_id, "system")
+        self.mgr.set("theme_mode", theme_val)
 
         self.mgr.set("remember_window_size", self.chk_win_size.isChecked())
         self.mgr.set("remember_last_rules", self.chk_rules.isChecked())
