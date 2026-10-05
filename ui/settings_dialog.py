@@ -13,52 +13,63 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QTimer
 from config.settings import SettingsManager
 from ui.styles import get_theme_stylesheet
+from i18n import t, i18n
 
 class SettingsDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("KyteRename 設定")
-        self.setFixedSize(530, 460)
+        self.setWindowTitle(t("settings.title"))
+        self.setFixedSize(680, 500)
         self.mgr = SettingsManager()
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         self._init_ui()
         self._load_current_values()
         self._apply_dialog_styles()
 
+    def _get_mailto_url(self) -> str:
+        is_en = i18n.current_language == "en_US"
+        if is_en:
+            return (
+                "mailto:support@aisming.com?subject=%5BBug%20Report%5D%20KyteRename%20Support%20-%20Order/License%20Key:%20(Optional)"
+                "&body=1.%20OS%20Version:%0A"
+                "2.%20Issue%20Description:%0A"
+                "3.%20Diagnostics%20(Please%20paste%20content%20after%20clicking%20'Copy%20System%20Diagnostics'):%0A"
+            )
+        return (
+            "mailto:support@aisming.com?subject=%5B%E5%95%8F%E9%A1%8C%E5%9B%9E%E5%A0%B1%5D%20KyteRename%20%E4%BD%BF%E7%94%A8%E8%AB%AE%E8%A9%A2%20-%20%E8%A8%82%E5%96%AE/%E5%BA%8F%E8%99%9F%EF%BC%9A(%E8%8B%A5%E6%9C%89%E8%AB%8B%E5%A1%AB%E5%AF%AB)"
+            "&body=1.%20%E4%BD%9C%E6%A5%AD%E7%B3%BB%E7%B5%B1%E7%89%88%E6%9C%AC%EF%BC%9A%0A"
+            "2.%20%E7%99%BC%E7%94%9F%E7%9A%84%E5%95%8F%E9%A1%8C%E6%8F%8F%E8%BF%B0%EF%BC%9A%0A"
+            "3.%20%E8%A8%BA%E6%96%B7%E8%B3%87%E8%A8%8A%EF%BC%88%E8%AB%8B%E8%B2%BC%E4%B8%8A%E9%BB%9E%E6%93%8A%E3%80%8C%E8%A4%87%E8%A3%BD%E7%B3%BB%E7%B5%B1%E8%A8%BA%E6%96%B7%E8%B3%87%E8%A8%8A%E3%80%8D%E5%BE%8C%E7%9A%84%E5%85%A7%E5%AE%B9%EF%BC%89%EF%BC%9A%0A"
+        )
+
     def _init_ui(self):
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(14, 14, 14, 14)
+        layout.setContentsMargins(16, 16, 16, 16)
         layout.setSpacing(12)
 
         self.tabs = QTabWidget()
 
         # 分頁 1：改名行為
         self.tab_behavior = self._build_behavior_tab()
-        self.tabs.addTab(self.tab_behavior, "改名行為")
+        self.tabs.addTab(self.tab_behavior, t("settings.tab_behavior"))
 
         # 分頁 2：快照與復原
         self.tab_snapshot = self._build_snapshot_tab()
-        self.tabs.addTab(self.tab_snapshot, "快照與復原")
+        self.tabs.addTab(self.tab_snapshot, t("settings.tab_snapshot"))
 
         # 分頁 3：介面與生態
         self.tab_integration = self._build_integration_tab()
-        self.tabs.addTab(self.tab_integration, "介面與生態")
+        self.tabs.addTab(self.tab_integration, t("settings.tab_integration"))
 
         layout.addWidget(self.tabs)
 
         # 底部操作列：左側支援連結與診斷資訊，右側取消與儲存按鈕
         bottom_bar = QHBoxLayout()
         bottom_bar.setContentsMargins(0, 8, 0, 0)
-        bottom_bar.setSpacing(12)
+        bottom_bar.setSpacing(10)
 
         # 支援連結 (KyteView 同款樣式)
-        mailto_support = (
-            "mailto:support@aisming.com?subject=%5B%E5%95%8F%E9%A1%8C%E5%9B%9E%E5%A0%B1%5D%20KyteRename%20%E4%BD%BF%E7%94%A8%E8%AB%AE%E8%A9%A2%20-%20%E8%A8%82%E5%96%AE/%E5%BA%8F%E8%99%9F%EF%BC%9A(%E8%8B%A5%E6%9C%89%E8%AB%8B%E5%A1%AB%E5%AF%AB)"
-            "&body=1.%20%E4%BD%9C%E6%A5%AD%E7%B3%BB%E7%B5%B1%E7%89%88%E6%9C%AC%EF%BC%9A%0A"
-            "2.%20%E7%99%BC%E7%94%9F%E7%9A%84%E5%95%8F%E9%A1%8C%E6%8F%8F%E8%BF%B0%EF%BC%9A%0A"
-            "3.%20%E8%A8%BA%E6%96%B7%E8%B3%87%E8%A8%8A%EF%BC%88%E8%AB%8B%E8%B2%BC%E4%B8%8A%E9%BB%9E%E6%93%8A%E3%80%8C%E8%A4%87%E8%A3%BD%E7%B3%BB%E7%B5%B1%E8%A8%BA%E6%96%B7%E8%B3%87%E8%A8%8A%E3%80%8D%E5%BE%8C%E7%9A%84%E5%85%A7%E5%AE%B9%EF%BC%89%EF%BC%9A%0A"
-        )
-        self.lbl_support = QLabel(f"<a href='{mailto_support}' style='color: #818cf8; text-decoration: none;'>✉ 聯絡技術支援</a>")
+        self.lbl_support = QLabel(f"<a href='{self._get_mailto_url()}' style='color: #818cf8; text-decoration: none;'>{t('settings.support_email')}</a>")
         self.lbl_support.setOpenExternalLinks(True)
         self.lbl_support.setCursor(Qt.CursorShape.PointingHandCursor)
         self.lbl_support.setStyleSheet("font-size: 11px;")
@@ -73,45 +84,33 @@ class SettingsDialog(QDialog):
         bottom_bar.addWidget(v_sep)
 
         # 複製系統診斷資訊按鈕 (KyteView 同款虛線樣式)
-        self.btn_diag = QPushButton("📋 複製系統診斷資訊")
+        self.btn_diag = QPushButton(t("settings.copy_diag"))
         self.btn_diag.setObjectName("btn_dialog_diag")
         self.btn_diag.setFixedHeight(30)
-        self.btn_diag.setStyleSheet("""
-            QPushButton#btn_dialog_diag {
-                background-color: transparent;
-                color: #a1a1aa;
-                border: 1px dashed #3f3f46;
-                border-radius: 6px;
-                padding: 4px 10px;
-                font-size: 11px;
-                font-weight: 500;
-            }
-            QPushButton#btn_dialog_diag:hover {
-                background-color: rgba(99, 102, 241, 0.14);
-                color: #818cf8;
-                border: 1px solid #818cf8;
-            }
-        """)
         self.btn_diag.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.btn_diag.setToolTip("收集當前作業系統、軟體版本、螢幕解析度與配置設定複製至剪貼簿，方便回報問題")
+        self.btn_diag.setToolTip(t("settings.copy_diag_tooltip"))
         self.btn_diag.clicked.connect(self._copy_diagnostic_info)
         bottom_bar.addWidget(self.btn_diag)
 
-        self.btn_open_license = QPushButton("💎 專業版授權")
+        self.btn_open_license = QPushButton(t("settings.license_btn"))
+        self.btn_open_license.setObjectName("btn_dialog_license")
         self.btn_open_license.setFixedHeight(30)
         self.btn_open_license.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.btn_open_license.setToolTip("查看當前 7 天試用天數、輸入序號啟用或管理授權")
+        self.btn_open_license.setToolTip(t("settings.license_tooltip"))
         self.btn_open_license.clicked.connect(self._on_open_license_clicked)
         bottom_bar.addWidget(self.btn_open_license)
 
         bottom_bar.addStretch()
 
-        self.btn_cancel = QPushButton("取消")
+        self.btn_cancel = QPushButton(t("settings.cancel"))
+        self.btn_cancel.setObjectName("btn_dialog_cancel")
+        self.btn_cancel.setFixedHeight(30)
         self.btn_cancel.clicked.connect(self.reject)
         bottom_bar.addWidget(self.btn_cancel)
 
-        self.btn_save = QPushButton("💾 儲存設定")
+        self.btn_save = QPushButton(t("settings.save"))
         self.btn_save.setObjectName("btn_primary")
+        self.btn_save.setFixedHeight(30)
         self.btn_save.clicked.connect(self._on_save_clicked)
         bottom_bar.addWidget(self.btn_save)
 
@@ -126,20 +125,20 @@ class SettingsDialog(QDialog):
         form = QFormLayout()
         form.setVerticalSpacing(12)
 
-        self.chk_recursive = QCheckBox("拖入資料夾時掃描所有子目錄")
-        form.addRow("遞迴掃描：", self.chk_recursive)
+        self.chk_recursive = QCheckBox(t("settings.recursive_scan"))
+        form.addRow(t("settings.lbl_recursive"), self.chk_recursive)
 
         self.combo_conflict = QComboBox()
-        self.combo_conflict.addItem("彈出視窗詢問 (Ask)", "ask")
-        self.combo_conflict.addItem("自動略過不改 (Skip)", "skip")
-        self.combo_conflict.addItem("自動增補後綴 _1 (Suffix)", "suffix")
-        form.addRow("衝突處理策略：", self.combo_conflict)
+        self.combo_conflict.addItem(t("settings.conflict_ask"), "ask")
+        self.combo_conflict.addItem(t("settings.conflict_skip"), "skip")
+        self.combo_conflict.addItem(t("settings.conflict_suffix"), "suffix")
+        form.addRow(t("settings.lbl_conflict"), self.combo_conflict)
 
-        self.chk_sanitize = QCheckBox(r'預先過濾 Windows 非法字元 (\/:*?"<>|)')
-        form.addRow("字元安全：", self.chk_sanitize)
+        self.chk_sanitize = QCheckBox(t("settings.auto_sanitize"))
+        form.addRow(t("settings.lbl_sanitize"), self.chk_sanitize)
 
-        self.chk_confirm = QCheckBox("點擊執行時彈出清單確認對話框")
-        form.addRow("防呆提示：", self.chk_confirm)
+        self.chk_confirm = QCheckBox(t("settings.confirm_before_apply"))
+        form.addRow(t("settings.lbl_confirm"), self.chk_confirm)
 
         layout.addLayout(form)
         layout.addStretch()
@@ -156,18 +155,18 @@ class SettingsDialog(QDialog):
 
         self.spin_history = QSpinBox()
         self.spin_history.setRange(5, 50)
-        form.addRow("歷史保留上限：", self.spin_history)
+        form.addRow(t("settings.lbl_max_history"), self.spin_history)
 
         self.combo_mode = QComboBox()
-        self.combo_mode.addItem("系統 AppData (標準安裝模式)", "appdata")
-        self.combo_mode.addItem("軟體資料夾 snapshots/ (便攜模式)", "portable")
-        form.addRow("儲存位置：", self.combo_mode)
+        self.combo_mode.addItem(t("settings.snapshot_appdata"), "appdata")
+        self.combo_mode.addItem(t("settings.snapshot_portable"), "portable")
+        form.addRow(t("settings.lbl_snapshot_mode"), self.combo_mode)
 
         layout.addLayout(form)
 
-        group = QGroupBox("歷史維護")
+        group = QGroupBox(t("settings.grp_history_maintenance"))
         grp_layout = QVBoxLayout(group)
-        btn_clear = QPushButton("🗑️ 立即清空所有歷史還原快照")
+        btn_clear = QPushButton(t("settings.btn_clear_snapshots"))
         btn_clear.clicked.connect(self._clear_snapshots)
         grp_layout.addWidget(btn_clear)
         layout.addWidget(group)
@@ -182,14 +181,14 @@ class SettingsDialog(QDialog):
         layout.setSpacing(14)
 
         # 1. 外觀模式 (Appearance Mode)
-        grp_theme = QGroupBox("外觀模式 (Appearance Mode)")
+        grp_theme = QGroupBox(t("settings.grp_appearance"))
         grp_theme_layout = QVBoxLayout(grp_theme)
         grp_theme_layout.setSpacing(10)
 
         theme_btn_row = QHBoxLayout()
-        self.rb_theme_system = QRadioButton("跟隨系統 (System)")
-        self.rb_theme_dark = QRadioButton("深色模式 (Dark)")
-        self.rb_theme_light = QRadioButton("淺色模式 (Light)")
+        self.rb_theme_system = QRadioButton(t("settings.theme_system"))
+        self.rb_theme_dark = QRadioButton(t("settings.theme_dark"))
+        self.rb_theme_light = QRadioButton(t("settings.theme_light"))
 
         self.theme_btn_group = QButtonGroup(self)
         self.theme_btn_group.addButton(self.rb_theme_system, 0)
@@ -203,25 +202,38 @@ class SettingsDialog(QDialog):
         theme_btn_row.addStretch()
         grp_theme_layout.addLayout(theme_btn_row)
 
-        lbl_theme_hint = QLabel("💡 選擇跟隨系統將自動即時響應 Windows 11/10 的深淺色外觀。")
+        lbl_theme_hint = QLabel(t("settings.theme_hint"))
         lbl_theme_hint.setStyleSheet("font-size: 11px; color: #71717a;")
         grp_theme_layout.addWidget(lbl_theme_hint)
         layout.addWidget(grp_theme)
 
-        # 2. 視窗與聯動偏好
-        grp_behavior = QGroupBox("視窗與生態聯動")
+        # 2. 語言設定 (Language)
+        grp_lang = QGroupBox(t("settings.lbl_language"))
+        grp_lang_layout = QVBoxLayout(grp_lang)
+        lang_form = QFormLayout()
+        lang_form.setVerticalSpacing(12)
+        self.combo_language = QComboBox()
+        self.combo_language.addItem(t("settings.lang_system"), "system")
+        self.combo_language.addItem("繁體中文 (Traditional Chinese)", "zh_TW")
+        self.combo_language.addItem("English", "en_US")
+        lang_form.addRow(t("settings.lbl_language"), self.combo_language)
+        grp_lang_layout.addLayout(lang_form)
+        layout.addWidget(grp_lang)
+
+        # 3. 視窗與聯動偏好
+        grp_behavior = QGroupBox(t("settings.grp_behavior"))
         grp_behavior_layout = QVBoxLayout(grp_behavior)
         form = QFormLayout()
         form.setVerticalSpacing(12)
 
-        self.chk_win_size = QCheckBox("記錄離開時的視窗大小與分隔比例")
-        form.addRow("視窗狀態：", self.chk_win_size)
+        self.chk_win_size = QCheckBox(t("settings.remember_window_size"))
+        form.addRow(t("settings.lbl_win_size"), self.chk_win_size)
 
-        self.chk_rules = QCheckBox("啟動時保留上次編輯的改名規則 (建議關閉)")
-        form.addRow("規則記憶：", self.chk_rules)
+        self.chk_rules = QCheckBox(t("settings.remember_last_rules"))
+        form.addRow(t("settings.lbl_rules"), self.chk_rules)
 
-        self.chk_preview = QCheckBox("選中清單項目按 Space 呼叫 KyteView 快速預覽")
-        form.addRow("軟體聯動：", self.chk_preview)
+        self.chk_preview = QCheckBox(t("settings.enable_space_preview"))
+        form.addRow(t("settings.lbl_preview"), self.chk_preview)
 
         grp_behavior_layout.addLayout(form)
         layout.addWidget(grp_behavior)
@@ -345,11 +357,24 @@ class SettingsDialog(QDialog):
                 selection-background-color: {accent_c};
                 selection-color: #FFFFFF;
             }}
+            QPushButton#btn_dialog_license {{
+                background-color: transparent;
+                border: 1px solid {input_border};
+                border-radius: 6px;
+                padding: 4px 10px;
+                color: {text_c};
+                font-size: 11px;
+                font-weight: 500;
+            }}
+            QPushButton#btn_dialog_license:hover {{
+                background-color: {btn_cancel_hover};
+                color: {'#FFFFFF' if is_dark else '#111827'};
+            }}
             QPushButton#btn_dialog_cancel {{
                 background-color: {btn_cancel_bg};
                 border: 1px solid {input_border};
                 border-radius: 6px;
-                padding: 6px 14px;
+                padding: 4px 14px;
                 color: {text_c};
                 font-weight: 500;
             }}
@@ -361,7 +386,7 @@ class SettingsDialog(QDialog):
                 background-color: {accent_c};
                 border: 1px solid {accent_c};
                 border-radius: 6px;
-                padding: 6px 14px;
+                padding: 4px 14px;
                 color: #FFFFFF;
                 font-weight: bold;
             }}
@@ -390,15 +415,11 @@ class SettingsDialog(QDialog):
             }}
         """)
 
-        # 支援信箱文字顏色
+        # 支援信箱文字顏色與多語言連結
         mail_color = "#818cf8" if is_dark else "#4f46e5"
-        mailto_support = (
-            "mailto:support@aisming.com?subject=%5B%E5%95%8F%E9%A1%8C%E5%9B%9E%E5%A0%B1%5D%20KyteRename%20%E4%BD%BF%E7%94%A8%E8%AB%AE%E8%A9%A2%20-%20%E8%A8%82%E5%96%AE/%E5%BA%8F%E8%99%9F%EF%BC%9A(%E8%8B%A5%E6%9C%89%E8%AB%8B%E5%A1%AB%E5%AF%AB)"
-            "&body=1.%20%E4%BD%9C%E6%A5%AD%E7%B3%BB%E7%B5%B1%E7%89%88%E6%9C%AC%EF%BC%9A%0A"
-            "2.%20%E7%99%BC%E7%94%9F%E7%9A%84%E5%95%8F%E9%A1%8C%E6%8F%8F%E8%BF%B0%EF%BC%9A%0A"
-            "3.%20%E8%A8%BA%E6%96%B7%E8%B3%87%E8%A8%8A%EF%BC%88%E8%AB%8B%E8%B2%BC%E4%B8%8A%E9%BB%9E%E6%93%8A%E3%80%8C%E8%A4%87%E8%A3%BD%E7%B3%BB%E7%B5%B1%E8%A8%BA%E6%96%B7%E8%B3%87%E8%A8%8A%E3%80%8D%E5%BE%8C%E7%9A%84%E5%85%A7%E5%AE%B9%EF%BC%89%EF%BC%9A%0A"
+        self.lbl_support.setText(
+            f"<a href='{self._get_mailto_url()}' style='color: {mail_color}; text-decoration: none;'>{t('settings.support_email')}</a>"
         )
-        self.lbl_support.setText(f"<a href='{mailto_support}' style='color: {mail_color}; text-decoration: none;'>✉ 聯絡技術支援</a>")
 
     def _load_current_values(self):
         """讀取目前設定並載入至各個表單控制項"""
@@ -424,6 +445,10 @@ class SettingsDialog(QDialog):
         else:
             self.rb_theme_system.setChecked(True)
 
+        cur_lang = self.mgr.get("language", "system")
+        lang_idx = self.combo_language.findData(cur_lang)
+        self.combo_language.setCurrentIndex(max(0, lang_idx))
+
         self.chk_win_size.setChecked(bool(self.mgr.get("remember_window_size", True)))
         self.chk_rules.setChecked(bool(self.mgr.get("remember_last_rules", False)))
         self.chk_preview.setChecked(bool(self.mgr.get("enable_space_preview", True)))
@@ -436,15 +461,15 @@ class SettingsDialog(QDialog):
         if new_mode != old_mode:
             reply = QMessageBox.question(
                 self,
-                "快照目錄變更確認",
-                "偵測到快照儲存位置已變更，是否自動將既有的歷史快照檔案遷移至新目錄？\n\n（建議遷移，以確保歷史還原功能可正常使用）",
+                t("settings.migrate_title"),
+                t("settings.migrate_msg"),
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                 QMessageBox.StandardButton.Yes
             )
             if reply == QMessageBox.StandardButton.Yes:
                 moved = self.mgr.migrate_snapshots(old_mode, new_mode)
                 if moved > 0:
-                    QMessageBox.information(self, "遷移成功", f"已成功遷移 {moved} 筆歷史快照至新目錄。")
+                    QMessageBox.information(self, t("settings.migrate_success_title"), t("settings.migrate_success_msg", count=moved))
 
         self.mgr.set("recursive_scan", self.chk_recursive.isChecked())
         self.mgr.set("conflict_policy", self.combo_conflict.currentData())
@@ -458,23 +483,27 @@ class SettingsDialog(QDialog):
         theme_val = {0: "system", 1: "dark", 2: "light"}.get(selected_theme_id, "system")
         self.mgr.set("theme_mode", theme_val)
 
+        new_lang = self.combo_language.currentData()
+        self.mgr.set("language", new_lang)
+
         self.mgr.set("remember_window_size", self.chk_win_size.isChecked())
         self.mgr.set("remember_last_rules", self.chk_rules.isChecked())
         self.mgr.set("enable_space_preview", self.chk_preview.isChecked())
 
-        QMessageBox.information(self, "設定已儲存", "✓ 偏好設定已成功更新並儲存！")
+        QMessageBox.information(self, t("settings.save_success_title"), t("settings.save_success_msg"))
         self.accept()
 
 
     def _on_open_license_clicked(self):
         diag = LicenseDialog(self)
         diag.exec()
+
     def _copy_diagnostic_info(self):
         """收集軟硬體環境資訊複製至剪貼簿"""
         lines = [
             "```yaml",
             "# KyteRename 系統環境診斷資訊",
-            "Software: KyteRename v1.0.0 (64-bit)",
+            "Software: KyteRename v1.1.0 (64-bit)",
             f"Python_Version: {platform.python_version()} ({platform.architecture()[0]})",
             f"OS: {platform.system()} {sys.getwindowsversion().major}.{sys.getwindowsversion().minor} (Build {sys.getwindowsversion().build})",
         ]
@@ -496,7 +525,7 @@ class SettingsDialog(QDialog):
         diag_text = "\n".join(lines)
         QApplication.clipboard().setText(diag_text)
 
-        self.btn_diag.setText("✓ 已複製診斷資訊！")
+        self.btn_diag.setText(t("settings.diag_copied"))
         self.btn_diag.setStyleSheet("""
             QPushButton#btn_dialog_diag {
                 background-color: rgba(16, 185, 129, 0.14);
@@ -525,14 +554,14 @@ class SettingsDialog(QDialog):
             }
         """
         QTimer.singleShot(2500, lambda: (
-            self.btn_diag.setText("📋 複製系統診斷資訊"),
+            self.btn_diag.setText(t("settings.copy_diag")),
             self.btn_diag.setStyleSheet(diag_default_qss)
         ))
 
     def _clear_snapshots(self):
         ret = QMessageBox.question(
-            self, "確認清理",
-            "確定要清空所有改名還原快照嗎？\n清空後將無法再執行歷史還原！",
+            self, t("settings.clear_confirm_title"),
+            t("settings.clear_confirm_msg"),
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
         )
         if ret == QMessageBox.StandardButton.Yes:
@@ -544,4 +573,4 @@ class SettingsDialog(QDialog):
                     count += 1
                 except Exception:
                     pass
-            QMessageBox.information(self, "完成", f"已成功清除 {count} 筆快照記錄。")
+            QMessageBox.information(self, t("settings.clear_success_title"), t("settings.clear_success_msg", count=count))

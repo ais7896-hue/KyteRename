@@ -21,6 +21,7 @@ from PySide6.QtWidgets import (
 
 from rules.base_rule import FileEntry
 from core.kyte_ipc import update_kyteview_preview_async
+from i18n import t, i18n
 
 class HighlightDelegate(QStyledItemDelegate):
     """在原始檔名儲存格上動態繪製正則/搜尋命中區段的高亮標記（底層背景膠囊高亮，文字置頂清晰不遮蔽）"""
@@ -104,8 +105,6 @@ class HighlightDelegate(QStyledItemDelegate):
 
 
 class PreviewTableModel(QAbstractTableModel):
-    HEADERS = ["原始檔名", "新檔名預覽", "狀態"]
-
     def __init__(self, parent=None, is_dark: bool = True):
         super().__init__(parent)
         self.entries: List[FileEntry] = []
@@ -113,24 +112,36 @@ class PreviewTableModel(QAbstractTableModel):
         self.duplicate_indices: Set[int] = set()
         self.disk_conflict_indices: Set[int] = set()
         self.is_dark_theme: bool = is_dark
+        i18n.language_changed.connect(self._on_language_changed)
+
+    def _on_language_changed(self):
+        self.headerDataChanged.emit(Qt.Orientation.Horizontal, 0, 2)
+        if self.entries:
+            self.dataChanged.emit(self.index(0, 2), self.index(len(self.entries) - 1, 2), [Qt.ItemDataRole.DisplayRole])
 
     def set_dark_theme(self, is_dark: bool):
         """更新深淺色主題並即時刷新所有儲存格顏色"""
         self.is_dark_theme = is_dark
         if self.entries:
             top_left = self.index(0, 0)
-            bottom_right = self.index(len(self.entries) - 1, len(self.HEADERS) - 1)
+            bottom_right = self.index(len(self.entries) - 1, 2)
             self.dataChanged.emit(top_left, bottom_right, [Qt.ItemDataRole.ForegroundRole, Qt.ItemDataRole.BackgroundRole])
 
     def rowCount(self, parent=QModelIndex()) -> int:
         return len(self.entries)
 
     def columnCount(self, parent=QModelIndex()) -> int:
-        return len(self.HEADERS)
+        return 3
 
     def headerData(self, section: int, orientation: Qt.Orientation, role: int = Qt.ItemDataRole.DisplayRole):
         if orientation == Qt.Orientation.Horizontal and role == Qt.ItemDataRole.DisplayRole:
-            return self.HEADERS[section]
+            headers = [
+                t("table.col_orig_name"),
+                t("table.col_new_name"),
+                t("table.col_status"),
+            ]
+            if 0 <= section < len(headers):
+                return headers[section]
         return None
 
     def data(self, index: QModelIndex, role: int = Qt.ItemDataRole.DisplayRole):
@@ -156,12 +167,12 @@ class PreviewTableModel(QAbstractTableModel):
                 return new_name
             elif col == 2:
                 if is_dup:
-                    return "⚠️ 名稱重複"
+                    return t("table.status_duplicate")
                 if is_disk_conflict:
-                    return "⚠️ 檔案已存在"
+                    return t("table.status_disk_conflict")
                 if is_changed:
-                    return "✓ 待更名"
-                return "無變更"
+                    return t("table.status_pending")
+                return t("table.status_no_change")
 
         elif role == Qt.ItemDataRole.ForegroundRole:
             if is_dup or is_disk_conflict:
@@ -409,41 +420,45 @@ class PreviewTable(QTableView):
         )
 
         # 1. KyteView 快速預覽
-        act_preview = menu.addAction("👁️ 在 KyteView 中預覽 (Space)")
+        act_preview = menu.addAction(t("table.menu_preview"))
         act_preview.triggered.connect(lambda: self.request_preview.emit(first_entry.path))
 
         # 2. 在檔案總管中顯示
-        act_reveal = menu.addAction("🔍 在檔案總管中顯示")
+        act_reveal = menu.addAction(t("table.menu_reveal"))
         act_reveal.triggered.connect(lambda: self._reveal_in_explorer(first_entry.path))
 
         menu.addSeparator()
 
         # 3. 複製功能群組
-        copy_menu = menu.addMenu("📋 複製資訊")
+        copy_menu = menu.addMenu(t("table.menu_copy_group"))
         copy_menu.setStyleSheet(menu.styleSheet())
 
-        act_copy_orig_name = copy_menu.addAction("複製原始檔名")
+        act_copy_orig_name = copy_menu.addAction(t("table.menu_copy_orig_name"))
         act_copy_orig_name.triggered.connect(lambda: QApplication.clipboard().setText(first_entry.original_name))
 
-        act_copy_new_name = copy_menu.addAction("複製預覽新檔名")
+        act_copy_new_name = copy_menu.addAction(t("table.menu_copy_new_name"))
         act_copy_new_name.triggered.connect(lambda: QApplication.clipboard().setText(first_new_name))
 
-        act_copy_orig_path = copy_menu.addAction("複製原始完整路徑")
+        act_copy_orig_path = copy_menu.addAction(t("table.menu_copy_orig_path"))
         act_copy_orig_path.triggered.connect(lambda: QApplication.clipboard().setText(str(first_entry.path.resolve())))
 
         new_full_path = str((first_entry.parent_dir / first_new_name).resolve())
-        act_copy_new_path = copy_menu.addAction("複製預覽新完整路徑")
+        act_copy_new_path = copy_menu.addAction(t("table.menu_copy_new_path"))
         act_copy_new_path.triggered.connect(lambda: QApplication.clipboard().setText(new_full_path))
 
         menu.addSeparator()
 
         # 4. 從列表移除
-        remove_text = f"❌ 從列表移除 ({len(selected_indices)} 個項目) [Delete]" if len(selected_indices) > 1 else "❌ 從列表移除 [Delete]"
+        remove_text = (
+            t("table.menu_remove_multi", count=len(selected_indices))
+            if len(selected_indices) > 1
+            else t("table.menu_remove_single")
+        )
         act_remove = menu.addAction(remove_text)
         act_remove.triggered.connect(lambda: self.request_remove.emit(selected_indices))
 
         # 5. 全選
-        act_select_all = menu.addAction("🔄 全選 (Ctrl+A)")
+        act_select_all = menu.addAction(t("table.menu_select_all"))
         act_select_all.triggered.connect(self.selectAll)
 
         menu.exec(QCursor.pos())

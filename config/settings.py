@@ -9,6 +9,7 @@ import winreg
 from pathlib import Path
 from typing import Dict, Any, Optional
 from PySide6.QtCore import QObject, Signal
+from i18n import i18n
 
 def get_system_theme() -> str:
     """讀取 Windows 系統深淺色外觀設定 (AppsUseLightTheme)"""
@@ -40,8 +41,9 @@ class SettingsManager(QObject):
         "max_snapshot_history": 15,
         "snapshot_dir_mode": "appdata",    # "appdata" | "portable"
 
-        # 外觀主題
+        # 外觀主題與多語言
         "theme_mode": "system",            # "system" | "dark" | "light"
+        "language": "system",              # "system" | "zh_TW" | "en_US"
 
         # 介面記憶
         "remember_window_size": True,
@@ -125,6 +127,7 @@ class SettingsManager(QObject):
                     self.settings.update(data)
             except Exception as e:
                 print(f"[Settings] 載入失敗，採用預設值: {e}")
+        i18n.apply_language(self.get("language", "system"))
 
     def save(self):
         """原子寫入 (Atomic Write)：寫入 tmp 檔後 replace，防止斷電損壞"""
@@ -161,7 +164,9 @@ class SettingsManager(QObject):
             self.settings[key] = value
             self.save()
             self.settings_changed.emit(key, value)
-            if key == "theme_mode":
+            if key == "language":
+                i18n.apply_language(value)
+            elif key == "theme_mode":
                 new_effective = self.effective_theme
                 if old_effective != new_effective:
                     self.theme_changed.emit(new_effective)

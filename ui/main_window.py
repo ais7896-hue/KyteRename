@@ -28,13 +28,14 @@ from ui.settings_dialog import SettingsDialog
 from core.license import LicenseManager
 from ui.license_dialog import LicenseDialog
 from ui.styles import get_theme_stylesheet, DARK_STYLE, LIGHT_STYLE
+from i18n import t, i18n
 
 
 
 class MainWindow(QMainWindow):
     def __init__(self, initial_paths: List[str] = None):
         super().__init__()
-        self.setWindowTitle("KyteRename — 規則式即時預覽批次重新命名")
+        self.setWindowTitle(t("app.title"))
         self.resize(1180, 760)
         self.setMinimumSize(780, 520)
         self.setAcceptDrops(True)
@@ -60,6 +61,7 @@ class MainWindow(QMainWindow):
 
         # 監聽快照目錄變更
         self.settings.settings_changed.connect(self._on_settings_changed)
+        i18n.language_changed.connect(self._retranslate_ui)
 
         if initial_paths:
             self._load_paths(initial_paths)
@@ -73,12 +75,12 @@ class MainWindow(QMainWindow):
 
         # 頂部操作列
         top_bar = QHBoxLayout()
-        self.btn_open_folder = QPushButton("📂 開啟資料夾")
-        self.btn_open_files = QPushButton("📄 新增檔案")
-        self.btn_clear = QPushButton("🗑️ 清空列表")
-        self.btn_undo = QPushButton("↩️ 復原上次改名 (Ctrl+Z)")
+        self.btn_open_folder = QPushButton(t("toolbar.open_folder"))
+        self.btn_open_files = QPushButton(t("toolbar.open_files"))
+        self.btn_clear = QPushButton(t("toolbar.clear_list"))
+        self.btn_undo = QPushButton(t("toolbar.undo"))
         self.btn_undo.setObjectName("btn_undo")
-        self.btn_settings = QPushButton("⚙️ 設定")
+        self.btn_settings = QPushButton(t("toolbar.settings"))
 
         top_bar.addWidget(self.btn_open_folder)
         top_bar.addWidget(self.btn_open_files)
@@ -93,7 +95,7 @@ class MainWindow(QMainWindow):
         self._update_license_button()
         top_bar.addStretch()
 
-        self.btn_apply = QPushButton("🚀 執行重新命名")
+        self.btn_apply = QPushButton(t("toolbar.apply_rename"))
         self.btn_apply.setObjectName("btn_primary")
         self.btn_apply.setEnabled(False)
         top_bar.addWidget(self.btn_apply)
@@ -125,7 +127,7 @@ class MainWindow(QMainWindow):
         # 狀態列
         self.status_bar = QStatusBar(self)
         self.setStatusBar(self.status_bar)
-        self.status_bar.showMessage("就緒：請拖入檔案或資料夾開始重新命名（支援按 Space 鍵快速預覽）")
+        self.status_bar.showMessage(t("status.ready"))
 
         # 事件連接
         self.btn_open_folder.clicked.connect(self._on_open_folder)
@@ -145,6 +147,18 @@ class MainWindow(QMainWindow):
         # 表格預覽與移除連動
         self.table.request_preview.connect(self._preview_file)
         self.table.request_remove.connect(self._remove_entries_by_indices)
+
+    def _retranslate_ui(self):
+        """當語言改變時更新主視窗各部件文字"""
+        self.setWindowTitle(t("app.title"))
+        self.btn_open_folder.setText(t("toolbar.open_folder"))
+        self.btn_open_files.setText(t("toolbar.open_files"))
+        self.btn_clear.setText(t("toolbar.clear_list"))
+        self.btn_undo.setText(t("toolbar.undo"))
+        self.btn_settings.setText(t("toolbar.settings"))
+        self.btn_apply.setText(t("toolbar.apply_rename"))
+        self._update_license_button()
+        self._update_status()
 
     def _init_shortcuts(self):
         shortcut_undo = QShortcut(QKeySequence("Ctrl+Z"), self)
@@ -216,14 +230,14 @@ class MainWindow(QMainWindow):
         plan = self.license_mgr.get_plan_type()
         days_left = self.license_mgr.get_trial_days_left()
         if plan == "pro":
-            self.btn_license.setText("💎 專業版")
-            self.btn_license.setToolTip("KyteRename 專業版永久授權 (已啟用)")
+            self.btn_license.setText(t("license.pro_badge"))
+            self.btn_license.setToolTip(t("license.pro_tooltip"))
         elif plan == "trial":
-            self.btn_license.setText(f"✨ 試用剩餘 {days_left} 天")
-            self.btn_license.setToolTip("點擊查看或啟用 KyteRename 專業版")
+            self.btn_license.setText(t("license.trial_badge", days=days_left))
+            self.btn_license.setToolTip(t("license.trial_tooltip"))
         else:
-            self.btn_license.setText("⚠️ 升級專業版")
-            self.btn_license.setToolTip("7 天試用期已結束，點擊升級解鎖無限批次與進階功能")
+            self.btn_license.setText(t("license.upgrade_badge"))
+            self.btn_license.setToolTip(t("license.upgrade_tooltip"))
 
     def _on_license_clicked(self):
         dialog = LicenseDialog(self)
@@ -249,12 +263,12 @@ class MainWindow(QMainWindow):
             self._load_paths(paths)
 
     def _on_open_folder(self):
-        folder = QFileDialog.getExistingDirectory(self, "選取要重新命名的資料夾")
+        folder = QFileDialog.getExistingDirectory(self, t("dialog.select_folder"))
         if folder:
             self._load_paths([folder])
 
     def _on_open_files(self):
-        files, _ = QFileDialog.getOpenFileNames(self, "選取要重新命名的檔案")
+        files, _ = QFileDialog.getOpenFileNames(self, t("dialog.select_files"))
         if files:
             self._load_paths(files)
 
@@ -285,7 +299,7 @@ class MainWindow(QMainWindow):
         self._refresh_previews(full_reset=True)
 
         if self.entries:
-            self.status_bar.showMessage(f"共 {len(self.entries)} 個檔案 | 背景讀取 EXIF/ID3 中繼資料中...")
+            self.status_bar.showMessage(t("status.reading_meta", count=len(self.entries)))
             self.meta_worker = MetadataWorker(self.entries, self)
             self.meta_worker.batch_ready.connect(self._on_metadata_batch)
             self.meta_worker.finished_all.connect(self._on_metadata_finished)
@@ -367,7 +381,7 @@ class MainWindow(QMainWindow):
         disk_conflicts = disk_conflicts or set()
 
         if count == 0:
-            self.status_bar.showMessage("就緒：請拖入檔案或資料夾開始重新命名（支援按 Space 鍵快速預覽）")
+            self.status_bar.showMessage(t("status.ready"))
             self.btn_apply.setEnabled(False)
             return
 
@@ -377,11 +391,11 @@ class MainWindow(QMainWindow):
         has_conflicts = len(duplicates) > 0 or len(disk_conflicts) > 0
         self.btn_apply.setEnabled(changed_count > 0 and not has_conflicts)
 
-        msg = f"共 {count} 個檔案 | {changed_count} 個待更名"
+        msg = t("status.summary", count=count, changed=changed_count)
         if duplicates:
-            msg += f" | ⚠️ {len(duplicates)} 個名稱衝突"
+            msg += f" | {t('status.conflicts', count=len(duplicates))}"
         if disk_conflicts:
-            msg += f" | ⚠️ {len(disk_conflicts)} 個目標檔案已存在於磁碟"
+            msg += f" | {t('status.disk_conflicts', count=len(disk_conflicts))}"
 
         self.status_bar.showMessage(msg)
 
@@ -394,7 +408,7 @@ class MainWindow(QMainWindow):
                 changed_ops.append((entry.path, dst))
 
         if not changed_ops:
-            QMessageBox.information(self, "提示", "目前沒有需要更名的檔案。")
+            QMessageBox.information(self, t("dialog.no_changes_title"), t("dialog.no_changes_msg"))
             return
 
         # 授權與降級檢查 (7天試用期過後溫和降級)
@@ -404,7 +418,7 @@ class MainWindow(QMainWindow):
             if not allowed:
                 reply = QMessageBox.warning(
                     self,
-                    "免費版批次限制提示",
+                    t("license.batch_limit_title"),
                     limit_msg,
                     QMessageBox.StandardButton.Open | QMessageBox.StandardButton.Cancel,
                     QMessageBox.StandardButton.Open
@@ -421,7 +435,7 @@ class MainWindow(QMainWindow):
                 if not allowed:
                     reply = QMessageBox.warning(
                         self,
-                        "專業版專屬功能提示",
+                        t("license.pro_feature_title"),
                         rule_msg,
                         QMessageBox.StandardButton.Open | QMessageBox.StandardButton.Cancel,
                         QMessageBox.StandardButton.Open
@@ -433,16 +447,16 @@ class MainWindow(QMainWindow):
         if self.settings.get("confirm_before_apply", True):
             reply = QMessageBox.question(
                 self,
-                "確認執行重新命名",
-                f"即將對 {len(changed_ops)} 個檔案執行重新命名。\n\n改名完成後會自動產生安全快照，隨時可按 Ctrl+Z 完整還原。\n是否確定執行？",
+                t("dialog.confirm_rename_title"),
+                t("dialog.confirm_rename_msg", count=len(changed_ops)),
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                 QMessageBox.StandardButton.Yes
             )
             if reply != QMessageBox.StandardButton.Yes:
                 return
 
-        progress_dialog = QProgressDialog("正在執行安全批次改名...", "取消", 0, len(changed_ops), self)
-        progress_dialog.setWindowTitle("處理中")
+        progress_dialog = QProgressDialog(t("dialog.progress_title"), t("dialog.progress_cancel"), 0, len(changed_ops), self)
+        progress_dialog.setWindowTitle(t("dialog.progress_title"))
         progress_dialog.setWindowModality(Qt.WindowModality.WindowModal)
         progress_dialog.setMinimumDuration(0)
 
@@ -450,7 +464,7 @@ class MainWindow(QMainWindow):
 
         self.rename_worker.progress.connect(lambda cur, tot, name: (
             progress_dialog.setValue(cur),
-            progress_dialog.setLabelText(f"正在更名 ({cur}/{tot}): {name}")
+            progress_dialog.setLabelText(t("dialog.renaming_progress", current=cur, total=tot, name=name))
         ))
 
         progress_dialog.canceled.connect(self.rename_worker.cancel)
@@ -471,12 +485,12 @@ class MainWindow(QMainWindow):
             self.entries.clear()
             self._load_paths(list(set(updated_paths)))
 
-            msg = f"更名完成！\n\n成功: {result['success_count']} 個檔案"
+            msg = f"{t('dialog.result_title')}！\n\n{t('dialog.result_success', count=result['success_count'])}"
             if result["failed_count"] > 0:
-                msg += f"\n失敗: {result['failed_count']} 個檔案（因鎖定或權限不足已略過）"
-            msg += "\n\n隨時可點擊「復原上次改名」或按 Ctrl+Z 還原。"
+                msg += f"\n{t('dialog.result_failed', count=result['failed_count'])}"
+            msg += f"\n\n{t('dialog.result_undo_tip')}"
 
-            QMessageBox.information(self, "執行結果", msg)
+            QMessageBox.information(self, t("dialog.result_title"), msg)
 
         self.rename_worker.finished_batch.connect(_on_rename_finished)
         self.rename_worker.start()
@@ -484,8 +498,8 @@ class MainWindow(QMainWindow):
     def _on_undo_clicked(self):
         reply = QMessageBox.question(
             self,
-            "確認復原改名",
-            "確定要復原上一次的改名操作嗎？\n所有更名檔案將依據快照逆向拓撲還原回原始名稱。",
+            t("dialog.confirm_undo_title"),
+            t("dialog.confirm_undo_msg"),
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
             QMessageBox.StandardButton.Yes
         )
@@ -504,6 +518,6 @@ class MainWindow(QMainWindow):
             else:
                 self._refresh_previews(full_reset=True)
 
-            QMessageBox.information(self, "復原完成", f"{undo_result['message']}！")
+            QMessageBox.information(self, t("dialog.undo_success_title"), f"{undo_result['message']}！")
         else:
-            QMessageBox.warning(self, "復原失敗", undo_result["message"])
+            QMessageBox.warning(self, t("dialog.undo_fail_title"), undo_result["message"])

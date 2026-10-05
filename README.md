@@ -70,7 +70,7 @@ powershell -ExecutionPolicy Bypass -File .\build_installer.ps1
 ```
 
 - **免安裝綠色版**：產出於 `dist/KyteRename/KyteRename.exe`
-- **安裝精靈 Setup**：產出於 `dist/KyteRename_Setup_1.0.0.exe`（自動整合 Windows 右鍵選單「使用 KyteRename 批次整理」）
+- **安裝精靈 Setup**：產出於 `dist/KyteRename_Setup_1.1.0.exe`（自動整合 Windows 右鍵選單「使用 KyteRename 批次整理」）
 
 ---
 

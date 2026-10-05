@@ -2,12 +2,13 @@
 KyteRename - Rule Panel (支援正則群組高亮、中文轉拼音與非法字元清洗)
 """
 import re
+import re
 from PySide6.QtCore import Qt, Signal, QTimer
 from PySide6.QtWidgets import (
     QMenu,
     QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QLineEdit,
     QCheckBox, QRadioButton, QButtonGroup, QGroupBox, QSpinBox,
-    QComboBox, QPushButton, QScrollArea, QFrame, QSizePolicy
+    QComboBox, QPushButton, QScrollArea, QFrame, QSizePolicy, QMessageBox
 )
 from rules.base_rule import TargetScope, BaseRule
 from rules.replace_rule import ReplaceRule
@@ -18,6 +19,8 @@ from rules.case_rule import CaseRule, CaseMode
 from rules.trim_rule import TrimRule
 from rules.sanitize_rule import SanitizeRule
 from rules.pinyin_rule import PinyinRule, PinyinMode
+from core.license import LicenseManager
+from i18n import t, i18n
 
 class RulePanel(QWidget):
     rules_changed = Signal(list)
@@ -28,6 +31,7 @@ class RulePanel(QWidget):
         super().__init__(parent)
         self._init_ui()
         self._init_debounce()
+        i18n.language_changed.connect(self._retranslate_ui)
 
     def _init_ui(self):
         outer_layout = QVBoxLayout(self)
@@ -50,12 +54,12 @@ class RulePanel(QWidget):
         layout.setSpacing(10)
 
         # 1. 作用目標 (Target Scope)
-        scope_box = QGroupBox("作用目標")
-        scope_layout = QHBoxLayout(scope_box)
+        self.scope_box = QGroupBox(t("rules.scope_title"))
+        scope_layout = QHBoxLayout(self.scope_box)
         scope_layout.setContentsMargins(8, 12, 8, 8)
-        self.btn_scope_base = QRadioButton("僅主檔名")
-        self.btn_scope_ext = QRadioButton("僅副檔名")
-        self.btn_scope_full = QRadioButton("完整檔名")
+        self.btn_scope_base = QRadioButton(t("rules.scope_base"))
+        self.btn_scope_ext = QRadioButton(t("rules.scope_ext"))
+        self.btn_scope_full = QRadioButton(t("rules.scope_full"))
         self.btn_scope_base.setChecked(True)
 
         self.scope_group = QButtonGroup(self)
@@ -66,79 +70,88 @@ class RulePanel(QWidget):
         scope_layout.addWidget(self.btn_scope_base)
         scope_layout.addWidget(self.btn_scope_ext)
         scope_layout.addWidget(self.btn_scope_full)
-        layout.addWidget(scope_box)
+        layout.addWidget(self.scope_box)
 
         # 2. 智慧標籤
-        meta_box = QGroupBox("相片與音樂資訊（智慧標籤）")
-        meta_layout = QVBoxLayout(meta_box)
+        self.meta_box = QGroupBox(t("rules.meta_title"))
+        meta_layout = QVBoxLayout(self.meta_box)
         meta_layout.setContentsMargins(8, 12, 8, 8)
         meta_layout.setSpacing(6)
 
-        self.chk_meta = QCheckBox("啟用相片/音樂資訊命名")
+        self.chk_meta = QCheckBox(t("rules.meta_enable"))
         meta_layout.addWidget(self.chk_meta)
 
+        self.PRESET_ITEMS = [
+            ("rules.meta_preset_custom", ""),
+            ("rules.meta_preset_photo1", "{exif_date}_{original}"),
+            ("rules.meta_preset_photo2", "{exif_date}_{resolution}_{n}"),
+            ("rules.meta_preset_music1", "{artist} - {original}"),
+            ("rules.meta_preset_music2", "{track}_{artist}_{album}"),
+            ("rules.meta_preset_backup", "{parent}_{date}_{original}"),
+        ]
+
         row_preset = QHBoxLayout()
-        row_preset.addWidget(QLabel("情境範本:"))
+        self.lbl_meta_preset = QLabel(t("rules.meta_preset_label"))
+        row_preset.addWidget(self.lbl_meta_preset)
         self.combo_presets = QComboBox()
-        self.combo_presets.addItem("自訂組合", "")
-        self.combo_presets.addItem("📷 相片：拍攝日期_原檔名", "{exif_date}_{original}")
-        self.combo_presets.addItem("📷 相片：拍攝日期_解析度_序號", "{exif_date}_{resolution}_{n}")
-        self.combo_presets.addItem("🎵 音樂：歌手 - 原檔名", "{artist} - {original}")
-        self.combo_presets.addItem("🎵 音樂：音軌_歌手_專輯", "{track}_{artist}_{album}")
-        self.combo_presets.addItem("📁 備份：資料夾名_修改日期", "{parent}_{date}_{original}")
+        for key, val in self.PRESET_ITEMS:
+            self.combo_presets.addItem(t(key), val)
         self.combo_presets.setEnabled(False)
         row_preset.addWidget(self.combo_presets, stretch=1)
         meta_layout.addLayout(row_preset)
 
         self.edit_template = QLineEdit()
-        self.edit_template.setPlaceholderText("例如: {exif_date}_{original}")
+        self.edit_template.setPlaceholderText(t("rules.meta_template_placeholder"))
         self.edit_template.setText("{original}")
         self.edit_template.setEnabled(False)
         meta_layout.addWidget(self.edit_template)
 
-        lbl_insert = QLabel("點擊標籤快速插入：")
-        lbl_insert.setStyleSheet("color: #8C94A0; font-size: 11px;")
-        meta_layout.addWidget(lbl_insert)
+        self.lbl_meta_click_tip = QLabel(t("rules.meta_click_tip"))
+        self.lbl_meta_click_tip.setStyleSheet("color: #8C94A0; font-size: 11px;")
+        meta_layout.addWidget(self.lbl_meta_click_tip)
 
         tag_grid = QGridLayout()
         tag_grid.setSpacing(5)
 
-        tags = [
-            ("📷 拍攝日期", "{exif_date}"),
-            ("📐 解析度", "{resolution}"),
-            ("📅 檔案日期", "{date}"),
-            ("📁 資料夾名", "{parent}"),
-            ("🎤 歌手", "{artist}"),
-            ("💿 專輯", "{album}"),
-            ("🎵 音軌號", "{track}"),
-            ("📄 原檔名", "{original}"),
-            ("🔢 流水號", "{n}")
+        self.TAG_BUTTONS_DEF = [
+            ("rules.tag_exif_date", "{exif_date}"),
+            ("rules.tag_resolution", "{resolution}"),
+            ("rules.tag_file_date", "{date}"),
+            ("rules.tag_folder", "{parent}"),
+            ("rules.tag_artist", "{artist}"),
+            ("rules.tag_album", "{album}"),
+            ("rules.tag_track", "{track}"),
+            ("rules.tag_original", "{original}"),
+            ("rules.tag_serial", "{n}")
         ]
 
-        for i, (text, tag_val) in enumerate(tags):
-            btn = QPushButton(text)
+        self.tag_buttons = []
+        for i, (key, tag_val) in enumerate(self.TAG_BUTTONS_DEF):
+            btn = QPushButton(t(key))
             btn.setProperty("class", "tag_btn")
             btn.setCursor(Qt.CursorShape.PointingHandCursor)
-            btn.clicked.connect(lambda _, t=tag_val: self._insert_template_tag(t))
+            btn.clicked.connect(lambda _, val=tag_val: self._insert_template_tag(val))
             tag_grid.addWidget(btn, i // 3, i % 3)
+            self.tag_buttons.append((btn, key))
 
         meta_layout.addLayout(tag_grid)
-        layout.addWidget(meta_box)
+        layout.addWidget(self.meta_box)
 
         # 3. 流水號 (Serial)
-        serial_box = QGroupBox("重新編號（流水號）")
-        serial_layout = QVBoxLayout(serial_box)
+        self.serial_box = QGroupBox(t("rules.serial_title"))
+        serial_layout = QVBoxLayout(self.serial_box)
         serial_layout.setContentsMargins(8, 12, 8, 8)
         serial_layout.setSpacing(6)
 
-        self.chk_serial = QCheckBox("啟用流水號編號")
+        self.chk_serial = QCheckBox(t("rules.serial_enable"))
         serial_layout.addWidget(self.chk_serial)
 
         grid_serial = QGridLayout()
         grid_serial.setHorizontalSpacing(8)
         grid_serial.setVerticalSpacing(6)
 
-        grid_serial.addWidget(QLabel("起始值:"), 0, 0)
+        self.lbl_serial_start = QLabel(t("rules.serial_start"))
+        grid_serial.addWidget(self.lbl_serial_start, 0, 0)
         self.spin_serial_start = QSpinBox()
         self.spin_serial_start.setRange(0, 999999)
         self.spin_serial_start.setValue(1)
@@ -146,7 +159,8 @@ class RulePanel(QWidget):
         self.spin_serial_start.setAlignment(Qt.AlignmentFlag.AlignCenter)
         grid_serial.addWidget(self.spin_serial_start, 0, 1)
 
-        grid_serial.addWidget(QLabel("每次遞增:"), 0, 2)
+        self.lbl_serial_step = QLabel(t("rules.serial_step"))
+        grid_serial.addWidget(self.lbl_serial_step, 0, 2)
         self.spin_serial_step = QSpinBox()
         self.spin_serial_step.setRange(1, 100)
         self.spin_serial_step.setValue(1)
@@ -154,7 +168,8 @@ class RulePanel(QWidget):
         self.spin_serial_step.setAlignment(Qt.AlignmentFlag.AlignCenter)
         grid_serial.addWidget(self.spin_serial_step, 0, 3)
 
-        grid_serial.addWidget(QLabel("補零位數:"), 1, 0)
+        self.lbl_serial_padding = QLabel(t("rules.serial_padding"))
+        grid_serial.addWidget(self.lbl_serial_padding, 1, 0)
         self.spin_serial_padding = QSpinBox()
         self.spin_serial_padding.setRange(1, 10)
         self.spin_serial_padding.setValue(3)
@@ -162,29 +177,35 @@ class RulePanel(QWidget):
         self.spin_serial_padding.setAlignment(Qt.AlignmentFlag.AlignCenter)
         grid_serial.addWidget(self.spin_serial_padding, 1, 1)
 
-        grid_serial.addWidget(QLabel("分隔符:"), 1, 2)
+        self.lbl_serial_sep = QLabel(t("rules.serial_sep"))
+        grid_serial.addWidget(self.lbl_serial_sep, 1, 2)
         self.edit_serial_sep = QLineEdit("_")
         self.edit_serial_sep.setMinimumWidth(65)
         self.edit_serial_sep.setAlignment(Qt.AlignmentFlag.AlignCenter)
         grid_serial.addWidget(self.edit_serial_sep, 1, 3)
 
-        grid_serial.addWidget(QLabel("位置:"), 2, 0)
+        self.lbl_serial_pos = QLabel(t("rules.serial_pos"))
+        grid_serial.addWidget(self.lbl_serial_pos, 2, 0)
+        self.SERIAL_POS_ITEMS = [
+            ("rules.serial_pos_suffix", SerialPosition.SUFFIX),
+            ("rules.serial_pos_prefix", SerialPosition.PREFIX),
+            ("rules.serial_pos_replace", SerialPosition.REPLACE),
+        ]
         self.combo_serial_pos = QComboBox()
-        self.combo_serial_pos.addItem("加在尾端 (如: photo_001)", SerialPosition.SUFFIX)
-        self.combo_serial_pos.addItem("加在開端 (如: 001_photo)", SerialPosition.PREFIX)
-        self.combo_serial_pos.addItem("整名替換 (如: 001)", SerialPosition.REPLACE)
+        for key, val in self.SERIAL_POS_ITEMS:
+            self.combo_serial_pos.addItem(t(key), val)
         grid_serial.addWidget(self.combo_serial_pos, 2, 1, 1, 3)
 
         serial_layout.addLayout(grid_serial)
-        lbl_serial_hint = QLabel("💡 預覽效果: photo_001.jpg, photo_002.jpg ...")
-        lbl_serial_hint.setStyleSheet("color: #6C757D; font-size: 11px;")
-        serial_layout.addWidget(lbl_serial_hint)
+        self.lbl_serial_hint = QLabel(t("rules.serial_hint"))
+        self.lbl_serial_hint.setStyleSheet("color: #6C757D; font-size: 11px;")
+        serial_layout.addWidget(self.lbl_serial_hint)
 
-        layout.addWidget(serial_box)
+        layout.addWidget(self.serial_box)
 
         # 4. 文字搜尋與取代 (含正則即時驗證與高亮)
-        replace_box = QGroupBox("文字搜尋與取代 (支援正則)")
-        replace_layout = QVBoxLayout(replace_box)
+        self.replace_box = QGroupBox(t("rules.replace_title"))
+        replace_layout = QVBoxLayout(self.replace_box)
         replace_layout.setContentsMargins(8, 12, 8, 8)
         replace_layout.setSpacing(6)
 
@@ -192,25 +213,27 @@ class RulePanel(QWidget):
         grid_rep.setHorizontalSpacing(6)
         grid_rep.setVerticalSpacing(6)
 
-        grid_rep.addWidget(QLabel("搜尋："), 0, 0)
+        self.lbl_replace_find = QLabel(t("rules.replace_find"))
+        grid_rep.addWidget(self.lbl_replace_find, 0, 0)
         self.edit_find = QLineEdit()
-        self.edit_find.setPlaceholderText("要取代的文字或正則 (如: \\d+)")
+        self.edit_find.setPlaceholderText(t("rules.replace_find_placeholder"))
         grid_rep.addWidget(self.edit_find, 0, 1)
 
-        grid_rep.addWidget(QLabel("替換為："), 1, 0)
+        self.lbl_replace_to = QLabel(t("rules.replace_to"))
+        grid_rep.addWidget(self.lbl_replace_to, 1, 0)
         self.edit_replace = QLineEdit()
-        self.edit_replace.setPlaceholderText("留空則為刪除，支援 $1 反向引用")
+        self.edit_replace.setPlaceholderText(t("rules.replace_to_placeholder"))
         grid_rep.addWidget(self.edit_replace, 1, 1)
 
         replace_layout.addLayout(grid_rep)
 
         row_opts = QHBoxLayout()
-        self.chk_case = QCheckBox("區分大小寫")
-        self.chk_regex = QCheckBox("進階規律匹配 (正則)")
+        self.chk_case = QCheckBox(t("rules.replace_case"))
+        self.chk_regex = QCheckBox(t("rules.replace_regex"))
         row_opts.addWidget(self.chk_case)
         row_opts.addWidget(self.chk_regex)
 
-        self.btn_regex_helper = QPushButton("💡 常用公式")
+        self.btn_regex_helper = QPushButton(t("rules.replace_regex_helper"))
         self.btn_regex_helper.setProperty("class", "tag_btn")
         self.btn_regex_helper.setCursor(Qt.CursorShape.PointingHandCursor)
         row_opts.addWidget(self.btn_regex_helper)
@@ -221,79 +244,91 @@ class RulePanel(QWidget):
         self.lbl_regex_error.setVisible(False)
         replace_layout.addWidget(self.lbl_regex_error)
 
-        layout.addWidget(replace_box)
+        layout.addWidget(self.replace_box)
 
         # 5. 前後綴增刪
-        prefix_box = QGroupBox("前後綴增刪")
-        prefix_layout = QGridLayout(prefix_box)
+        self.prefix_box = QGroupBox(t("rules.prefix_title"))
+        prefix_layout = QGridLayout(self.prefix_box)
         prefix_layout.setContentsMargins(8, 12, 8, 8)
         prefix_layout.setHorizontalSpacing(6)
         prefix_layout.setVerticalSpacing(6)
 
-        prefix_layout.addWidget(QLabel("加前綴："), 0, 0)
+        self.lbl_prefix_add = QLabel(t("rules.prefix_add"))
+        prefix_layout.addWidget(self.lbl_prefix_add, 0, 0)
         self.edit_prefix = QLineEdit()
-        self.edit_prefix.setPlaceholderText("例如: [Final]_")
+        self.edit_prefix.setPlaceholderText(t("rules.prefix_placeholder"))
         prefix_layout.addWidget(self.edit_prefix, 0, 1)
 
-        prefix_layout.addWidget(QLabel("加後綴："), 1, 0)
+        self.lbl_suffix_add = QLabel(t("rules.suffix_add"))
+        prefix_layout.addWidget(self.lbl_suffix_add, 1, 0)
         self.edit_suffix = QLineEdit()
-        self.edit_suffix.setPlaceholderText("例如: _v2")
+        self.edit_suffix.setPlaceholderText(t("rules.suffix_placeholder"))
         prefix_layout.addWidget(self.edit_suffix, 1, 1)
 
-        layout.addWidget(prefix_box)
+        layout.addWidget(self.prefix_box)
 
         # 6. 中文轉拼音 (Pinyin)
-        pinyin_box = QGroupBox("中文轉拼音")
-        pinyin_layout = QVBoxLayout(pinyin_box)
+        self.pinyin_box = QGroupBox(t("rules.pinyin_title"))
+        pinyin_layout = QVBoxLayout(self.pinyin_box)
         pinyin_layout.setContentsMargins(8, 12, 8, 8)
         pinyin_layout.setSpacing(6)
 
-        self.chk_pinyin = QCheckBox("啟用中文轉拼音")
+        self.chk_pinyin = QCheckBox(t("rules.pinyin_enable"))
         pinyin_layout.addWidget(self.chk_pinyin)
 
         row_py = QHBoxLayout()
-        row_py.addWidget(QLabel("拼音格式:"))
+        self.lbl_pinyin_format = QLabel(t("rules.pinyin_format"))
+        row_py.addWidget(self.lbl_pinyin_format)
+        self.PINYIN_MODE_ITEMS = [
+            ("rules.pinyin_full", PinyinMode.FULL),
+            ("rules.pinyin_cap", PinyinMode.CAPITALIZE),
+            ("rules.pinyin_initial", PinyinMode.FIRST_LETTER),
+        ]
         self.combo_pinyin_mode = QComboBox()
-        self.combo_pinyin_mode.addItem("全拼小寫 (如: qing_tian)", PinyinMode.FULL)
-        self.combo_pinyin_mode.addItem("首字大寫 (如: Qing_Tian)", PinyinMode.CAPITALIZE)
-        self.combo_pinyin_mode.addItem("首字母簡拼 (如: qt)", PinyinMode.FIRST_LETTER)
+        for key, val in self.PINYIN_MODE_ITEMS:
+            self.combo_pinyin_mode.addItem(t(key), val)
         row_py.addWidget(self.combo_pinyin_mode, stretch=1)
         pinyin_layout.addLayout(row_py)
 
-        layout.addWidget(pinyin_box)
+        layout.addWidget(self.pinyin_box)
 
         # 7. 字元清洗與大小寫修剪
-        clean_box = QGroupBox("安全清洗與樣式修剪")
-        clean_layout = QVBoxLayout(clean_box)
+        self.clean_box = QGroupBox(t("rules.clean_title"))
+        clean_layout = QVBoxLayout(self.clean_box)
         clean_layout.setContentsMargins(8, 12, 8, 8)
         clean_layout.setSpacing(6)
 
-        self.chk_sanitize_illegal = QCheckBox(r'自動清理 Windows 非法字元 (\/:*?"<>|)')
+        self.chk_sanitize_illegal = QCheckBox(t("rules.clean_illegal"))
         self.chk_sanitize_illegal.setChecked(True)
         clean_layout.addWidget(self.chk_sanitize_illegal)
 
-        self.chk_sanitize_symbols = QCheckBox("去除裝飾性符號 (如: 【】★☆◆等)")
+        self.chk_sanitize_symbols = QCheckBox(t("rules.clean_symbols"))
         clean_layout.addWidget(self.chk_sanitize_symbols)
 
         row_case = QHBoxLayout()
-        row_case.addWidget(QLabel("大小寫:"))
+        self.lbl_case = QLabel(t("rules.case_label"))
+        row_case.addWidget(self.lbl_case)
+        self.CASE_ITEMS = [
+            ("rules.case_keep", None),
+            ("rules.case_lower", CaseMode.LOWER),
+            ("rules.case_upper", CaseMode.UPPER),
+            ("rules.case_title", CaseMode.TITLE),
+            ("rules.case_capitalize", CaseMode.CAPITALIZE),
+        ]
         self.combo_case = QComboBox()
-        self.combo_case.addItem("維持原樣", None)
-        self.combo_case.addItem("全部小寫 (lower)", CaseMode.LOWER)
-        self.combo_case.addItem("全部大寫 (UPPER)", CaseMode.UPPER)
-        self.combo_case.addItem("詞首大寫 (Title Case)", CaseMode.TITLE)
-        self.combo_case.addItem("句首大寫 (Capitalize)", CaseMode.CAPITALIZE)
+        for key, val in self.CASE_ITEMS:
+            self.combo_case.addItem(t(key), val)
         row_case.addWidget(self.combo_case, stretch=1)
         clean_layout.addLayout(row_case)
 
         row_trim = QHBoxLayout()
-        self.chk_trim_ends = QCheckBox("去除頭尾空白")
-        self.chk_collapse_spaces = QCheckBox("壓縮連續空格")
+        self.chk_trim_ends = QCheckBox(t("rules.clean_trim_ends"))
+        self.chk_collapse_spaces = QCheckBox(t("rules.clean_collapse_spaces"))
         row_trim.addWidget(self.chk_trim_ends)
         row_trim.addWidget(self.chk_collapse_spaces)
         clean_layout.addLayout(row_trim)
 
-        layout.addWidget(clean_box)
+        layout.addWidget(self.clean_box)
 
         layout.addStretch()
         scroll.setWidget(content)
@@ -351,7 +386,7 @@ class RulePanel(QWidget):
             if is_regex:
                 valid, err = ReplaceRule.validate_pattern(find_text, is_regex=True)
                 if not valid:
-                    self.lbl_regex_error.setText(f"⚠️ 正則表達式語法無效: {err}")
+                    self.lbl_regex_error.setText(t("rules.regex_error", err=err))
                     self.lbl_regex_error.setVisible(True)
                     self.edit_find.setStyleSheet("border: 1px solid #FF7875;")
                 else:
@@ -381,8 +416,8 @@ class RulePanel(QWidget):
             if not lic_mgr.is_unlimited():
                 reply = QMessageBox.information(
                     self,
-                    "專業版進階功能",
-                    "「中文轉拼音」為專業版專屬進階功能。\n\n7 天試用期已結束，請啟用專業版解鎖漢字拼音能力。",
+                    t("rules.pro_pinyin_title"),
+                    t("rules.pro_pinyin_msg"),
                     QMessageBox.StandardButton.Open | QMessageBox.StandardButton.Cancel,
                     QMessageBox.StandardButton.Open
                 )
@@ -402,8 +437,8 @@ class RulePanel(QWidget):
             if not lic_mgr.is_unlimited():
                 reply = QMessageBox.information(
                     self,
-                    "專業版進階功能",
-                    "「正規表達式 (Regex) 高級搜尋與群組替換」為專業版專屬進階功能。\n\n7 天試用期已結束，純文字替換仍然完全免費開放！",
+                    t("rules.pro_regex_title"),
+                    t("rules.pro_regex_msg"),
                     QMessageBox.StandardButton.Open | QMessageBox.StandardButton.Cancel,
                     QMessageBox.StandardButton.Open
                 )
@@ -461,12 +496,12 @@ class RulePanel(QWidget):
         """)
 
         formulas = [
-            ("🔢 抓取所有數字 (\\d+)", r"\d+", ""),
-            ("🗑️ 刪除圓括號及內容 (\\(.*?\\))", r"\(.*?\)", ""),
-            ("🗑️ 刪除中括號及內容 (\\[.*?\\])", r"\[.*?\]", ""),
-            ("🔤 抓取英文字母 ([a-zA-Z]+)", r"[a-zA-Z]+", ""),
-            ("🧹 刪除底線與連續空格 ([\\s_]+)", r"[\s_]+", " "),
-            ("🔄 日期與名稱顛倒 ((\\d+)_(.*) -> $2_$1)", r"(\d+)_(.*)", "$2_$1")
+            (t("rules.regex_f_digits"), r"\d+", ""),
+            (t("rules.regex_f_round_brackets"), r"\(.*?\)", ""),
+            (t("rules.regex_f_square_brackets"), r"\[.*?\]", ""),
+            (t("rules.regex_f_letters"), r"[a-zA-Z]+", ""),
+            (t("rules.regex_f_spaces"), r"[\s_]+", " "),
+            (t("rules.regex_f_date_reverse"), r"(\d+)_(.*)", "$2_$1")
         ]
 
         for label, pat, rep in formulas:
@@ -562,3 +597,78 @@ class RulePanel(QWidget):
             ))
 
         self.rules_changed.emit(rules)
+
+    def _retranslate_ui(self):
+        """當全域語言變更時即時刷新規則面板所有群組標題與控制項文字"""
+        self.scope_box.setTitle(t("rules.scope_title"))
+        self.btn_scope_base.setText(t("rules.scope_base"))
+        self.btn_scope_ext.setText(t("rules.scope_ext"))
+        self.btn_scope_full.setText(t("rules.scope_full"))
+
+        self.meta_box.setTitle(t("rules.meta_title"))
+        self.chk_meta.setText(t("rules.meta_enable"))
+        self.edit_template.setPlaceholderText(t("rules.meta_template_placeholder"))
+
+        self.serial_box.setTitle(t("rules.serial_title"))
+        self.chk_serial.setText(t("rules.serial_enable"))
+        self.lbl_serial_start.setText(t("rules.serial_start"))
+        self.lbl_serial_step.setText(t("rules.serial_step"))
+        self.lbl_serial_padding.setText(t("rules.serial_padding"))
+        self.lbl_serial_sep.setText(t("rules.serial_sep"))
+        self.lbl_serial_pos.setText(t("rules.serial_pos"))
+        self.lbl_serial_hint.setText(t("rules.serial_hint"))
+
+        self.replace_box.setTitle(t("rules.replace_title"))
+        self.lbl_replace_find.setText(t("rules.replace_find"))
+        self.edit_find.setPlaceholderText(t("rules.replace_find_placeholder"))
+        self.lbl_replace_to.setText(t("rules.replace_to"))
+        self.edit_replace.setPlaceholderText(t("rules.replace_to_placeholder"))
+        self.chk_case.setText(t("rules.replace_case"))
+        self.chk_regex.setText(t("rules.replace_regex"))
+        self.btn_regex_helper.setText(t("rules.replace_regex_helper"))
+
+        self.prefix_box.setTitle(t("rules.prefix_title"))
+        self.lbl_prefix_add.setText(t("rules.prefix_add"))
+        self.edit_prefix.setPlaceholderText(t("rules.prefix_placeholder"))
+        self.lbl_suffix_add.setText(t("rules.suffix_add"))
+        self.edit_suffix.setPlaceholderText(t("rules.suffix_placeholder"))
+
+        self.pinyin_box.setTitle(t("rules.pinyin_title"))
+        self.chk_pinyin.setText(t("rules.pinyin_enable"))
+        self.lbl_pinyin_format.setText(t("rules.pinyin_format"))
+
+        self.clean_box.setTitle(t("rules.clean_title"))
+        self.chk_sanitize_illegal.setText(t("rules.clean_illegal"))
+        self.chk_sanitize_symbols.setText(t("rules.clean_symbols"))
+        self.lbl_case.setText(t("rules.case_label"))
+        self.chk_trim_ends.setText(t("rules.clean_trim_ends"))
+        self.chk_collapse_spaces.setText(t("rules.clean_collapse_spaces"))
+
+        # 刷新中繼標籤面板標籤與下拉選項
+        self.lbl_meta_preset.setText(t("rules.meta_preset_label"))
+        self.lbl_meta_click_tip.setText(t("rules.meta_click_tip"))
+        self.combo_presets.blockSignals(True)
+        for idx, (key, _) in enumerate(self.PRESET_ITEMS):
+            self.combo_presets.setItemText(idx, t(key))
+        self.combo_presets.blockSignals(False)
+
+        for btn, key in self.tag_buttons:
+            btn.setText(t(key))
+
+        # 刷新流水號位置選項
+        self.combo_serial_pos.blockSignals(True)
+        for idx, (key, _) in enumerate(self.SERIAL_POS_ITEMS):
+            self.combo_serial_pos.setItemText(idx, t(key))
+        self.combo_serial_pos.blockSignals(False)
+
+        # 刷新拼音模式選項
+        self.combo_pinyin_mode.blockSignals(True)
+        for idx, (key, _) in enumerate(self.PINYIN_MODE_ITEMS):
+            self.combo_pinyin_mode.setItemText(idx, t(key))
+        self.combo_pinyin_mode.blockSignals(False)
+
+        # 刷新大小寫選項
+        self.combo_case.blockSignals(True)
+        for idx, (key, _) in enumerate(self.CASE_ITEMS):
+            self.combo_case.setItemText(idx, t(key))
+        self.combo_case.blockSignals(False)

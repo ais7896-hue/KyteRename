@@ -2,7 +2,7 @@
 ; 適用於 Inno Setup 6.x / 7.x
 
 #define MyAppName "KyteRename"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.1.0"
 #define MyAppPublisher "ais7896-hue"
 #define MyAppURL "https://github.com/ais7896-hue/KyteRename"
 #define MyAppExeName "KyteRename.exe"

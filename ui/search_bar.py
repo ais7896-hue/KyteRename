@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (
     QWidget, QHBoxLayout, QLineEdit, QPushButton, QLabel, QButtonGroup
 )
 from config.settings import SettingsManager
+from i18n import t, i18n
 
 class SearchBar(QWidget):
     """
@@ -21,7 +22,9 @@ class SearchBar(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.mgr = SettingsManager()
+        self._last_counts = (0, 0, 0, 0)
         self._init_ui()
+        i18n.language_changed.connect(self._retranslate_ui)
 
     def _init_ui(self):
         layout = QHBoxLayout(self)
@@ -31,7 +34,7 @@ class SearchBar(QWidget):
         # 搜尋輸入框
         self.edit_search = QLineEdit()
         self.edit_search.setObjectName("search_input")
-        self.edit_search.setPlaceholderText("🔍 搜尋檔案名稱... (Ctrl+F)")
+        self.edit_search.setPlaceholderText(t("search.placeholder"))
         self.edit_search.setClearButtonEnabled(True)
         self.edit_search.setFixedHeight(28)
         self.edit_search.textChanged.connect(self.search_changed.emit)
@@ -41,20 +44,20 @@ class SearchBar(QWidget):
         self.btn_group = QButtonGroup(self)
         self.btn_group.setExclusive(True)
 
-        self.btn_all = QPushButton("全部")
+        self.btn_all = QPushButton(t("search.filter_all"))
         self.btn_all.setProperty("class", "filter_chip")
         self.btn_all.setCheckable(True)
         self.btn_all.setChecked(True)
         self.btn_all.setFixedHeight(26)
         self.btn_all.setCursor(Qt.CursorShape.PointingHandCursor)
 
-        self.btn_changed = QPushButton("✓ 待更名")
+        self.btn_changed = QPushButton(t("search.filter_changed"))
         self.btn_changed.setProperty("class", "filter_chip")
         self.btn_changed.setCheckable(True)
         self.btn_changed.setFixedHeight(26)
         self.btn_changed.setCursor(Qt.CursorShape.PointingHandCursor)
 
-        self.btn_conflict = QPushButton("⚠️ 衝突 (0)")
+        self.btn_conflict = QPushButton(t("search.filter_conflict"))
         self.btn_conflict.setProperty("class", "filter_chip")
         self.btn_conflict.setCheckable(True)
         self.btn_conflict.setFixedHeight(26)
@@ -69,19 +72,25 @@ class SearchBar(QWidget):
         self.btn_conflict.clicked.connect(lambda: self.filter_mode_changed.emit("conflict"))
 
         # 筆數統計標籤
-        self.lbl_count = QLabel("共 0 筆")
+        self.lbl_count = QLabel(t("search.count_total", count=0))
         self.lbl_count.setObjectName("search_count_lbl")
         layout.addWidget(self.lbl_count)
 
+    def _retranslate_ui(self):
+        self.edit_search.setPlaceholderText(t("search.placeholder"))
+        self.btn_all.setText(t("search.filter_all"))
+        self.update_counts(*self._last_counts)
+
     def update_counts(self, visible_count: int, total_count: int, conflict_count: int = 0, changed_count: int = 0):
         """更新統計數據與按鈕標題"""
+        self._last_counts = (visible_count, total_count, conflict_count, changed_count)
         if visible_count == total_count:
-            self.lbl_count.setText(f"共 {total_count} 筆")
+            self.lbl_count.setText(t("search.count_total", count=total_count))
         else:
-            self.lbl_count.setText(f"顯示 {visible_count} / {total_count} 筆")
+            self.lbl_count.setText(t("search.count_filtered", visible=visible_count, total=total_count))
 
-        self.btn_changed.setText(f"✓ 待更名 ({changed_count})")
-        self.btn_conflict.setText(f"⚠️ 衝突 ({conflict_count})")
+        self.btn_changed.setText(t("search.filter_changed_count", count=changed_count))
+        self.btn_conflict.setText(t("search.filter_conflict_count", count=conflict_count))
 
         is_dark = self.mgr.is_dark()
         if conflict_count > 0:
