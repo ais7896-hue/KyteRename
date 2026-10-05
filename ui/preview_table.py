@@ -55,73 +55,50 @@ class HighlightDelegate(QStyledItemDelegate):
             super().paint(painter, option, index)
             return
 
-        # 1. 取得完整儲存格狀態，清空文字並繪製背景、斑馬紋與選取底色
         opt = QStyleOptionViewItem(option)
         self.initStyleOption(opt, index)
-        opt.text = ""  # 避免 super().paint 提前畫出未高亮的底層文字
-        super().paint(painter, opt, index)
 
-        # 2. 準備繪圖參數
+        widget = opt.widget
+        style = widget.style() if widget else QApplication.style()
+
+        # 1. 僅繪製儲存格原生背景（斑馬紋、選取狀態等），完全不呼叫 super().paint 避免文字被重複繪製
+        style.drawPrimitive(QStyle.PrimitiveElement.PE_PanelItemViewItem, opt, painter, widget)
+
         painter.save()
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.setClipRect(opt.rect.adjusted(2, 0, -2, 0))
 
-        fm = opt.fontMetrics
-        text_rect = opt.rect.adjusted(6, 0, -6, 0)
+        font = opt.font
+        painter.setFont(font)
+        fm = painter.fontMetrics()
+
+        text_x = opt.rect.left() + 6
         box_h = fm.height() + 2
-        box_y = text_rect.top() + (text_rect.height() - box_h) // 2
+        box_y = opt.rect.top() + (opt.rect.height() - box_h) // 2
         baseline_y = box_y + fm.ascent() + 1
 
-        # 3. 第一層：先在底層繪製命中字元的柔和圓角膠囊（無生硬邊框，文字居於其上）
+        # 2. 在背景上繪製柔和半透明螢光底色標記（底層、無生硬邊框線）
         painter.setPen(Qt.PenStyle.NoPen)
         if self.is_dark_theme:
-            # 深色模式：飽滿暖琥珀金底 (amber-600)
-            painter.setBrush(QColor(217, 119, 6, 215))
+            # 深色模式：高質感暖琥珀金螢光底 (amber-500)
+            painter.setBrush(QColor(245, 158, 11, 140))
         else:
-            # 淺色模式：明亮暖杏橙底 (amber-200)
-            painter.setBrush(QColor(254, 215, 170, 235))
+            # 淺色模式：明亮鵝黃螢光底 (yellow-400)
+            painter.setBrush(QColor(250, 204, 21, 160))
 
         for m in matches:
-            pre_w = fm.horizontalAdvance(text[:m.start()])
+            start_x = text_x + fm.horizontalAdvance(text[:m.start()])
             match_w = fm.horizontalAdvance(text[m.start():m.end()])
-            hl_x = text_rect.left() + pre_w
-            hl_rect = QRect(hl_x - 1, box_y, match_w + 2, box_h)
-            painter.drawRoundedRect(hl_rect, 3, 3)
+            painter.drawRoundedRect(QRect(start_x, box_y, match_w, box_h), 2, 2)
 
-        # 4. 第二層：在膠囊之上置頂繪製清晰文字（高對比、不模糊）
-        is_selected = bool(opt.state & QStyle.StateFlag.State_Selected)
-        if is_selected:
-            normal_color = opt.palette.color(QPalette.ColorRole.HighlightedText)
+        # 3. 完整一次性繪製整行文字（零錯位、零重疊、字形最自然）
+        if opt.state & QStyle.StateFlag.State_Selected:
+            text_color = opt.palette.color(QPalette.ColorRole.HighlightedText)
         else:
-            normal_color = QColor("#E2E4E8") if self.is_dark_theme else QColor("#1F2937")
+            text_color = QColor("#E2E4E8") if self.is_dark_theme else QColor("#1F2937")
 
-        hl_color = QColor("#FFFFFF") if self.is_dark_theme else QColor("#7C2D12")
-
-        # 切分普通區段與命中高亮區段
-        segments = []
-        last_idx = 0
-        for m in matches:
-            if m.start() > last_idx:
-                segments.append((text[last_idx:m.start()], False))
-            segments.append((text[m.start():m.end()], True))
-            last_idx = m.end()
-        if last_idx < len(text):
-            segments.append((text[last_idx:], False))
-
-        cur_x = text_rect.left()
-        for sub_str, is_hl in segments:
-            sub_w = fm.horizontalAdvance(sub_str)
-            if is_hl:
-                painter.setPen(hl_color)
-                bold_font = QFont(opt.font)
-                bold_font.setBold(True)
-                painter.setFont(bold_font)
-            else:
-                painter.setPen(normal_color)
-                painter.setFont(opt.font)
-
-            painter.drawText(cur_x, baseline_y, sub_str)
-            cur_x += sub_w
+        painter.setPen(text_color)
+        painter.drawText(text_x, baseline_y, text)
 
         painter.restore()
 
