@@ -1,10 +1,13 @@
-"""
-KyteRename - Preview Table Model, Proxy & View (雙欄預覽、搜尋過濾、排序、正則高亮與右鍵選單)
-"""
+import sys
 import re
 import subprocess
 from pathlib import Path
 from typing import List, Set, Optional
+
+# 將專案根目錄加入 sys.path，支援直接單獨執行本腳本進行預覽測試
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from PySide6.QtCore import (
     QTimer,
@@ -448,3 +451,28 @@ class PreviewTable(QTableView):
                 subprocess.Popen(f'explorer.exe "{parent_str}"')
         except Exception:
             pass
+
+
+if __name__ == "__main__":
+    from ui.styles import get_theme_stylesheet
+    from config.settings import SettingsManager
+
+    app = QApplication(sys.argv)
+    settings = SettingsManager()
+    is_dark = settings.is_dark()
+    app.setStyleSheet(get_theme_stylesheet(is_dark))
+
+    table = PreviewTable()
+    sample_files = [
+        FileEntry(path=Path("227065_0.jpg"), original_base="227065_0", extension=".jpg"),
+        FileEntry(path=Path("227064_0.jpg"), original_base="227064_0", extension=".jpg"),
+        FileEntry(path=Path("227063_0.jpg"), original_base="227063_0", extension=".jpg"),
+        FileEntry(path=Path("227062_0.jpg"), original_base="227062_0", extension=".jpg"),
+    ]
+    table.table_model.entries = sample_files
+    table.table_model.preview_names = ["photo_001.jpg", "photo_002.jpg", "227063_0.jpg", "photo_004.jpg"]
+    table.table_model.layoutChanged.emit()
+    table.resize(800, 400)
+    table.setWindowTitle(f"KyteRename PreviewTable 獨立預覽測試 - {'深色模式' if is_dark else '淺色模式'}")
+    table.show()
+    sys.exit(app.exec())
