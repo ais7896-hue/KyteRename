@@ -260,7 +260,7 @@ class PreviewTable(QTableView):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        from core.settings_manager import SettingsManager
+        from config.settings import SettingsManager
         is_dark = SettingsManager().is_dark()
 
         self.table_model = PreviewTableModel(self, is_dark=is_dark)
