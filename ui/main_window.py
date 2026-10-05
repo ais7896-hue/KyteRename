@@ -39,8 +39,6 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(780, 520)
         self.setAcceptDrops(True)
         self.settings = SettingsManager()
-        self.apply_theme()
-        self.settings.theme_changed.connect(lambda t: self.apply_theme())
         self.entries: List[FileEntry] = []
         self.rule_engine = RuleEngine()
         self.current_rules: List[BaseRule] = []
@@ -56,6 +54,9 @@ class MainWindow(QMainWindow):
         self._init_shortcuts()
         self._restore_settings_state()
         self._update_undo_button_state()
+
+        self.apply_theme()
+        self.settings.theme_changed.connect(lambda t: self.apply_theme())
 
         # 監聽快照目錄變更
         self.settings.settings_changed.connect(self._on_settings_changed)
@@ -195,8 +196,11 @@ class MainWindow(QMainWindow):
         app = QApplication.instance()
         if app:
             app.setStyleSheet(stylesheet)
-        if hasattr(self, "table") and hasattr(self.table, "viewport"):
-            self.table.viewport().update()
+        if hasattr(self, "table") and self.table is not None:
+            if hasattr(self.table, "set_dark_theme"):
+                self.table.set_dark_theme(is_dark)
+            elif hasattr(self.table, "viewport"):
+                self.table.viewport().update()
 
     def _on_settings_changed(self, key: str, val: object):
         if key == "snapshot_dir_mode":

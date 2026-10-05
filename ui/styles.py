@@ -239,6 +239,8 @@ QTableView {{
     border-radius: 8px;
     gridline-color: #22262C;
     selection-background-color: #1B3854;
+    selection-color: #FFFFFF;
+    color: #E2E4E8;
 }}
 QHeaderView::section {{
     background-color: #1F2328;
@@ -484,6 +486,7 @@ QTableView {{
     gridline-color: #F3F4F6;
     selection-background-color: #DBEAFE;
     selection-color: #1E3A8A;
+    color: #1F2937;
 }}
 QHeaderView::section {{
     background-color: #F3F4F6;

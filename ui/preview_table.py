@@ -21,12 +21,16 @@ from core.kyte_ipc import update_kyteview_preview_async
 
 class HighlightDelegate(QStyledItemDelegate):
     """在原始檔名儲存格上動態繪製正則/搜尋命中區段的高亮標記"""
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, is_dark: bool = True):
         super().__init__(parent)
         self.pattern: Optional[re.Pattern] = None
+        self.is_dark_theme: bool = is_dark
 
     def set_pattern(self, pattern: Optional[re.Pattern]):
         self.pattern = pattern
+
+    def set_dark_theme(self, is_dark: bool):
+        self.is_dark_theme = is_dark
 
     def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex):
         super().paint(painter, option, index)
@@ -52,8 +56,12 @@ class HighlightDelegate(QStyledItemDelegate):
             y = rect.top() + 4
             h = rect.height() - 8
 
-            highlight_bg = QColor(245, 166, 35, 110)    # 琥珀金半透明底
-            highlight_border = QColor(255, 195, 80, 210) # 亮金邊框
+            if self.is_dark_theme:
+                highlight_bg = QColor(245, 166, 35, 110)    # 琥珀金半透明底
+                highlight_border = QColor(255, 195, 80, 210) # 亮金邊框
+            else:
+                highlight_bg = QColor(254, 240, 138, 180)    # 淺色系柔和琥珀黃底
+                highlight_border = QColor(234, 179, 8, 220)  # 鮮明黃金邊框
 
             for m in matches:
                 start_idx, end_idx = m.start(), m.end()
@@ -77,12 +85,21 @@ class HighlightDelegate(QStyledItemDelegate):
 class PreviewTableModel(QAbstractTableModel):
     HEADERS = ["原始檔名", "新檔名預覽", "狀態"]
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, is_dark: bool = True):
         super().__init__(parent)
         self.entries: List[FileEntry] = []
         self.preview_names: List[str] = []
         self.duplicate_indices: Set[int] = set()
         self.disk_conflict_indices: Set[int] = set()
+        self.is_dark_theme: bool = is_dark
+
+    def set_dark_theme(self, is_dark: bool):
+        """更新深淺色主題並即時刷新所有儲存格顏色"""
+        self.is_dark_theme = is_dark
+        if self.entries:
+            top_left = self.index(0, 0)
+            bottom_right = self.index(len(self.entries) - 1, len(self.HEADERS) - 1)
+            self.dataChanged.emit(top_left, bottom_right, [Qt.ItemDataRole.ForegroundRole, Qt.ItemDataRole.BackgroundRole])
 
     def rowCount(self, parent=QModelIndex()) -> int:
         return len(self.entries)
@@ -127,18 +144,21 @@ class PreviewTableModel(QAbstractTableModel):
 
         elif role == Qt.ItemDataRole.ForegroundRole:
             if is_dup or is_disk_conflict:
-                return QBrush(QColor("#FF4D4F"))
+                return QBrush(QColor("#FF4D4F" if self.is_dark_theme else "#DC2626"))
             if col == 1 and is_changed:
-                return QBrush(QColor("#52C41A"))
+                return QBrush(QColor("#52C41A" if self.is_dark_theme else "#15803D"))
             if col == 2:
-                return QBrush(QColor("#52C41A") if is_changed else QColor("#8C8C8C"))
-            return QBrush(QColor("#D9D9D9"))
+                if is_changed:
+                    return QBrush(QColor("#52C41A" if self.is_dark_theme else "#15803D"))
+                else:
+                    return QBrush(QColor("#8C8C8C" if self.is_dark_theme else "#6B7280"))
+            return QBrush(QColor("#E2E4E8" if self.is_dark_theme else "#1F2937"))
 
         elif role == Qt.ItemDataRole.BackgroundRole:
             if is_dup or is_disk_conflict:
-                return QBrush(QColor(60, 20, 20, 180))
+                return QBrush(QColor(60, 20, 20, 180) if self.is_dark_theme else QColor(254, 226, 226, 220))
             if col == 1 and is_changed:
-                return QBrush(QColor(20, 45, 25, 120))
+                return QBrush(QColor(20, 45, 25, 120) if self.is_dark_theme else QColor(220, 252, 231, 180))
             return None
 
         elif role == Qt.ItemDataRole.TextAlignmentRole:
@@ -240,7 +260,10 @@ class PreviewTable(QTableView):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.table_model = PreviewTableModel(self)
+        from core.settings_manager import SettingsManager
+        is_dark = SettingsManager().is_dark()
+
+        self.table_model = PreviewTableModel(self, is_dark=is_dark)
         self.proxy_model = PreviewSortFilterProxyModel(self)
         self.proxy_model.setSourceModel(self.table_model)
         self.setModel(self.proxy_model)
@@ -249,7 +272,7 @@ class PreviewTable(QTableView):
         self.setSortingEnabled(True)
 
         # 綁定正則即時高亮 Delegate
-        self.highlight_delegate = HighlightDelegate(self)
+        self.highlight_delegate = HighlightDelegate(self, is_dark=is_dark)
         self.setItemDelegateForColumn(0, self.highlight_delegate)
 
         self.setShowGrid(True)
@@ -280,6 +303,12 @@ class PreviewTable(QTableView):
     def set_search_pattern(self, pattern: Optional[re.Pattern]):
         """更新高亮 Pattern 並觸發左欄重新繪製"""
         self.highlight_delegate.set_pattern(pattern)
+        self.viewport().update()
+
+    def set_dark_theme(self, is_dark: bool):
+        """即時同步主題顏色至 TableModel 與 HighlightDelegate"""
+        self.table_model.set_dark_theme(is_dark)
+        self.highlight_delegate.set_dark_theme(is_dark)
         self.viewport().update()
 
     def get_selected_source_indices(self) -> List[int]:
