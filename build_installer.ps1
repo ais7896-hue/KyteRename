@@ -1,4 +1,4 @@
-﻿# build_installer.ps1
+# build_installer.ps1
 # KyteRename 一鍵打包與安裝程式編譯腳本
 
 $ErrorActionPreference = "Stop"
@@ -41,6 +41,13 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host "`n[OK] PyInstaller 打包成功！綠色免安裝目錄位於 dist\KyteRename\ " -ForegroundColor Green
+
+# 2.5 打包免安裝綠色版 (Portable Zip)
+Write-Host "`n>>> 正在打包免安裝綠色版 (Portable Zip)... " -ForegroundColor Yellow
+$portableZip = "dist\KyteRename_1.0.0_Portable.zip"
+if (Test-Path $portableZip) { Remove-Item -Force $portableZip }
+Compress-Archive -Path "dist\KyteRename\*" -DestinationPath $portableZip -Force
+Write-Host " [SUCCESS] 綠色免安裝包已產出：$portableZip " -ForegroundColor Green
 
 # 3. Inno Setup 封裝
 Write-Host "`n>>> [3/3] 正在使用 Inno Setup 封裝安裝精靈... " -ForegroundColor Yellow
