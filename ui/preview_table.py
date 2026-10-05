@@ -13,17 +13,17 @@ from PySide6.QtCore import (
     QTimer,
     Qt, QAbstractTableModel, QModelIndex, QRect, QSortFilterProxyModel, Signal
 )
-from PySide6.QtGui import QColor, QBrush, QPainter, QCursor, QAction
+from PySide6.QtGui import QColor, QBrush, QPainter, QCursor, QAction, QFont, QPalette
 from PySide6.QtWidgets import (
     QTableView, QHeaderView, QStyledItemDelegate, QStyleOptionViewItem,
-    QMenu, QApplication
+    QMenu, QApplication, QStyle
 )
 
 from rules.base_rule import FileEntry
 from core.kyte_ipc import update_kyteview_preview_async
 
 class HighlightDelegate(QStyledItemDelegate):
-    """在原始檔名儲存格上動態繪製正則/搜尋命中區段的高亮標記"""
+    """在原始檔名儲存格上動態繪製正則/搜尋命中區段的高亮標記（底層背景膠囊高亮，文字置頂清晰不遮蔽）"""
     def __init__(self, parent=None, is_dark: bool = True):
         super().__init__(parent)
         self.pattern: Optional[re.Pattern] = None
@@ -36,53 +36,94 @@ class HighlightDelegate(QStyledItemDelegate):
         self.is_dark_theme = is_dark
 
     def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex):
-        super().paint(painter, option, index)
+        # 僅在第 0 欄 (原檔名) 且有有效搜尋字串時自訂渲染，否則維持原生預設
+        if index.column() != 0 or not self.pattern:
+            super().paint(painter, option, index)
+            return
 
-        # 僅在第 0 欄 (原檔名) 且有有效搜尋字串時繪製命中底色
-        if index.column() == 0 and self.pattern:
-            text = index.data(Qt.ItemDataRole.DisplayRole)
-            if not text:
-                return
+        text = index.data(Qt.ItemDataRole.DisplayRole)
+        if not text:
+            super().paint(painter, option, index)
+            return
 
-            try:
-                matches = list(self.pattern.finditer(text))
-            except Exception:
-                matches = []
+        try:
+            matches = [m for m in self.pattern.finditer(text) if m.start() < m.end()]
+        except Exception:
+            matches = []
 
-            if not matches:
-                return
+        if not matches:
+            super().paint(painter, option, index)
+            return
 
-            painter.save()
-            fm = option.fontMetrics
-            rect = option.rect
-            base_x = rect.left() + 6
-            y = rect.top() + 4
-            h = rect.height() - 8
+        # 1. 取得完整儲存格狀態，清空文字並繪製背景、斑馬紋與選取底色
+        opt = QStyleOptionViewItem(option)
+        self.initStyleOption(opt, index)
+        opt.text = ""  # 避免 super().paint 提前畫出未高亮的底層文字
+        super().paint(painter, opt, index)
 
-            if self.is_dark_theme:
-                highlight_bg = QColor(245, 166, 35, 110)    # 琥珀金半透明底
-                highlight_border = QColor(255, 195, 80, 210) # 亮金邊框
+        # 2. 準備繪圖參數
+        painter.save()
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        painter.setClipRect(opt.rect.adjusted(2, 0, -2, 0))
+
+        fm = opt.fontMetrics
+        text_rect = opt.rect.adjusted(6, 0, -6, 0)
+        box_h = fm.height() + 2
+        box_y = text_rect.top() + (text_rect.height() - box_h) // 2
+        baseline_y = box_y + fm.ascent() + 1
+
+        # 3. 第一層：先在底層繪製命中字元的柔和圓角膠囊（無生硬邊框，文字居於其上）
+        painter.setPen(Qt.PenStyle.NoPen)
+        if self.is_dark_theme:
+            # 深色模式：飽滿暖琥珀金底 (amber-600)
+            painter.setBrush(QColor(217, 119, 6, 215))
+        else:
+            # 淺色模式：明亮暖杏橙底 (amber-200)
+            painter.setBrush(QColor(254, 215, 170, 235))
+
+        for m in matches:
+            pre_w = fm.horizontalAdvance(text[:m.start()])
+            match_w = fm.horizontalAdvance(text[m.start():m.end()])
+            hl_x = text_rect.left() + pre_w
+            hl_rect = QRect(hl_x - 1, box_y, match_w + 2, box_h)
+            painter.drawRoundedRect(hl_rect, 3, 3)
+
+        # 4. 第二層：在膠囊之上置頂繪製清晰文字（高對比、不模糊）
+        is_selected = bool(opt.state & QStyle.StateFlag.State_Selected)
+        if is_selected:
+            normal_color = opt.palette.color(QPalette.ColorRole.HighlightedText)
+        else:
+            normal_color = QColor("#E2E4E8") if self.is_dark_theme else QColor("#1F2937")
+
+        hl_color = QColor("#FFFFFF") if self.is_dark_theme else QColor("#7C2D12")
+
+        # 切分普通區段與命中高亮區段
+        segments = []
+        last_idx = 0
+        for m in matches:
+            if m.start() > last_idx:
+                segments.append((text[last_idx:m.start()], False))
+            segments.append((text[m.start():m.end()], True))
+            last_idx = m.end()
+        if last_idx < len(text):
+            segments.append((text[last_idx:], False))
+
+        cur_x = text_rect.left()
+        for sub_str, is_hl in segments:
+            sub_w = fm.horizontalAdvance(sub_str)
+            if is_hl:
+                painter.setPen(hl_color)
+                bold_font = QFont(opt.font)
+                bold_font.setBold(True)
+                painter.setFont(bold_font)
             else:
-                highlight_bg = QColor(254, 240, 138, 180)    # 淺色系柔和琥珀黃底
-                highlight_border = QColor(234, 179, 8, 220)  # 鮮明黃金邊框
+                painter.setPen(normal_color)
+                painter.setFont(opt.font)
 
-            for m in matches:
-                start_idx, end_idx = m.start(), m.end()
-                if start_idx == end_idx:
-                    continue
+            painter.drawText(cur_x, baseline_y, sub_str)
+            cur_x += sub_w
 
-                pre_text = text[:start_idx]
-                match_text = text[start_idx:end_idx]
-
-                x_offset = fm.horizontalAdvance(pre_text)
-                match_w = fm.horizontalAdvance(match_text)
-
-                hl_rect = QRect(base_x + x_offset, y, match_w, h)
-                painter.setBrush(highlight_bg)
-                painter.setPen(highlight_border)
-                painter.drawRoundedRect(hl_rect, 3, 3)
-
-            painter.restore()
+        painter.restore()
 
 
 class PreviewTableModel(QAbstractTableModel):
