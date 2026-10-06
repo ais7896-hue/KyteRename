@@ -76,4 +76,5 @@ powershell -ExecutionPolicy Bypass -File .\build_installer.ps1
 
 ## 📄 授權條款
 
-MIT License.
+本專案採用 [Personal & Non-Commercial License](LICENSE) 條款發布。
+原始碼僅供個人學習、研究與檢閱用途。未經授權，嚴格禁止任何形式之商業用途、轉售、重新打包、再發布或散布。商業使用或官方打包版本請向原作者取得正式授權。
