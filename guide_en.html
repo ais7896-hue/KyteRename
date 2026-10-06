@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="zh-TW" class="scroll-smooth">
+<html lang="en" class="scroll-smooth">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KyteRename 使用手冊與操作指南 - 次世代 Windows 智慧批次重新命名神器</title>
-    <meta name="description" content="KyteRename 完整圖文使用手冊：雙欄 50ms 零延遲對照、琥珀金正則高亮、相片 EXIF/音樂 ID3 中繼資料變數、中文拼音轉換、DAG 安全拓撲換名、Ctrl+Z 快照安全還原與 KyteView 空白鍵預覽連動。">
-    <meta name="keywords" content="KyteRename 使用教學, 批次改名指南, 正則表達式改名, EXIF改名教學, ID3標籤改名, 拓撲改名, Ctrl+Z還原, KyteRename手冊">
+    <title>KyteRename User Manual & Guide - Next-Gen Smart Batch File Renamer for Windows</title>
+    <meta name="description" content="KyteRename comprehensive user manual: Dual-pane 50ms sub-latency live preview, Amber Gold regex highlights, photo EXIF / audio ID3 metadata variables, Chinese Pinyin conversion, DAG safe topological renaming, Ctrl+Z atomic snapshot undo, and KyteView Spacebar integration.">
+    <meta name="keywords" content="KyteRename User Guide, Batch Renaming Tutorial, RegEx Renaming, EXIF Renaming Tutorial, ID3 Tags Renamer, Topological Renaming, Ctrl+Z Undo, KyteRename Manual">
     <meta name="author" content="ais7896-hue">
     <link rel="icon" type="image/x-icon" href="assets/icon.ico">
 
@@ -52,7 +52,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap');
 
         body {
-            font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
         code, kbd {
@@ -88,119 +88,119 @@
 
 <body class="bg-slate-50 text-slate-800 antialiased selection:bg-brand-600 selection:text-white">
 
-    <!-- 頂部導航列 -->
+    <!-- Top Navigation Bar -->
     <nav class="sticky top-0 z-50 backdrop-blur-md bg-white/90 border-b border-slate-200/80 transition-all">
         <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-3 group">
-                <img src="assets/icon.png" alt="KyteRename Logo" class="w-9 h-9 rounded-xl shadow-md shadow-blue-500/20 group-hover:scale-105 transition">
+            <a href="index.html" class="flex items-center gap-3 group shrink-0">
+                <img src="assets/icon.png" alt="KyteRename Logo" class="w-9 h-9 rounded-xl shadow-md shadow-blue-500/20 group-hover:scale-105 transition shrink-0">
                 <div class="flex flex-col text-left">
                     <span class="text-xl font-extrabold tracking-tight text-slate-950 leading-tight">KyteRename</span>
                     <span class="text-[10px] font-semibold text-slate-400 tracking-wider">USER MANUAL & GUIDE</span>
                 </div>
             </a>
 
-            <div class="flex items-center gap-4 sm:gap-6">
-                <a href="guide_en.html" class="text-sm font-semibold text-slate-600 hover:text-brand-600 transition flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-slate-100">
+            <div class="flex items-center gap-4 sm:gap-6 shrink-0">
+                <a href="guide.html" class="text-sm font-semibold text-slate-600 hover:text-brand-600 transition flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-slate-100">
                     <i class="fa-solid fa-globe text-xs"></i>
-                    <span>English</span>
+                    <span>繁體中文</span>
                 </a>
                 <a href="index.html" class="text-sm font-semibold text-slate-600 hover:text-brand-600 transition flex items-center gap-1.5">
                     <i class="fa-solid fa-arrow-left text-xs"></i>
-                    <span>返回產品首頁</span>
+                    <span>Back to Home</span>
                 </a>
                 <a href="index.html#download"
-                    class="px-4 py-2 text-xs sm:text-sm font-bold text-white bg-brand-600 hover:bg-brand-700 active:scale-95 rounded-xl shadow-md shadow-brand-600/20 transition flex items-center gap-2">
+                    class="px-4 py-2 text-xs sm:text-sm font-bold text-white bg-brand-600 hover:bg-brand-700 active:scale-95 rounded-xl shadow-md shadow-brand-600/20 transition flex items-center gap-2 shrink-0">
                     <i class="fa-solid fa-download"></i>
-                    <span>下載最新版 (v1.1.0)</span>
+                    <span>Download (v1.1.0)</span>
                 </a>
             </div>
         </div>
     </nav>
 
-    <!-- 標題橫幅 (Header) -->
+    <!-- Header Banner -->
     <header class="gradient-banner pt-12 pb-12 border-b border-slate-200/60 bg-white">
         <div class="max-w-5xl mx-auto px-6 text-center">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-brand-700 text-xs font-bold mb-4">
                 <i class="fa-solid fa-book-open"></i>
-                <span>官方全功能圖文使用說明手冊 · 適用 Windows 10 / 11 (64-bit)</span>
+                <span>Official User Guide & Documentation • Windows 10 & 11 (64-bit)</span>
             </div>
             <h1 class="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight mb-4">
-                KyteRename 操作指南
+                KyteRename User Manual
             </h1>
             <p class="text-slate-600 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-                涵蓋從雙欄 50ms 零延遲即時對照、琥珀金正則高亮匹配、相片 EXIF 與音樂 ID3 中繼資料抽取，到 DAG 安全拓撲破圈改名與 Ctrl+Z 快照還原的完整技巧。
+                Master everything from dual-pane 50ms sub-latency preview, Amber Gold regex matching, and EXIF/ID3 metadata extraction to 3-stage DAG safe topological renaming and Ctrl+Z atomic undo.
             </p>
         </div>
     </header>
 
-    <!-- 主要內容區 (雙欄結構) -->
+    <!-- Main Content Area -->
     <div class="max-w-7xl mx-auto px-6 py-10">
         <div class="flex flex-col lg:flex-row gap-10 items-start">
 
-            <!-- 側邊固定目錄 (Sticky Sidebar) -->
+            <!-- Sticky Sidebar -->
             <aside class="w-full lg:w-72 flex-shrink-0 lg:sticky lg:top-24 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                <div class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-3">指南目錄</div>
+                <div class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-3">Contents</div>
                 <nav class="space-y-1.5 text-sm font-medium text-slate-600">
-                    <a href="#section-quickstart" class="sidebar-link block py-1">1. 快速開始與 3 步工作流</a>
-                    <a href="#section-preview" class="sidebar-link block py-1 font-semibold text-brand-600">2. 雙欄即時對照與琥珀金高亮</a>
-                    <a href="#section-scope" class="sidebar-link block py-1">3. 作用域與精確修改控制</a>
-                    <a href="#section-regex" class="sidebar-link block py-1">4. 搜尋取代與正規表達式</a>
-                    <a href="#section-serial" class="sidebar-link block py-1">5. 智慧補零流水號規則</a>
-                    <a href="#section-metadata" class="sidebar-link block py-1 font-semibold text-brand-600">6. 相片 EXIF 與音樂 ID3 標籤</a>
-                    <a href="#section-pinyin" class="sidebar-link block py-1">7. 漢字智慧轉拼音與字元清洗</a>
-                    <a href="#section-topology" class="sidebar-link block py-1 font-semibold text-brand-600">8. 安全三階段 DAG 拓撲換名</a>
-                    <a href="#section-snapshot" class="sidebar-link block py-1">9. Ctrl+Z 快照安全原子還原</a>
-                    <a href="#section-kyteview" class="sidebar-link block py-1 font-semibold text-brand-600">10. KyteView 原生無縫預覽連動</a>
-                    <a href="#section-shortcuts" class="sidebar-link block py-1">11. 快捷鍵一覽與疑難排解</a>
+                    <a href="#section-quickstart" class="sidebar-link block py-1">1. Quick Start & 3-Step Workflow</a>
+                    <a href="#section-preview" class="sidebar-link block py-1 font-semibold text-brand-600">2. Dual-Pane Preview & Amber Highlights</a>
+                    <a href="#section-scope" class="sidebar-link block py-1">3. Target Scope & Precision Control</a>
+                    <a href="#section-regex" class="sidebar-link block py-1">4. Find & Replace with RegEx</a>
+                    <a href="#section-serial" class="sidebar-link block py-1">5. Smart Serial Numbering Rules</a>
+                    <a href="#section-metadata" class="sidebar-link block py-1 font-semibold text-brand-600">6. Photo EXIF & Audio ID3 Tags</a>
+                    <a href="#section-pinyin" class="sidebar-link block py-1">7. Chinese Pinyin & Sanitization</a>
+                    <a href="#section-topology" class="sidebar-link block py-1 font-semibold text-brand-600">8. 3-Stage DAG Safe Topology</a>
+                    <a href="#section-snapshot" class="sidebar-link block py-1">9. Ctrl+Z Snapshot Atomic Undo</a>
+                    <a href="#section-kyteview" class="sidebar-link block py-1 font-semibold text-brand-600">10. KyteView Spacebar Preview IPC</a>
+                    <a href="#section-shortcuts" class="sidebar-link block py-1">11. Shortcuts & Troubleshooting</a>
                 </nav>
                 <div class="mt-6 pt-5 border-t border-slate-100">
                     <a href="index.html"
                         class="block w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl text-center shadow transition flex items-center justify-center gap-2">
                         <i class="fa-solid fa-house text-sm"></i>
-                        <span>回到產品首頁</span>
+                        <span>Back to Product Home</span>
                     </a>
                 </div>
             </aside>
 
-            <!-- 右側主要文件內容 -->
+            <!-- Main Documentation Articles -->
             <main class="flex-1 w-full space-y-12">
 
-                <!-- 1. 快速開始與 3 步工作流 -->
+                <!-- 1. Quick Start & 3-Step Workflow -->
                 <section id="section-quickstart" class="doc-section bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-sm">
                     <div class="flex items-center gap-3 text-brand-600 mb-4">
                         <span class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center font-black text-sm">01</span>
-                        <h2 class="text-2xl font-black text-slate-900">快速開始與 3 步極速工作流</h2>
+                        <h2 class="text-2xl font-black text-slate-900">Quick Start & 3-Step Rapid Workflow</h2>
                     </div>
                     <p class="text-slate-600 text-sm leading-relaxed mb-6">
-                        KyteRename 旨在提供 Windows 上最直覺流暢的批次更名體驗。只需 3 個步驟，即可安全處理數萬個檔案：
+                        KyteRename is engineered to deliver the smoothest, most intuitive renaming experience on Windows. Process tens of thousands of files in just three simple steps:
                     </p>
 
-                    <!-- 三步驟卡片 -->
+                    <!-- 3 Step Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col justify-between">
                             <div>
                                 <span class="text-xs font-black text-brand-600 uppercase tracking-wider">Step 1</span>
-                                <h4 class="text-sm font-bold text-slate-900 mt-1 mb-2">拖入檔案或資料夾</h4>
+                                <h4 class="text-sm font-bold text-slate-900 mt-1 mb-2">Drag in Files or Folders</h4>
                                 <p class="text-xs text-slate-500 leading-relaxed">
-                                    從檔案總管直接選取檔案或整個目錄，拖曳進 KyteRename 視窗；亦可在 Windows 右鍵選單點擊「使用 KyteRename 批次整理」。
+                                    Select files or entire directories directly from File Explorer and drop them into KyteRename; or right-click in Windows and choose "Batch Rename with KyteRename".
                                 </p>
                             </div>
                         </div>
                         <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col justify-between">
                             <div>
                                 <span class="text-xs font-black text-amber-600 uppercase tracking-wider">Step 2</span>
-                                <h4 class="text-sm font-bold text-slate-900 mt-1 mb-2">設定規則與即時預覽</h4>
+                                <h4 class="text-sm font-bold text-slate-900 mt-1 mb-2">Configure Rules with Live Preview</h4>
                                 <p class="text-xs text-slate-500 leading-relaxed">
-                                    在右側規則面板自由組合取代、前後綴、流水號或 EXIF 標籤；左欄會以琥珀金高亮匹配處，右欄即刻顯示 50ms 零延遲新檔名。
+                                    Combine replacements, prefixes, suffixes, numbering, or EXIF tags in the right-hand panel. The left pane highlights matches in Amber Gold while the right pane renders results in under 50ms.
                                 </p>
                             </div>
                         </div>
                         <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col justify-between">
                             <div>
                                 <span class="text-xs font-black text-emerald-600 uppercase tracking-wider">Step 3</span>
-                                <h4 class="text-sm font-bold text-slate-900 mt-1 mb-2">一鍵安全執行更名</h4>
+                                <h4 class="text-sm font-bold text-slate-900 mt-1 mb-2">Execute Rename Safely</h4>
                                 <p class="text-xs text-slate-500 leading-relaxed">
-                                    按下鍵盤 <kbd class="px-1.5 py-0.5 rounded bg-white border border-slate-300 font-bold text-slate-700 text-xs">Enter</kbd> 或點擊「執行更名」，DAG 拓撲引擎瞬間安全提交，自動建立原子快照備查。
+                                    Press <kbd class="px-1.5 py-0.5 rounded bg-white border border-slate-300 font-bold text-slate-700 text-xs">Enter</kbd> or click "Execute Batch Rename". The DAG topological engine safely commits the operation and automatically creates an atomic undo snapshot.
                                 </p>
                             </div>
                         </div>
@@ -208,141 +208,141 @@
 
                     <div class="p-4 bg-blue-50 border border-blue-200/80 rounded-2xl text-xs text-blue-900 leading-relaxed flex items-center gap-3">
                         <i class="fa-solid fa-circle-info text-brand-600 text-base flex-shrink-0"></i>
-                        <span><b>命令列支援 (CLI)</b>：您可以透過命令列快速傳入路徑啟動，例如：<code class="bg-blue-100/80 px-2 py-0.5 rounded text-blue-950 font-bold">python main.py "D:\Photos\2026"</code>，程式會自動將該目錄所有項目匯入。</span>
+                        <span><b>Command-Line Interface (CLI) Support</b>: Launch directly with target directory paths, e.g.: <code class="bg-blue-100/80 px-2 py-0.5 rounded text-blue-950 font-bold">python main.py "D:\Photos\2026"</code> to import all items automatically.</span>
                     </div>
                 </section>
 
-                <!-- 2. 雙欄即時對照與琥珀金高亮 -->
+                <!-- 2. Dual-Pane Preview & Amber Highlights -->
                 <section id="section-preview" class="doc-section bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-sm">
                     <div class="flex items-center gap-3 text-brand-600 mb-4">
                         <span class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center font-black text-sm">02</span>
-                        <h2 class="text-2xl font-black text-slate-900">雙欄即時對照與琥珀金高亮匹配</h2>
+                        <h2 class="text-2xl font-black text-slate-900">Dual-Pane Live Preview & Amber Gold Highlights</h2>
                     </div>
                     <p class="text-slate-600 text-sm leading-relaxed mb-6">
-                        傳統批次更名工具最常讓人不安的就是「不知道改完後長怎樣」或是「盲猜取代字串是否符合預期」。KyteRename 獨家設計了高對比雙欄預覽系統：
+                        Legacy batch renamers leave users in anxiety—wondering what files will look like after renaming. KyteRename eliminates guesswork with high-contrast dual-pane live comparisons:
                     </p>
 
                     <div class="space-y-4 mb-6">
                         <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200">
                             <h4 class="text-sm font-bold text-slate-900 mb-2 flex items-center gap-2">
                                 <i class="fa-solid fa-highlighter text-amber-500"></i>
-                                <span>琥珀金動態匹配標記 (Regex Delegate)</span>
+                                <span>Amber Gold Match Delegate (Regex Highlighting)</span>
                             </h4>
                             <p class="text-xs text-slate-600 leading-relaxed mb-3">
-                                當您在搜尋框輸入文字或正則表達式時，KyteRename 會在左欄原始檔名中，將被比對命中的文字片段以琥珀金背景（Amber Gold）即時標亮：
+                                As you type text or regex into search fields, KyteRename immediately highlights the exact matched characters in the original filename column with an Amber Gold background:
                             </p>
                             <div class="p-3 bg-white rounded-xl border border-slate-200 font-mono text-xs text-slate-700">
-                                原始檔名範例：DSC_<span class="amber-highlight-inline">20261005</span>_001.JPG
+                                Original Filename: DSC_<span class="amber-highlight-inline">20261005</span>_001.JPG
                             </div>
                             <p class="text-xs text-slate-500 mt-2">
-                                您能瞬間確認哪些部分會被替換、哪些部分會被保留，在正式執行前就擁有一目了然的確定感。
+                                You can immediately confirm which parts will be replaced and which will remain, granting total clarity before committing any changes.
                             </p>
                         </div>
 
                         <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200">
                             <h4 class="text-sm font-bold text-slate-900 mb-2 flex items-center gap-2">
                                 <i class="fa-solid fa-gauge-high text-brand-600"></i>
-                                <span>Qt 虛擬滾動 (Virtual Scroll) 技術</span>
+                                <span>Qt Virtual Scrolling Technology</span>
                             </h4>
                             <p class="text-xs text-slate-600 leading-relaxed">
-                                底層基於 <code class="bg-slate-200 px-1.5 py-0.5 rounded text-slate-800 text-[11px]">QAbstractTableModel</code> 開發。即便載入 10,000+ 筆檔案，程式也只渲染畫面可見的十幾行，垂直滾輪共用同步，拖曳絲滑順暢，50ms 內完成全量規則預覽重算。
+                                Built upon <code class="bg-slate-200 px-1.5 py-0.5 rounded text-slate-800 text-[11px]">QAbstractTableModel</code>. Even with 10,000+ files loaded, the application only renders visible rows. Synchronized dual vertical scrolling ensures buttery 60 FPS performance with full recalculations in under 50ms.
                             </p>
                         </div>
                     </div>
                 </section>
 
-                <!-- 3. 作用域與精確修改控制 -->
+                <!-- 3. Target Scope & Precision Control -->
                 <section id="section-scope" class="doc-section bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-sm">
                     <div class="flex items-center gap-3 text-brand-600 mb-4">
                         <span class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center font-black text-sm">03</span>
-                        <h2 class="text-2xl font-black text-slate-900">作用域與精確修改控制 (Target Scope)</h2>
+                        <h2 class="text-2xl font-black text-slate-900">Target Scope & Precision Modification Control</h2>
                     </div>
                     <p class="text-slate-600 text-sm leading-relaxed mb-6">
-                        為了防止使用者意外改到副檔名導致檔案格式損毀，KyteRename 為所有規則提供了嚴謹的「作用域（Scope）」選項：
+                        To prevent accidental changes to file extensions that could break format associations, KyteRename offers strict "Target Scope" options for every rule:
                     </p>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <div class="p-4 rounded-xl border border-slate-200 bg-white">
                             <div class="flex items-center gap-2 text-xs font-bold text-blue-700 mb-1.5">
                                 <i class="fa-solid fa-file-lines"></i>
-                                <span>僅主檔名 (Base Only)</span>
+                                <span>Base Name Only</span>
                             </div>
-                            <span class="text-[10px] px-2 py-0.5 bg-blue-100 text-blue-800 rounded font-bold">預設安全模式</span>
+                            <span class="text-[10px] px-2 py-0.5 bg-blue-100 text-blue-800 rounded font-bold">Default Safe Mode</span>
                             <p class="text-xs text-slate-500 mt-2 leading-relaxed">
-                                僅對副檔名前的檔名主體生效。副檔名受絕對保護，絕不因正則或替換意外損壞關聯。
+                                Affects only the filename preceding the extension dot. Extensions are strictly protected from accidental regex or replace operations.
                             </p>
                         </div>
 
                         <div class="p-4 rounded-xl border border-slate-200 bg-white">
                             <div class="flex items-center gap-2 text-xs font-bold text-purple-700 mb-1.5">
                                 <i class="fa-solid fa-asterisk"></i>
-                                <span>僅副檔名 (Ext Only)</span>
+                                <span>Extension Only</span>
                             </div>
-                            <span class="text-[10px] px-2 py-0.5 bg-purple-100 text-purple-800 rounded font-bold">副檔名專用</span>
+                            <span class="text-[10px] px-2 py-0.5 bg-purple-100 text-purple-800 rounded font-bold">Extension Dedicated</span>
                             <p class="text-xs text-slate-500 mt-2 leading-relaxed">
-                                僅對點號後的副檔名生效。適合統一將相機的 <code class="text-purple-600">.JPG</code> 改為 <code class="text-purple-600">.jpg</code>，或修正錯誤格式副檔名。
+                                Affects only the extension following the dot. Ideal for converting uppercase camera <code class="text-purple-600">.JPG</code> to lowercase <code class="text-purple-600">.jpg</code>, or correcting mismatched extensions.
                             </p>
                         </div>
 
                         <div class="p-4 rounded-xl border border-slate-200 bg-white">
                             <div class="flex items-center gap-2 text-xs font-bold text-amber-700 mb-1.5">
                                 <i class="fa-solid fa-file-pen"></i>
-                                <span>完整檔名 (Full Name)</span>
+                                <span>Full Filename</span>
                             </div>
-                            <span class="text-[10px] px-2 py-0.5 bg-amber-100 text-amber-800 rounded font-bold">高階自訂</span>
+                            <span class="text-[10px] px-2 py-0.5 bg-amber-100 text-amber-800 rounded font-bold">Advanced Custom</span>
                             <p class="text-xs text-slate-500 mt-2 leading-relaxed">
-                                包含主檔名與副檔名整串進行處理。適用於高階正則重新組合完整檔案名稱。
+                                Processes the base name and extension together as a single unified string. Perfect for advanced regex re-structuring across the entire filename.
                             </p>
                         </div>
                     </div>
                 </section>
 
-                <!-- 4. 搜尋取代與正規表達式 -->
+                <!-- 4. Find & Replace with RegEx -->
                 <section id="section-regex" class="doc-section bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-sm">
                     <div class="flex items-center gap-3 text-brand-600 mb-4">
                         <span class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center font-black text-sm">04</span>
-                        <h2 class="text-2xl font-black text-slate-900">搜尋取代與正規表達式 (RegEx)</h2>
+                        <h2 class="text-2xl font-black text-slate-900">Find & Replace with Regular Expressions (RegEx)</h2>
                     </div>
                     <p class="text-slate-600 text-sm leading-relaxed mb-6">
-                        KyteRename 內建 Python 原生高速正則表達式引擎，支援群組捕捉（Capturing Groups）與反向引用重組：
+                        KyteRename embeds Python's high-speed native regular expression engine, supporting capturing groups and back-reference restructuring:
                     </p>
 
                     <div class="space-y-4 mb-6">
                         <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200">
-                            <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">反向引用語法支援</h4>
+                            <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">Back-Reference Syntax Support</h4>
                             <p class="text-xs text-slate-600 leading-relaxed mb-3">
-                                支援現代標準的 <code class="bg-slate-200 px-1.5 py-0.5 rounded text-blue-700 font-bold">$1, $2, $3</code> 語法，同時完全向下相容傳統的 <code class="bg-slate-200 px-1.5 py-0.5 rounded text-slate-800 font-bold">\1, \2, \3</code> 引用方式。
+                                Supports modern standard <code class="bg-slate-200 px-1.5 py-0.5 rounded text-blue-700 font-bold">$1, $2, $3</code> syntax as well as classic <code class="bg-slate-200 px-1.5 py-0.5 rounded text-slate-800 font-bold">\1, \2, \3</code> back-references seamlessly.
                             </p>
 
-                            <!-- 正則範例表格 -->
+                            <!-- RegEx Examples Table -->
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left text-xs">
                                     <thead>
                                         <tr class="border-b border-slate-200 text-slate-500">
-                                            <th class="py-2 px-2">任務目標</th>
-                                            <th class="py-2 px-2 font-mono">搜尋正則表達式</th>
-                                            <th class="py-2 px-2 font-mono">替換字串</th>
-                                            <th class="py-2 px-2">結果示範</th>
+                                            <th class="py-2 px-2">Objective</th>
+                                            <th class="py-2 px-2 font-mono">RegEx Pattern</th>
+                                            <th class="py-2 px-2 font-mono">Replacement</th>
+                                            <th class="py-2 px-2">Example Output</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-100 text-slate-700">
                                         <tr>
-                                            <td class="py-2.5 px-2 font-medium">8碼日期加分隔線</td>
+                                            <td class="py-2.5 px-2 font-medium">8-Digit Date to Hyphenated</td>
                                             <td class="py-2.5 px-2 font-mono text-purple-600">(\d{4})(\d{2})(\d{2})</td>
                                             <td class="py-2.5 px-2 font-mono text-blue-600">$1-$2-$3</td>
                                             <td class="py-2.5 px-2 text-emerald-600 font-bold">2026-10-05</td>
                                         </tr>
                                         <tr>
-                                            <td class="py-2.5 px-2 font-medium">前後名稱順序調換</td>
+                                            <td class="py-2.5 px-2 font-medium">Swap Prefix & Suffix Order</td>
                                             <td class="py-2.5 px-2 font-mono text-purple-600">^(.*)_(.*)$</td>
                                             <td class="py-2.5 px-2 font-mono text-blue-600">$2 - $1</td>
                                             <td class="py-2.5 px-2 text-emerald-600 font-bold">Title - Artist</td>
                                         </tr>
                                         <tr>
-                                            <td class="py-2.5 px-2 font-medium">移除所有中括號內容</td>
+                                            <td class="py-2.5 px-2 font-medium">Strip All Bracketed Content</td>
                                             <td class="py-2.5 px-2 font-mono text-purple-600">\[.*?\]</td>
-                                            <td class="py-2.5 px-2 font-mono text-blue-600">(留空)</td>
-                                            <td class="py-2.5 px-2 text-emerald-600 font-bold">清爽檔名.mp4</td>
+                                            <td class="py-2.5 px-2 font-mono text-blue-600">(leave empty)</td>
+                                            <td class="py-2.5 px-2 text-emerald-600 font-bold">Clean_Title.mp4</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -351,71 +351,71 @@
                     </div>
                 </section>
 
-                <!-- 5. 智慧補零流水號規則 -->
+                <!-- 5. Smart Serial Numbering Rules -->
                 <section id="section-serial" class="doc-section bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-sm">
                     <div class="flex items-center gap-3 text-brand-600 mb-4">
                         <span class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center font-black text-sm">05</span>
-                        <h2 class="text-2xl font-black text-slate-900">智慧補零流水號規則 (Serial Numbering)</h2>
+                        <h2 class="text-2xl font-black text-slate-900">Smart Serial Numbering Rules</h2>
                     </div>
                     <p class="text-slate-600 text-sm leading-relaxed mb-6">
-                        依序編號是整理文件、相簿與合約最核心的需求。KyteRename 的流水號引擎具備高度靈活性：
+                        Sequential numbering is fundamental for organizing documents, photo albums, and contracts. KyteRename's numbering engine provides maximum flexibility:
                     </p>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
                             <div class="text-xs font-bold text-slate-800 mb-2 flex items-center gap-2">
                                 <i class="fa-solid fa-sliders text-brand-600"></i>
-                                <span>彈性參數控制</span>
+                                <span>Flexible Parameters</span>
                             </div>
                             <ul class="text-xs text-slate-600 space-y-2 leading-relaxed">
-                                <li>• <b>起始序號 (Start)</b>：自訂從 1、0 或任意數字開始（如 101）。</li>
-                                <li>• <b>步進值 (Step)</b>：支援遞增步長（+1、+2 或跳號）。</li>
-                                <li>• <b>補零位數 (Padding)</b>：設定為 3 碼即自動補零為 001, 002；4 碼為 0001。</li>
+                                <li>• <b>Start Index</b>: Start from 1, 0, or any arbitrary integer (e.g. 101).</li>
+                                <li>• <b>Step Increment</b>: Specify increments (+1, +2, or custom steps).</li>
+                                <li>• <b>Zero-Padding</b>: Set to 3 digits to produce 001, 002; 4 digits for 0001.</li>
                             </ul>
                         </div>
                         <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
                             <div class="text-xs font-bold text-slate-800 mb-2 flex items-center gap-2">
                                 <i class="fa-solid fa-arrows-split-up-and-left text-brand-600"></i>
-                                <span>插入位置配置</span>
+                                <span>Placement Configuration</span>
                             </div>
                             <ul class="text-xs text-slate-600 space-y-2 leading-relaxed">
-                                <li>• <b>開頭 (Prefix)</b>：例如 <code class="text-blue-600 font-mono">001_相片.jpg</code></li>
-                                <li>• <b>結尾 (Suffix)</b>：例如 <code class="text-blue-600 font-mono">相片_001.jpg</code></li>
-                                <li>• <b>全名覆蓋 (Replace)</b>：直接將主檔名改為流水號。</li>
+                                <li>• <b>Prefix</b>: e.g. <code class="text-blue-600 font-mono">001_Photo.jpg</code></li>
+                                <li>• <b>Suffix</b>: e.g. <code class="text-blue-600 font-mono">Photo_001.jpg</code></li>
+                                <li>• <b>Replace Entire Name</b>: Replace the base name entirely with serial numbers.</li>
                             </ul>
                         </div>
                     </div>
                 </section>
 
-                <!-- 6. 相片 EXIF 與音樂 ID3 標籤 -->
+                <!-- 6. Photo EXIF & Audio ID3 Tags -->
                 <section id="section-metadata" class="doc-section bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-sm">
                     <div class="flex items-center gap-3 text-brand-600 mb-4">
                         <span class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center font-black text-sm">06</span>
-                        <h2 class="text-2xl font-black text-slate-900">相片 EXIF 與音樂 ID3 標籤大全</h2>
+                        <h2 class="text-2xl font-black text-slate-900">Photo EXIF & Audio ID3 Tags Guide</h2>
                     </div>
                     <p class="text-slate-600 text-sm leading-relaxed mb-6">
-                        在規則模板中輸入花括號 <code class="font-mono text-brand-600 font-bold">{變數名稱}</code>，背景工作執行緒會自動非同步提取檔案中的真實中繼資料並動態替換：
+                        Insert curly brackets <code class="font-mono text-brand-600 font-bold">{variable_name}</code> into your templates. Asynchronous background threads will automatically parse and substitute real metadata dynamically:
                     </p>
 
-                    <!-- 標籤分類手冊 -->
+                    <!-- Tags Catalog -->
                     <div class="space-y-4 mb-6">
                         <div class="p-5 rounded-2xl bg-amber-50/70 border border-amber-200/80">
                             <h4 class="text-xs font-bold text-amber-900 mb-3 flex items-center gap-2">
                                 <i class="fa-solid fa-camera text-amber-600"></i>
-                                <span>相片 EXIF 元資料變數</span>
+                                <span>Photo EXIF Variables</span>
                             </h4>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                                 <div class="bg-white p-3 rounded-xl border border-amber-200/60 font-mono">
                                     <span class="font-bold text-amber-700">{exif_date}</span>
-                                    <div class="text-[11px] text-slate-500 font-sans mt-1">相機原始拍攝時間<br>(例: 2026-10-05_143000)</div>
+                                    <div class="text-[11px] text-slate-500 font-sans mt-1">Camera Original Shutter Date<br>(e.g. 2026-10-05_143000)</div>
                                 </div>
                                 <div class="bg-white p-3 rounded-xl border border-amber-200/60 font-mono">
                                     <span class="font-bold text-amber-700">{resolution}</span>
-                                    <div class="text-[11px] text-slate-500 font-sans mt-1">寬度x高度解析度<br>(例: 3840x2160)</div>
+                                    <div class="text-[11px] text-slate-500 font-sans mt-1">Width x Height Resolution<br>(e.g. 3840x2160)</div>
                                 </div>
                                 <div class="bg-white p-3 rounded-xl border border-amber-200/60 font-mono">
                                     <span class="font-bold text-amber-700">{camera}</span>
-                                    <div class="text-[11px] text-slate-500 font-sans mt-1">相機品牌與型號<br>(例: Sony_A7M4)</div>
+                                    <div class="text-[11px] text-slate-500 font-sans mt-1">Camera Brand & Model<br>(e.g. Sony_A7M4)</div>
                                 </div>
                             </div>
                         </div>
@@ -423,24 +423,24 @@
                         <div class="p-5 rounded-2xl bg-blue-50/70 border border-blue-200/80">
                             <h4 class="text-xs font-bold text-blue-900 mb-3 flex items-center gap-2">
                                 <i class="fa-solid fa-music text-brand-600"></i>
-                                <span>音樂 ID3 / 音訊標籤變數 (MP3 / FLAC / M4A)</span>
+                                <span>Music ID3 & Audio Tags (MP3 / FLAC / M4A)</span>
                             </h4>
                             <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
                                 <div class="bg-white p-3 rounded-xl border border-blue-200/60 font-mono">
                                     <span class="font-bold text-blue-700">{artist}</span>
-                                    <div class="text-[11px] text-slate-500 font-sans mt-1">演出者 / 歌手</div>
+                                    <div class="text-[11px] text-slate-500 font-sans mt-1">Artist / Performer</div>
                                 </div>
                                 <div class="bg-white p-3 rounded-xl border border-blue-200/60 font-mono">
                                     <span class="font-bold text-blue-700">{album}</span>
-                                    <div class="text-[11px] text-slate-500 font-sans mt-1">唱片專輯名稱</div>
+                                    <div class="text-[11px] text-slate-500 font-sans mt-1">Album Title</div>
                                 </div>
                                 <div class="bg-white p-3 rounded-xl border border-blue-200/60 font-mono">
                                     <span class="font-bold text-blue-700">{track}</span>
-                                    <div class="text-[11px] text-slate-500 font-sans mt-1">曲目編號 (自動補零)</div>
+                                    <div class="text-[11px] text-slate-500 font-sans mt-1">Track Number (zero-padded)</div>
                                 </div>
                                 <div class="bg-white p-3 rounded-xl border border-blue-200/60 font-mono">
                                     <span class="font-bold text-blue-700">{title}</span>
-                                    <div class="text-[11px] text-slate-500 font-sans mt-1">歌曲正式名稱</div>
+                                    <div class="text-[11px] text-slate-500 font-sans mt-1">Official Song Title</div>
                                 </div>
                             </div>
                         </div>
@@ -448,57 +448,57 @@
                         <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200">
                             <h4 class="text-xs font-bold text-slate-900 mb-3 flex items-center gap-2">
                                 <i class="fa-solid fa-folder-tree text-slate-600"></i>
-                                <span>系統與檔案共用變數</span>
+                                <span>System & Shared Variables</span>
                             </h4>
                             <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
                                 <div class="bg-white p-3 rounded-xl border border-slate-200 font-mono">
                                     <span class="font-bold text-slate-800">{original}</span>
-                                    <div class="text-[11px] text-slate-500 font-sans mt-1">原始未修改主檔名</div>
+                                    <div class="text-[11px] text-slate-500 font-sans mt-1">Original Unmodified Base Name</div>
                                 </div>
                                 <div class="bg-white p-3 rounded-xl border border-slate-200 font-mono">
                                     <span class="font-bold text-slate-800">{parent}</span>
-                                    <div class="text-[11px] text-slate-500 font-sans mt-1">檔案所在上層目錄名稱</div>
+                                    <div class="text-[11px] text-slate-500 font-sans mt-1">Parent Directory Name</div>
                                 </div>
                                 <div class="bg-white p-3 rounded-xl border border-slate-200 font-mono">
                                     <span class="font-bold text-slate-800">{date}</span>
-                                    <div class="text-[11px] text-slate-500 font-sans mt-1">檔案系統修改日期</div>
+                                    <div class="text-[11px] text-slate-500 font-sans mt-1">Filesystem Modified Date</div>
                                 </div>
                                 <div class="bg-white p-3 rounded-xl border border-slate-200 font-mono">
                                     <span class="font-bold text-slate-800">{n}</span>
-                                    <div class="text-[11px] text-slate-500 font-sans mt-1">當前流水號序數</div>
+                                    <div class="text-[11px] text-slate-500 font-sans mt-1">Current Sequential Index</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- 7. 漢字智慧轉拼音與字元清洗 -->
+                <!-- 7. Chinese Pinyin & Sanitization -->
                 <section id="section-pinyin" class="doc-section bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-sm">
                     <div class="flex items-center gap-3 text-brand-600 mb-4">
                         <span class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center font-black text-sm">07</span>
-                        <h2 class="text-2xl font-black text-slate-900">漢字智慧轉拼音與字元清洗</h2>
+                        <h2 class="text-2xl font-black text-slate-900">Chinese Pinyin Conversion & Character Sanitization</h2>
                     </div>
                     <p class="text-slate-600 text-sm leading-relaxed mb-6">
-                        針對繁簡中文檔名在跨平台傳輸、英文版伺服器或程式編譯容易亂碼的問題，KyteRename 提供了專屬清洗方案：
+                        To resolve encoding errors across English servers, cross-platform transfers, and code compilation pipelines, KyteRename provides targeted sanitization tools:
                     </p>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200">
                             <h4 class="text-xs font-bold text-slate-900 mb-2 flex items-center gap-2">
                                 <i class="fa-solid fa-language text-brand-600"></i>
-                                <span>中文轉拼音模式 (pypinyin 支援)</span>
+                                <span>Chinese to Pinyin Modes (pypinyin Engine)</span>
                             </h4>
                             <div class="space-y-2 text-xs">
                                 <div class="flex justify-between p-2 bg-white rounded-lg border border-slate-200">
-                                    <span class="text-slate-500">全拼小寫：</span>
+                                    <span class="text-slate-500">Full Pinyin Lowercase:</span>
                                     <span class="font-mono text-brand-600 font-bold">qing_tian</span>
                                 </div>
                                 <div class="flex justify-between p-2 bg-white rounded-lg border border-slate-200">
-                                    <span class="text-slate-500">首字大寫駝峰：</span>
+                                    <span class="text-slate-500">CamelCase Capitalized:</span>
                                     <span class="font-mono text-brand-600 font-bold">Qing_Tian</span>
                                 </div>
                                 <div class="flex justify-between p-2 bg-white rounded-lg border border-slate-200">
-                                    <span class="text-slate-500">簡拼縮寫：</span>
+                                    <span class="text-slate-500">Initials Abbreviation:</span>
                                     <span class="font-mono text-brand-600 font-bold">qt</span>
                                 </div>
                             </div>
@@ -507,195 +507,195 @@
                         <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200">
                             <h4 class="text-xs font-bold text-slate-900 mb-2 flex items-center gap-2">
                                 <i class="fa-solid fa-broom text-brand-600"></i>
-                                <span>非法字元與垃圾符號過濾 (Sanitize)</span>
+                                <span>Illegal Characters & Symbol Sanitization</span>
                             </h4>
                             <p class="text-xs text-slate-600 leading-relaxed mb-3">
-                                一鍵將 Windows 檔案系統禁止的 9 個字元（<code class="font-mono text-rose-600 font-bold">\ / : * ? " &lt; &gt; |</code>）替換為自訂底線或安全空格，並可一鍵批次去除網路資源常見的裝飾括號（如 <code class="font-mono text-slate-700">【】★◆</code>）。
+                                Automatically replace Windows-prohibited characters (<code class="font-mono text-rose-600 font-bold">\ / : * ? " &lt; &gt; |</code>) with custom underscores or safe spaces, and batch-strip noisy decorative brackets (such as <code class="font-mono text-slate-700">【】★◆</code>).
                             </p>
                         </div>
                     </div>
                 </section>
 
-                <!-- 8. 安全三階段 DAG 拓撲換名 -->
+                <!-- 8. 3-Stage DAG Safe Topology -->
                 <section id="section-topology" class="doc-section bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-sm">
                     <div class="flex items-center gap-3 text-brand-600 mb-4">
                         <span class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center font-black text-sm">08</span>
-                        <h2 class="text-2xl font-black text-slate-900">安全三階段 DAG 拓撲換名技術</h2>
+                        <h2 class="text-2xl font-black text-slate-900">3-Stage DAG Safe Topological Renaming Technology</h2>
                     </div>
                     <p class="text-slate-600 text-sm leading-relaxed mb-6">
-                        這是 KyteRename 領先業界的核心技術。當批次改名遇到複雜的依賴鏈或死鎖循環時，傳統軟體常會發生「檔案相互覆蓋而永久遺失」的悲劇：
+                        This is KyteRename's industry-leading core innovation. When batch renames encounter complex dependency chains or deadlocks, traditional renamers often cause catastrophic file overwriting and permanent data loss:
                     </p>
 
                     <div class="p-6 rounded-2xl bg-slate-900 text-white font-mono text-xs space-y-3 mb-6">
-                        <div class="text-amber-400 font-bold">// 經典循環依賴案例：A 換成 B，B 換成 A</div>
-                        <div class="text-slate-400">若按普通順序直接改名：<br>
-                        Step 1: A.txt ➔ B.txt (原本的 B.txt 被覆蓋刪除！嚴重災難！)</div>
-                        <div class="text-emerald-400 font-bold">// KyteRename DAG 拓撲破圈演算法執行過程：</div>
+                        <div class="text-amber-400 font-bold">// Classic cyclic dependency: Swapping A to B, and B to A</div>
+                        <div class="text-slate-400">If executed in sequential order by traditional tools:<br>
+                        Step 1: A.txt ➔ B.txt (Original B.txt is overwritten and deleted! Total disaster!)</div>
+                        <div class="text-emerald-400 font-bold">// KyteRename DAG topological cycle-breaking execution:</div>
                         <div class="text-slate-300">
-                        階段 1：分析有向圖拓撲環，偵測到循環衝突。<br>
-                        階段 2：將 A.txt 暫存更名為微秒級暫存標記 <span class="text-amber-300">__kyte_tmp_12345.tmp</span><br>
-                        階段 3：安全執行 B.txt ➔ A.txt<br>
-                        階段 4：將暫存標記原子提交為 B.txt（兩者完美對調，零損耗）
+                        Stage 1: Analyze directed graph topological cycles and detect dependency conflict.<br>
+                        Stage 2: Temporarily rename A.txt with microsecond token <span class="text-amber-300">__kyte_tmp_12345.tmp</span><br>
+                        Stage 3: Safely execute B.txt ➔ A.txt<br>
+                        Stage 4: Atomically commit the temporary token to B.txt (Perfect zero-loss swap!)
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
-                            <span class="text-xs font-bold text-slate-900">NTFS 大小寫不敏感兩階段過渡</span>
-                            <p class="text-xs text-slate-500 mt-1">Windows 不區分檔名大小寫，將 <code class="font-mono text-blue-600">file.txt</code> 改為 <code class="font-mono text-blue-600">FILE.TXT</code> 時，系統自動採用兩階段提交，避免 Windows 回傳「檔名已存在」的錯誤。</p>
+                            <span class="text-xs font-bold text-slate-900">NTFS Case-Insensitive Two-Phase Transition</span>
+                            <p class="text-xs text-slate-500 mt-1">Windows does not distinguish casing. Changing <code class="font-mono text-blue-600">file.txt</code> to <code class="font-mono text-blue-600">FILE.TXT</code> automatically employs two-phase commits to prevent "File already exists" system errors.</p>
                         </div>
                         <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
-                            <span class="text-xs font-bold text-slate-900">Windows 超長路徑 (MAX_PATH) 防護</span>
-                            <p class="text-xs text-slate-500 mt-1">底層自動掛載 Windows <code class="font-mono text-blue-600">\\?\</code> 擴展路徑前綴，打破傳統 260 字元限制，深層多層資料夾依然穩如泰山。</p>
+                            <span class="text-xs font-bold text-slate-900">Windows MAX_PATH Extended Path Protection</span>
+                            <p class="text-xs text-slate-500 mt-1">Automatically attaches Windows <code class="font-mono text-blue-600">\\?\</code> extended path prefixes, breaking the classic 260-character limit for rock-solid nested directory renaming.</p>
                         </div>
                     </div>
                 </section>
 
-                <!-- 9. Ctrl+Z 快照安全原子還原 -->
+                <!-- 9. Ctrl+Z Snapshot Atomic Undo -->
                 <section id="section-snapshot" class="doc-section bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-sm">
                     <div class="flex items-center gap-3 text-brand-600 mb-4">
                         <span class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center font-black text-sm">09</span>
-                        <h2 class="text-2xl font-black text-slate-900">Ctrl+Z 快照安全原子還原</h2>
+                        <h2 class="text-2xl font-black text-slate-900">Ctrl+Z Snapshot Atomic Undo System</h2>
                     </div>
                     <p class="text-slate-600 text-sm leading-relaxed mb-6">
-                        就算手滑按錯了更名規則，KyteRename 也為您準備了萬無一失的救悔機制：
+                        Even if you apply an incorrect rule by mistake, KyteRename provides an ironclad fail-safe mechanism:
                     </p>
 
                     <div class="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 mb-6">
                         <h4 class="text-xs font-bold text-emerald-950 mb-3 flex items-center gap-2">
                             <i class="fa-solid fa-rotate-left text-emerald-600"></i>
-                            <span>快照安全體系三大特點：</span>
+                            <span>Three Pillars of the Snapshot Architecture:</span>
                         </h4>
                         <ul class="text-xs text-emerald-900 space-y-2 leading-relaxed">
-                            <li>• <b>毫秒級即時還原</b>：在視窗隨時按 <kbd class="px-2 py-0.5 rounded bg-white border border-emerald-300 font-bold text-emerald-800">Ctrl+Z</kbd>，系統即刻原路還原。</li>
-                            <li>• <b>跨工作階段持久記錄</b>：快照以 JSON 日誌格式儲存於本地。即使關閉程式、重新開機，也能透過「歷程對話框」指定回滾過去的任一次改名。</li>
-                            <li>• <b>逆向拓撲保證</b>：還原時同樣嚴格依循 DAG 逆向依賴順序執行，保證還原過程也絕對不會覆蓋衝突。</li>
+                            <li>• <b>Instant Millisecond Rollback</b>: Press <kbd class="px-2 py-0.5 rounded bg-white border border-emerald-300 font-bold text-emerald-800">Ctrl+Z</kbd> anytime to roll back immediately along the exact reverse path.</li>
+                            <li>• <b>Cross-Session Persistent Logs</b>: Snapshots are preserved locally in JSON format. Even if you restart your PC, you can invoke the History Dialog to roll back past executions.</li>
+                            <li>• <b>Reverse Topological Guarantee</b>: Undo runs strictly adhere to reverse DAG topological orders, guaranteeing zero collision or overwrite during the rollback process.</li>
                         </ul>
                     </div>
                 </section>
 
-                <!-- 10. KyteView 原生無縫預覽連動 -->
+                <!-- 10. KyteView Spacebar Preview IPC -->
                 <section id="section-kyteview" class="doc-section bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-sm">
                     <div class="flex items-center gap-3 text-brand-600 mb-4">
                         <span class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center font-black text-sm">10</span>
-                        <h2 class="text-2xl font-black text-slate-900">KyteView 原生無縫預覽連動</h2>
+                        <h2 class="text-2xl font-black text-slate-900">Native Seamless Preview Synergy with KyteView</h2>
                     </div>
                     <p class="text-slate-600 text-sm leading-relaxed mb-6">
-                        KyteRename 與同門的極速檔案預覽神器 <strong>KyteView</strong> 具備原生跨進程通道協同：
+                        KyteRename cooperates natively with its sister utility, the instant preview tool <strong>KyteView</strong>, via local inter-process channels:
                     </p>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200">
                             <span class="p-2 rounded-lg bg-blue-100 text-blue-600 font-bold text-xs"><i class="fa-solid fa-keyboard"></i></span>
-                            <h4 class="text-xs font-bold text-slate-800 mt-2 mb-1">Space 鍵瞬開內容</h4>
+                            <h4 class="text-xs font-bold text-slate-800 mt-2 mb-1">Spacebar Instant Content Popups</h4>
                             <p class="text-xs text-slate-500 leading-relaxed">
-                                在清單中選取任意項目，按一下 <kbd class="px-1.5 py-0.5 rounded bg-white border border-slate-300 font-bold text-blue-600">Space</kbd> 空白鍵，即刻呼叫 KyteView 彈出影音播放、Office 簡報或高清相片。
+                                Select any item in the list and press <kbd class="px-1.5 py-0.5 rounded bg-white border border-slate-300 font-bold text-blue-600">Space</kbd> to pop up KyteView for videos, Office documents, or high-res photos instantly.
                             </p>
                         </div>
                         <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200">
                             <span class="p-2 rounded-lg bg-emerald-100 text-emerald-600 font-bold text-xs"><i class="fa-solid fa-arrows-up-down"></i></span>
-                            <h4 class="text-xs font-bold text-slate-800 mt-2 mb-1">焦點保護與流暢瀏覽</h4>
+                            <h4 class="text-xs font-bold text-slate-800 mt-2 mb-1">Focus Retention & Fluid Navigation</h4>
                             <p class="text-xs text-slate-500 leading-relaxed">
-                                預覽開啟狀態下，按下鍵盤 <kbd class="px-1.5 py-0.5 rounded bg-white border border-slate-300">↑</kbd> <kbd class="px-1.5 py-0.5 rounded bg-white border border-slate-300">↓</kbd> 移動檔案，預覽內容無縫即時切換，鍵盤焦點維持鎖定在清單中，效率完全不受影響。
+                                While previewing, press <kbd class="px-1.5 py-0.5 rounded bg-white border border-slate-300">↑</kbd> <kbd class="px-1.5 py-0.5 rounded bg-white border border-slate-300">↓</kbd> to switch items. The preview updates instantly while keyboard focus remains locked inside the list.
                             </p>
                         </div>
                     </div>
                 </section>
 
-                <!-- 11. 快捷鍵一覽與疑難排解 -->
+                <!-- 11. Shortcuts & Troubleshooting -->
                 <section id="section-shortcuts" class="doc-section bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-sm">
                     <div class="flex items-center gap-3 text-brand-600 mb-4">
                         <span class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center font-black text-sm">11</span>
-                        <h2 class="text-2xl font-black text-slate-900">快捷鍵一覽與疑難排解 (FAQ)</h2>
+                        <h2 class="text-2xl font-black text-slate-900">Keyboard Shortcuts & Troubleshooting (FAQ)</h2>
                     </div>
 
-                    <!-- 快捷鍵對照表 -->
+                    <!-- Shortcuts Reference Table -->
                     <div class="overflow-x-auto mb-8">
                         <table class="w-full text-left text-xs">
                             <thead>
                                 <tr class="border-b border-slate-200 text-slate-500">
-                                    <th class="py-2.5 px-3">按鍵組合</th>
-                                    <th class="py-2.5 px-3">功能作用</th>
-                                    <th class="py-2.5 px-3">使用情境說明</th>
+                                    <th class="py-2.5 px-3">Shortcut</th>
+                                    <th class="py-2.5 px-3">Function Action</th>
+                                    <th class="py-2.5 px-3">Description</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 text-slate-700">
                                 <tr>
                                     <td class="py-2.5 px-3"><kbd class="px-2 py-0.5 bg-slate-100 border border-slate-300 rounded font-bold text-blue-700">Space</kbd></td>
-                                    <td class="py-2.5 px-3 font-bold text-slate-900">KyteView 快速預覽切換</td>
-                                    <td class="py-2.5 px-3 text-slate-500">選中項目時開關內容預覽視窗</td>
+                                    <td class="py-2.5 px-3 font-bold text-slate-900">Toggle KyteView Preview</td>
+                                    <td class="py-2.5 px-3 text-slate-500">Open / close content preview for the selected file</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3"><kbd class="px-2 py-0.5 bg-slate-100 border border-slate-300 rounded font-bold text-blue-700">↑ / ↓</kbd></td>
-                                    <td class="py-2.5 px-3 font-bold text-slate-900">連續選取與同步換檔</td>
-                                    <td class="py-2.5 px-3 text-slate-500">在清單中快速切換項目，預覽同步切換</td>
+                                    <td class="py-2.5 px-3 font-bold text-slate-900">Continuous Navigation</td>
+                                    <td class="py-2.5 px-3 text-slate-500">Quickly switch items with synchronized preview updates</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3"><kbd class="px-2 py-0.5 bg-slate-100 border border-slate-300 rounded font-bold text-emerald-700">Ctrl + Z</kbd></td>
-                                    <td class="py-2.5 px-3 font-bold text-slate-900">安全還原上次更名</td>
-                                    <td class="py-2.5 px-3 text-slate-500">依照快照日誌逆向安全拓撲還原</td>
+                                    <td class="py-2.5 px-3 font-bold text-slate-900">Undo Last Rename</td>
+                                    <td class="py-2.5 px-3 text-slate-500">Safely restore filenames via reverse-topological snapshot log</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3"><kbd class="px-2 py-0.5 bg-slate-100 border border-slate-300 rounded font-bold text-amber-700">Ctrl + F</kbd></td>
-                                    <td class="py-2.5 px-3 font-bold text-slate-900">快速聚焦搜尋列</td>
-                                    <td class="py-2.5 px-3 text-slate-500">雙手不離鍵盤直接輸入關鍵字或正則</td>
+                                    <td class="py-2.5 px-3 font-bold text-slate-900">Focus Search Field</td>
+                                    <td class="py-2.5 px-3 text-slate-500">Jump directly to keyword or regex input fields</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3"><kbd class="px-2 py-0.5 bg-slate-100 border border-slate-300 rounded font-bold text-slate-700">Ctrl + A</kbd></td>
-                                    <td class="py-2.5 px-3 font-bold text-slate-900">全選所有檔案</td>
-                                    <td class="py-2.5 px-3 text-slate-500">一次套用規則或批次調整</td>
+                                    <td class="py-2.5 px-3 font-bold text-slate-900">Select All Files</td>
+                                    <td class="py-2.5 px-3 text-slate-500">Apply batch rules or select all items in one click</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3"><kbd class="px-2 py-0.5 bg-slate-100 border border-slate-300 rounded font-bold text-rose-700">Delete</kbd></td>
-                                    <td class="py-2.5 px-3 font-bold text-slate-900">自清單中移除</td>
-                                    <td class="py-2.5 px-3 text-slate-500">將不想更名的項目移出清單（不刪除實體檔案）</td>
+                                    <td class="py-2.5 px-3 font-bold text-slate-900">Remove from List</td>
+                                    <td class="py-2.5 px-3 text-slate-500">Remove items from processing list without deleting files</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3"><kbd class="px-2 py-0.5 bg-slate-100 border border-slate-300 rounded font-bold text-brand-700">Enter</kbd></td>
-                                    <td class="py-2.5 px-3 font-bold text-slate-900">執行批次更名</td>
-                                    <td class="py-2.5 px-3 text-slate-500">確認預覽無誤後提交執行更名作業</td>
+                                    <td class="py-2.5 px-3 font-bold text-slate-900">Execute Batch Rename</td>
+                                    <td class="py-2.5 px-3 text-slate-500">Commit renaming after verifying preview accuracy</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- 常見問題排查 FAQ -->
+                    <!-- FAQ -->
                     <div class="space-y-4">
                         <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
-                            <h4 class="text-xs font-bold text-slate-900 mb-1">Q: 執行更名時提示「檔案被佔用」或「拒絕存取」？</h4>
+                            <h4 class="text-xs font-bold text-slate-900 mb-1">Q: Warning states "File is locked" or "Access Denied"?</h4>
                             <p class="text-xs text-slate-600 leading-relaxed">
-                                A: 通常是因為該檔案目前正在被微軟 Excel、Word、播放器或其他程式開啟並鎖定中。請先將佔用該檔案的程式關閉，然後點擊「重試」；您也可以選擇「略過鎖定檔案」，系統會繼續完成其餘檔案的更名。
+                                A: Usually this happens when a file is currently opened and locked by Excel, Word, or media players. Close the locking process and click "Retry"; or select "Skip Locked File" to continue processing the rest.
                             </p>
                         </div>
                         <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
-                            <h4 class="text-xs font-bold text-slate-900 mb-1">Q: 如何更換深色模式 (Dark Mode)？</h4>
+                            <h4 class="text-xs font-bold text-slate-900 mb-1">Q: How do I switch to Dark Mode?</h4>
                             <p class="text-xs text-slate-600 leading-relaxed">
-                                A: 點擊視窗右上角或功能表的「設定 (Settings)」➔「外觀模式 (Appearance Mode)」，可選擇「跟隨系統 (System)」、「深色模式 (Dark)」或「淺色模式 (Light)」，介面會即時無縫切換。
+                                A: In the top menu or settings, navigate to "Settings" ➔ "Appearance Mode" and select "System", "Dark", or "Light" for immediate UI adaptation.
                             </p>
                         </div>
                         <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
-                            <h4 class="text-xs font-bold text-slate-900 mb-1">Q: 購買正式版後享有什麼維護與更新保障？</h4>
+                            <h4 class="text-xs font-bold text-slate-900 mb-1">Q: What is the maintenance period for perpetual purchases?</h4>
                             <p class="text-xs text-slate-600 leading-relaxed">
-                                A: 本商品為一次性買斷，享有一年內免費維護與 Bug 修復。若未來作業系統大型改版（如 Windows 升級）導致軟體需重構，新版本將另行販售。
+                                A: Perpetual licenses include one year of free maintenance and bug fixes. If major operating system overhauls (such as major future Windows upgrades) necessitate software refactoring, new versions will be sold separately.
                             </p>
                         </div>
                     </div>
                 </section>
 
-                <!-- 底部導覽卡片 -->
+                <!-- Call to Action Banner -->
                 <div class="p-8 rounded-3xl bg-gradient-to-r from-blue-600 to-indigo-700 text-white text-center shadow-xl">
-                    <h3 class="text-2xl font-black mb-3">準備好提升您的檔案管理效率了嗎？</h3>
+                    <h3 class="text-2xl font-black mb-3">Ready to Turbocharge Your File Organization?</h3>
                     <p class="text-blue-100 text-xs sm:text-sm max-w-xl mx-auto mb-6">
-                        立即下載 KyteRename，體驗 50ms 零延遲雙欄即時對照與極致安全的批次更名體驗。
+                        Download KyteRename now and experience true 50ms sub-latency dual-pane comparisons and fail-safe topological batch renaming.
                     </p>
                     <div class="flex flex-col sm:flex-row justify-center gap-3">
                         <a href="index.html#download"
                             class="px-6 py-3 bg-white text-brand-700 hover:bg-slate-100 font-bold rounded-xl text-xs shadow-md transition">
-                            <i class="fa-solid fa-download mr-1.5"></i> 下載最新安裝檔
+                            <i class="fa-solid fa-download mr-1.5"></i> Download Latest Setup
                         </a>
                         <a href="index.html"
                             class="px-6 py-3 bg-blue-900/60 hover:bg-blue-900 text-white font-bold rounded-xl text-xs border border-blue-400/40 transition">
-                            <i class="fa-solid fa-house mr-1.5"></i> 返回產品官網
+                            <i class="fa-solid fa-house mr-1.5"></i> Back to Homepage
                         </a>
                     </div>
                 </div>
@@ -704,17 +704,17 @@
         </div>
     </div>
 
-    <!-- 頁尾 Footer -->
+    <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 py-8 text-center text-xs text-slate-500">
         <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-2">
                 <img src="assets/icon.png" class="w-5 h-5 rounded" alt="KyteRename">
-                <span class="font-bold text-slate-700">KyteRename 操作指南</span>
+                <span class="font-bold text-slate-700">KyteRename User Manual</span>
                 <span>© 2026 ais7896-hue</span>
             </div>
             <div class="flex items-center gap-6">
-                <a href="index.html" class="hover:text-brand-600 transition">首頁</a>
-                <a href="https://ais7896-hue.github.io/Kyteindex/" class="hover:text-brand-600 transition">Kyte 全系列</a>
+                <a href="index.html" class="hover:text-brand-600 transition">Home</a>
+                <a href="https://ais7896-hue.github.io/Kyteindex/" class="hover:text-brand-600 transition">Kyte Suite</a>
                 <a href="https://kyteview.aisming.com/" class="hover:text-brand-600 transition">KyteView</a>
                 <a href="https://ais7896-hue.github.io/KyteShelf-website/" class="hover:text-brand-600 transition">KyteShelf</a>
             </div>

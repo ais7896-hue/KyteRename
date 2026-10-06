@@ -58,7 +58,7 @@
           "fileSize": "38MB",
           "offers": {
             "@type": "Offer",
-            "price": "0",
+            "price": "199",
             "priceCurrency": "TWD",
             "availability": "https://schema.org/InStock"
           },
@@ -199,49 +199,55 @@
 
     <!-- 頂部公告列 -->
     <div class="bg-gradient-to-r from-blue-950 via-slate-900 to-amber-950 text-slate-300 text-xs py-2 px-4 text-center font-medium border-b border-white/10 flex items-center justify-center gap-2">
-        <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-bold text-[10px] border border-blue-400/30">v1.1.0 正式版</span>
-        <span>KyteRename 旗艦釋出：支援雙欄 50ms 零延遲虛擬滾動、琥珀金正則高亮、DAG 拓撲破圈換名與 Ctrl+Z 快照原路還原！</span>
+        <span data-i18n="top.badge" class="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-bold text-[10px] border border-blue-400/30">v1.1.0 正式版</span>
+        <span data-i18n="top.announcement">KyteRename 旗艦釋出：支援雙欄 50ms 零延遲虛擬滾動、琥珀金正則高亮、DAG 拓撲破圈換名與 Ctrl+Z 快照原路還原！</span>
     </div>
 
     <!-- 導航列 -->
     <nav class="sticky top-0 z-50 backdrop-blur-xl bg-slate-950/80 border-b border-white/10 transition-all">
-        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-3 group">
-                <img src="assets/icon.png" alt="KyteRename Logo" class="w-9 h-9 rounded-xl shadow-lg shadow-blue-500/25 group-hover:scale-105 transition">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+            <a href="index.html" class="flex items-center gap-3 group shrink-0">
+                <img src="assets/icon.png" alt="KyteRename Logo" class="w-9 h-9 rounded-xl shadow-lg shadow-blue-500/25 group-hover:scale-105 transition shrink-0">
                 <div class="flex flex-col text-left">
-                    <span class="text-xl font-extrabold tracking-tight text-white leading-tight flex items-center gap-1.5">
+                    <span class="text-xl font-extrabold tracking-tight text-white leading-tight flex items-center gap-1.5 whitespace-nowrap">
                         KyteRename
-                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30 font-bold">PRO</span>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30 font-bold shrink-0">PRO</span>
                     </span>
-                    <span class="text-[10px] font-semibold text-slate-400 tracking-wider">SMART BATCH RENAMER</span>
+                    <span data-i18n="nav.brand_sub" class="text-[10px] font-semibold text-slate-400 tracking-wider whitespace-nowrap">SMART BATCH RENAMER</span>
                 </div>
             </a>
-            <div class="hidden lg:flex items-center gap-6">
-                <a href="#features" class="text-sm font-semibold text-slate-300 hover:text-white transition">核心特色</a>
-                <a href="#rules" class="text-sm font-semibold text-slate-300 hover:text-white transition">規則矩陣</a>
-                <a href="#metadata" class="text-sm font-semibold text-slate-300 hover:text-white transition">EXIF & ID3</a>
-                <a href="#topology" class="text-sm font-semibold text-slate-300 hover:text-white transition">拓撲安全</a>
-                <a href="#integration" class="text-sm font-semibold text-slate-300 hover:text-white transition flex items-center gap-1.5">
+            <div class="hidden lg:flex items-center gap-2.5 xl:gap-3.5 2xl:gap-5 shrink-0 text-xs xl:text-xs 2xl:text-sm">
+                <a href="#features" data-i18n="nav.features" class="font-semibold text-slate-300 hover:text-white transition whitespace-nowrap">核心特色</a>
+                <a href="#rules" data-i18n="nav.rules" class="font-semibold text-slate-300 hover:text-white transition whitespace-nowrap">規則矩陣</a>
+                <a href="#metadata" data-i18n="nav.metadata" class="font-semibold text-slate-300 hover:text-white transition whitespace-nowrap hidden 2xl:block">EXIF & ID3</a>
+                <a href="#topology" data-i18n="nav.topology" class="font-semibold text-slate-300 hover:text-white transition whitespace-nowrap hidden 2xl:block">拓撲安全</a>
+                <a href="#integration" class="font-semibold text-slate-300 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap hidden xl:flex">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>KyteView 連動</span>
+                    <span data-i18n="nav.integration">KyteView 連動</span>
                 </a>
-                <a href="#compare" class="text-sm font-semibold text-slate-300 hover:text-white transition">強大對比</a>
-                <a href="#shortcuts" class="text-sm font-semibold text-slate-300 hover:text-white transition">快捷鍵</a>
-                <a href="guide.html" class="flex items-center gap-1.5 text-sm font-semibold text-blue-400 hover:text-blue-300 transition">
+                <a href="#compare" data-i18n="nav.compare" class="font-semibold text-slate-300 hover:text-white transition whitespace-nowrap hidden 2xl:block">強大對比</a>
+                <a href="#shortcuts" data-i18n="nav.shortcuts" class="font-semibold text-slate-300 hover:text-white transition whitespace-nowrap hidden 2xl:block">快捷鍵</a>
+                <a href="#pricing" data-i18n="nav.pricing" class="font-semibold text-amber-300 hover:text-white transition whitespace-nowrap">授權方案</a>
+                <a href="guide.html" class="flex items-center gap-1.5 font-semibold text-blue-400 hover:text-blue-300 transition whitespace-nowrap">
                     <i class="fa-solid fa-book-open text-xs"></i>
-                    <span>使用指南</span>
+                    <span data-i18n="nav.guide">使用指南</span>
                 </a>
-                <a href="https://ais7896-hue.github.io/Kyteindex/" class="flex items-center gap-1.5 text-sm font-semibold text-amber-400 hover:text-amber-300 transition">
+                <a href="https://ais7896-hue.github.io/Kyteindex/" class="items-center gap-1.5 font-semibold text-amber-400 hover:text-amber-300 transition whitespace-nowrap hidden xl:flex">
                     <i class="fa-solid fa-shapes text-xs"></i>
-                    <span>Kyte 全系列</span>
+                    <span data-i18n="nav.suite">Kyte 全系列</span>
                 </a>
-                <a href="#faq" class="text-sm font-semibold text-slate-300 hover:text-white transition">常見問答</a>
+                <a href="#faq" data-i18n="nav.faq" class="font-semibold text-slate-300 hover:text-white transition whitespace-nowrap hidden xl:block">常見問答</a>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2.5 shrink-0">
+                <button id="lang-toggle-btn"
+                    class="px-2.5 py-1.5 rounded-xl border border-slate-700/80 hover:border-slate-500 bg-slate-900/90 hover:bg-slate-800 text-xs font-semibold text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap cursor-pointer shadow-sm">
+                    <i class="fa-solid fa-globe text-slate-400 text-xs"></i>
+                    <span id="lang-toggle-text">EN</span>
+                </button>
                 <a href="https://github.com/ais7896-hue/KyteRename/releases/download/v1.1.0/KyteRename_Setup_1.1.0.exe"
-                    class="px-5 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 active:scale-95 rounded-xl shadow-lg shadow-blue-600/30 transition flex items-center gap-2">
-                    <i class="fa-solid fa-download text-xs"></i>
-                    <span>免費下載</span>
+                    class="px-4 xl:px-5 py-2 text-xs xl:text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 active:scale-95 rounded-xl shadow-lg shadow-blue-600/30 transition flex items-center gap-2 shrink-0 whitespace-nowrap">
+                    <i class="fa-solid fa-download text-xs shrink-0"></i>
+                    <span data-i18n="nav.download" class="whitespace-nowrap">免費下載</span>
                 </a>
             </div>
         </div>
@@ -253,19 +259,19 @@
             <!-- 認證膠囊 -->
             <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-blue-400/30 text-blue-300 text-xs font-bold mb-6 shadow-sm shadow-blue-500/10">
                 <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-                <span>為 Windows 10 / 11 打造的旗艦級批次更名利器 · 50ms 零延遲</span>
+                <span data-i18n="hero.badge">為 Windows 10 / 11 打造的旗艦級批次更名利器 · 50ms 零延遲</span>
             </div>
 
             <!-- 主標題 -->
             <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight leading-[1.18] mb-6">
-                海量檔案重新命名<br class="hidden sm:inline">
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-sky-300 to-amber-300">
+                <span data-i18n="hero.title_pre">海量檔案重新命名</span><br class="hidden sm:inline">
+                <span data-i18n="hero.title_post" class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-sky-300 to-amber-300">
                     雙欄即時對照 · 琥珀金高亮 · 絕不覆蓋
                 </span>
             </h1>
 
             <!-- 副標題 -->
-            <p class="text-base sm:text-xl text-slate-300 max-w-3xl mx-auto font-normal leading-relaxed mb-10">
+            <p data-i18n="hero.desc" class="text-base sm:text-xl text-slate-300 max-w-3xl mx-auto font-normal leading-relaxed mb-10">
                 告別傳統更名工具盲目改名、檔案衝突覆蓋、或當機崩潰的惡夢！<br class="hidden sm:inline">
                 KyteRename 具備虛擬化雙欄即時預覽、相片 EXIF 拍攝時間、音樂 ID3 標籤抽取、漢字轉拼音與三階段安全 DAG 拓撲換名，更支援隨時按 <kbd class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono-code text-blue-300 font-bold text-xs shadow">Space</kbd> 空白鍵喚起 KyteView 內容預覽。
             </p>
@@ -276,22 +282,22 @@
                     <a href="https://github.com/ais7896-hue/KyteRename/releases/download/v1.1.0/KyteRename_Setup_1.1.0.exe"
                         class="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-xl shadow-blue-600/30 transition transform active:scale-95 flex items-center justify-center gap-3">
                         <i class="fa-solid fa-download text-lg"></i>
-                        <span>立即下載 Windows 安裝版 (v1.1.0)</span>
+                        <span data-i18n="hero.btn_installer">立即下載 Windows 安裝版 (v1.1.0)</span>
                     </a>
                     <a href="https://github.com/ais7896-hue/KyteRename/releases/download/v1.1.0/KyteRename_1.1.0_Portable.zip"
                         class="w-full sm:w-auto px-7 py-4 bg-slate-900/90 hover:bg-slate-800 text-blue-300 font-bold rounded-xl border border-blue-400/30 shadow-sm transition flex items-center justify-center gap-2">
                         <i class="fa-solid fa-file-zipper text-blue-400"></i>
-                        <span>免安裝綠色版 (.zip)</span>
+                        <span data-i18n="hero.btn_portable">免安裝綠色版 (.zip)</span>
                     </a>
                     <a href="guide.html"
                         class="w-full sm:w-auto px-7 py-4 bg-slate-900/90 hover:bg-slate-800 text-slate-200 font-bold rounded-xl border border-white/10 shadow-sm transition flex items-center justify-center gap-2">
                         <i class="fa-solid fa-book-open text-blue-400"></i>
-                        <span>閱讀完整圖文手冊</span>
+                        <span data-i18n="hero.btn_guide">閱讀完整圖文手冊</span>
                     </a>
                 </div>
                 <div class="mt-3.5 text-xs text-slate-400 font-medium flex items-center justify-center gap-2">
                     <i class="fa-solid fa-shield-halved text-emerald-400"></i>
-                    <span>純本機極速運作 · 100% 離線免連網 · 內建原子級快照日誌 Ctrl+Z 隨時還原</span>
+                    <span data-i18n="hero.trial_note">純本機極速運作 · 100% 離線免連網 · 內建原子級快照日誌 Ctrl+Z 隨時還原</span>
                 </div>
             </div>
 
@@ -305,16 +311,16 @@
                         <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
                         <span class="text-xs font-semibold text-slate-300 ml-2 flex items-center gap-2">
                             <i class="fa-solid fa-folder-tree text-blue-400 text-xs"></i>
-                            KyteRename — [D:\Noah\Camera_2026] 批次重新命名中 (32 項目)
+                            <span data-i18n="mock.title">KyteRename — [D:\Noah\Camera_2026] 批次重新命名中 (32 項目)</span>
                         </span>
                     </div>
                     <div class="flex items-center gap-3 text-xs font-mono">
                         <span class="text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/60 flex items-center gap-1.5">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                            DAG 無衝突
+                            <span data-i18n="mock.badge_dag">DAG 無衝突</span>
                         </span>
                         <span class="text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/60">
-                            <i class="fa-solid fa-bolt mr-1"></i>預覽延遲: 42ms
+                            <i class="fa-solid fa-bolt mr-1"></i><span data-i18n="mock.badge_latency">預覽延遲: 42ms</span>
                         </span>
                     </div>
                 </div>
@@ -324,8 +330,8 @@
                     <!-- 左側主視圖：虛擬化雙欄表格 -->
                     <div class="lg:col-span-8 bg-slate-950 p-4 rounded-xl border border-slate-800/90 space-y-2.5">
                         <div class="flex justify-between items-center text-slate-400 border-b border-slate-800 pb-2 text-[11px] font-bold uppercase tracking-wider">
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-file-lines text-slate-500"></i>原始檔名 (Original Name)</span>
-                            <span class="flex items-center gap-1.5 text-blue-400"><i class="fa-solid fa-wand-magic-sparkles"></i>新檔名即時對照 (New Name)</span>
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-file-lines text-slate-500"></i><span data-i18n="mock.col_original">原始檔名 (Original Name)</span></span>
+                            <span class="flex items-center gap-1.5 text-blue-400"><i class="fa-solid fa-wand-magic-sparkles"></i><span data-i18n="mock.col_new">新檔名即時對照 (New Name)</span></span>
                         </div>
                         
                         <!-- 檔案列 1 -->
@@ -376,13 +382,13 @@
                         <!-- 底部快捷操作列 -->
                         <div class="pt-2 flex items-center justify-between text-[11px] text-slate-400 font-sans border-t border-slate-800/80">
                             <div class="flex items-center gap-3">
-                                <span>選取：1 / 32 個檔案</span>
+                                <span data-i18n="mock.stat_selected">選取：1 / 32 個檔案</span>
                                 <span class="text-slate-600">|</span>
-                                <span class="text-blue-400 flex items-center gap-1"><i class="fa-solid fa-link"></i> KyteView 管道已連線</span>
+                                <span class="text-blue-400 flex items-center gap-1"><i class="fa-solid fa-link"></i> <span data-i18n="mock.stat_pipe">KyteView 管道已連線</span></span>
                             </div>
                             <div class="flex items-center gap-2 font-mono-code text-[10px]">
-                                <span class="bg-slate-800 px-2 py-0.5 rounded text-slate-300">Ctrl+A 全選</span>
-                                <span class="bg-slate-800 px-2 py-0.5 rounded text-slate-300">Ctrl+Z 復原</span>
+                                <span data-i18n="mock.kbd_select_all" class="bg-slate-800 px-2 py-0.5 rounded text-slate-300">Ctrl+A 全選</span>
+                                <span data-i18n="mock.kbd_undo" class="bg-slate-800 px-2 py-0.5 rounded text-slate-300">Ctrl+Z 復原</span>
                             </div>
                         </div>
                     </div>
@@ -391,14 +397,14 @@
                     <div class="lg:col-span-4 bg-slate-950 p-4 rounded-xl border border-slate-800/90 flex flex-col justify-between space-y-3 font-sans">
                         <div class="space-y-2.5">
                             <div class="text-[11px] font-bold text-slate-300 flex items-center justify-between">
-                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-list-check text-blue-400"></i>作用中的規則鏈</span>
-                                <span class="text-emerald-400 text-[10px] font-mono-code font-bold">4 項生效中</span>
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-list-check text-blue-400"></i><span data-i18n="mock.rule_chain_title">作用中的規則鏈</span></span>
+                                <span data-i18n="mock.rule_chain_count" class="text-emerald-400 text-[10px] font-mono-code font-bold">4 項生效中</span>
                             </div>
 
                             <!-- 規則 1 -->
                             <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800 text-[11px]">
                                 <div class="flex items-center justify-between text-amber-400 font-bold mb-1">
-                                    <span><i class="fa-solid fa-camera mr-1"></i>相片 EXIF 拍攝時間</span>
+                                    <span><i class="fa-solid fa-camera mr-1"></i><span data-i18n="mock.rule_1_title">相片 EXIF 拍攝時間</span></span>
                                     <span class="text-[9px] bg-amber-950 text-amber-300 px-1.5 py-0.5 rounded border border-amber-800/80">EXIF</span>
                                 </div>
                                 <div class="text-slate-400 font-mono-code text-[10px] truncate">{exif_date}_{original}</div>
@@ -407,19 +413,19 @@
                             <!-- 規則 2 -->
                             <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800 text-[11px]">
                                 <div class="flex items-center justify-between text-blue-400 font-bold mb-1">
-                                    <span><i class="fa-solid fa-arrow-down-1-9 mr-1"></i>智慧補零流水號</span>
-                                    <span class="text-[9px] bg-blue-950 text-blue-300 px-1.5 py-0.5 rounded border border-blue-800/80">3 位數</span>
+                                    <span><i class="fa-solid fa-arrow-down-1-9 mr-1"></i><span data-i18n="mock.rule_2_title">智慧補零流水號</span></span>
+                                    <span data-i18n="mock.rule_2_tag" class="text-[9px] bg-blue-950 text-blue-300 px-1.5 py-0.5 rounded border border-blue-800/80">3 位數</span>
                                 </div>
-                                <div class="text-slate-400 font-mono-code text-[10px]">起始: 1 · 步長: 1 · 格式: 001, 002...</div>
+                                <div data-i18n="mock.rule_2_desc" class="text-slate-400 font-mono-code text-[10px]">起始: 1 · 步長: 1 · 格式: 001, 002...</div>
                             </div>
 
                             <!-- 規則 3 -->
                             <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800 text-[11px]">
                                 <div class="flex items-center justify-between text-purple-400 font-bold mb-1">
-                                    <span><i class="fa-solid fa-broom mr-1"></i>非法字元與裝飾清洗</span>
+                                    <span><i class="fa-solid fa-broom mr-1"></i><span data-i18n="mock.rule_3_title">非法字元與裝飾清洗</span></span>
                                     <span class="text-[9px] bg-purple-950 text-purple-300 px-1.5 py-0.5 rounded border border-purple-800/80">Auto Clean</span>
                                 </div>
-                                <div class="text-slate-400 font-mono-code text-[10px]">清除 \/:*?"<>| 與 【】★ 符號</div>
+                                <div data-i18n="mock.rule_3_desc" class="text-slate-400 font-mono-code text-[10px]">清除 \/:*?"<>| 與 【】★ 符號</div>
                             </div>
                         </div>
 
@@ -427,7 +433,7 @@
                         <div class="pt-2">
                             <button class="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl text-xs shadow-md shadow-blue-600/30 flex items-center justify-center gap-2 hover:brightness-110 transition">
                                 <i class="fa-solid fa-play text-xs"></i>
-                                <span>安全執行更名 (Enter)</span>
+                                <span data-i18n="mock.btn_apply">安全執行更名 (Enter)</span>
                             </button>
                         </div>
                     </div>
@@ -441,13 +447,13 @@
     <section id="features" class="py-24 bg-slate-900/60 border-b border-white/10">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center max-w-3xl mx-auto mb-16">
-                <span class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-3.5 py-1.5 rounded-full border border-blue-400/20">
+                <span data-i18n="feat.badge" class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-3.5 py-1.5 rounded-full border border-blue-400/20">
                     Why Choose KyteRename
                 </span>
-                <h2 class="text-3xl sm:text-5xl font-black text-white mt-4 tracking-tight">
+                <h2 data-i18n="feat.title" class="text-3xl sm:text-5xl font-black text-white mt-4 tracking-tight">
                     專為嚴苛檔案整理打造的極致體驗
                 </h2>
-                <p class="text-slate-400 text-base mt-4 leading-relaxed">
+                <p data-i18n="feat.desc" class="text-slate-400 text-base mt-4 leading-relaxed">
                     結合萬級檔案虛擬滾動、毫秒級規則計算、多媒體深度中繼資料解析與無懈可擊的 DAG 拓撲防覆蓋安全性。
                 </p>
             </div>
@@ -459,9 +465,9 @@
                         <i class="fa-solid fa-highlighter"></i>
                     </div>
                     <h3 class="text-xl font-bold text-white mb-2.5 flex items-center gap-2">
-                        <span>琥珀金動態高亮匹配</span>
+                        <span data-i18n="feat.f1_title">琥珀金動態高亮匹配</span>
                     </h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">
+                    <p data-i18n="feat.f1_desc" class="text-slate-400 text-sm leading-relaxed">
                         當您在搜尋欄輸入文字或正規表達式時，左欄原檔名即時以高對比琥珀金背景標註目標字串，一眼掌握即將被替換的區塊，徹底終結盲改猜測。
                     </p>
                 </div>
@@ -472,9 +478,9 @@
                         <i class="fa-solid fa-bolt"></i>
                     </div>
                     <h3 class="text-xl font-bold text-white mb-2.5 flex items-center gap-2">
-                        <span>50ms 雙欄虛擬化預覽</span>
+                        <span data-i18n="feat.f2_title">50ms 雙欄虛擬化預覽</span>
                     </h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">
+                    <p data-i18n="feat.f2_desc" class="text-slate-400 text-sm leading-relaxed">
                         採用 Qt <code class="font-mono-code text-blue-300 text-xs">QAbstractTableModel</code> 虛擬滾動架構。即使拖入上萬張相片或音訊檔，規則變更時僅需 50ms 即可完成對照更新，記憶體佔用極低。
                     </p>
                 </div>
@@ -485,9 +491,9 @@
                         <i class="fa-solid fa-diagram-project"></i>
                     </div>
                     <h3 class="text-xl font-bold text-white mb-2.5 flex items-center gap-2">
-                        <span>三階段 DAG 拓撲換名</span>
+                        <span data-i18n="feat.f3_title">三階段 DAG 拓撲換名</span>
                     </h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">
+                    <p data-i18n="feat.f3_desc" class="text-slate-400 text-sm leading-relaxed">
                         遇到 A 換 B、B 換 C，甚至 A 換 B、B 換 A 的循環改名？引擎自動建構有向無環圖 (DAG) 拓撲破圈，利用微秒級暫存標記三階段原子提交，保證零覆蓋、零死鎖。
                     </p>
                 </div>
@@ -498,9 +504,9 @@
                         <i class="fa-solid fa-rotate-left"></i>
                     </div>
                     <h3 class="text-xl font-bold text-white mb-2.5 flex items-center gap-2">
-                        <span>Ctrl+Z 快照逆向安全還原</span>
+                        <span data-i18n="feat.f4_title">Ctrl+Z 快照逆向安全還原</span>
                     </h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">
+                    <p data-i18n="feat.f4_desc" class="text-slate-400 text-sm leading-relaxed">
                         改錯名字完全不用慌！每次改名都在本地產生獨立原子快照日誌。隨時按下 <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-emerald-400 font-mono-code text-xs">Ctrl+Z</kbd>，系統依照逆向拓撲順序精確原路復原。
                     </p>
                 </div>
@@ -511,9 +517,9 @@
                         <i class="fa-solid fa-camera-retro"></i>
                     </div>
                     <h3 class="text-xl font-bold text-white mb-2.5 flex items-center gap-2">
-                        <span>相片 EXIF 與音樂 ID3</span>
+                        <span data-i18n="feat.f5_title">相片 EXIF 與音樂 ID3</span>
                     </h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">
+                    <p data-i18n="feat.f5_desc" class="text-slate-400 text-sm leading-relaxed">
                         非同步背景自動提取數位相機 EXIF 拍攝時間、照片解析度、相機型號，以及 MP3/FLAC/M4A 歌曲歌手、專輯、曲目編號，將多媒體變數自由組合成完美檔名。
                     </p>
                 </div>
@@ -524,9 +530,9 @@
                         <i class="fa-solid fa-expand"></i>
                     </div>
                     <h3 class="text-xl font-bold text-white mb-2.5 flex items-center gap-2">
-                        <span>KyteView 跨進程 Space 預覽</span>
+                        <span data-i18n="feat.f6_title">KyteView 跨進程 Space 預覽</span>
                     </h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">
+                    <p data-i18n="feat.f6_desc" class="text-slate-400 text-sm leading-relaxed">
                         與 KyteView 深度打通！在改名清單中按 <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 font-mono-code text-xs">Space</kbd> 空白鍵，即刻彈出快速內容預覽；按方向鍵上下切換時預覽視窗自動同步，焦點絕不脫離清單。
                     </p>
                 </div>
@@ -538,13 +544,13 @@
     <section id="rules" class="py-24 bg-slate-950">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center max-w-3xl mx-auto mb-16">
-                <span class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-3.5 py-1.5 rounded-full border border-blue-400/20">
+                <span data-i18n="rules.badge" class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-3.5 py-1.5 rounded-full border border-blue-400/20">
                     Rule Engine Pipeline
                 </span>
-                <h2 class="text-3xl sm:text-5xl font-black text-white mt-4 tracking-tight">
+                <h2 data-i18n="rules.title" class="text-3xl sm:text-5xl font-black text-white mt-4 tracking-tight">
                     強大而靈活的規則流水線
                 </h2>
-                <p class="text-slate-400 text-base mt-4 leading-relaxed">
+                <p data-i18n="rules.desc" class="text-slate-400 text-base mt-4 leading-relaxed">
                     任意疊加組合多項規則，並可精確指定作用於「僅主檔名」、「僅副檔名」或「完整檔名」。
                 </p>
             </div>
@@ -554,9 +560,9 @@
                 <div class="p-6 rounded-2xl bg-slate-900/80 border border-white/10 hover:border-blue-400/50 transition">
                     <div class="flex items-center gap-3 mb-3 text-blue-400">
                         <i class="fa-solid fa-magnifying-glass-arrow-right text-lg"></i>
-                        <h4 class="font-bold text-white text-base">搜尋與取代 (Regex)</h4>
+                        <h4 data-i18n="rules.r1_title" class="font-bold text-white text-base">搜尋與取代 (Regex)</h4>
                     </div>
-                    <p class="text-xs text-slate-400 leading-relaxed mb-3">
+                    <p data-i18n="rules.r1_desc" class="text-xs text-slate-400 leading-relaxed mb-3">
                         支援純文字比對與正規表達式。可利用群組捕捉與反向引用（<code class="text-blue-300">$1</code>, <code class="text-blue-300">$2</code>）進行顛倒或重組。
                     </p>
                     <div class="p-2 rounded bg-slate-950 border border-slate-800 text-[11px] font-mono-code text-amber-300">
@@ -568,9 +574,9 @@
                 <div class="p-6 rounded-2xl bg-slate-900/80 border border-white/10 hover:border-blue-400/50 transition">
                     <div class="flex items-center gap-3 mb-3 text-emerald-400">
                         <i class="fa-solid fa-list-ol text-lg"></i>
-                        <h4 class="font-bold text-white text-base">智慧補零流水號</h4>
+                        <h4 data-i18n="rules.r2_title" class="font-bold text-white text-base">智慧補零流水號</h4>
                     </div>
-                    <p class="text-xs text-slate-400 leading-relaxed mb-3">
+                    <p data-i18n="rules.r2_desc" class="text-xs text-slate-400 leading-relaxed mb-3">
                         自訂起始值（例如從 1 開始）、增量步進值（每次 +1）與補零位數（如 3 碼：001, 002）。可置於檔名開頭、尾部或全名取代。
                     </p>
                     <div class="p-2 rounded bg-slate-950 border border-slate-800 text-[11px] font-mono-code text-emerald-300">
@@ -582,9 +588,9 @@
                 <div class="p-6 rounded-2xl bg-slate-900/80 border border-white/10 hover:border-blue-400/50 transition">
                     <div class="flex items-center gap-3 mb-3 text-amber-400">
                         <i class="fa-solid fa-quote-left text-lg"></i>
-                        <h4 class="font-bold text-white text-base">前後綴增刪 (Affix)</h4>
+                        <h4 data-i18n="rules.r3_title" class="font-bold text-white text-base">前後綴增刪 (Affix)</h4>
                     </div>
-                    <p class="text-xs text-slate-400 leading-relaxed mb-3">
+                    <p data-i18n="rules.r3_desc" class="text-xs text-slate-400 leading-relaxed mb-3">
                         在檔名開頭或副檔名之前一鍵插入自訂字串（如日期、專案名稱），或批次刪除檔名前 N 個或後 N 個字元。
                     </p>
                     <div class="p-2 rounded bg-slate-950 border border-slate-800 text-[11px] font-mono-code text-amber-300">
@@ -596,9 +602,9 @@
                 <div class="p-6 rounded-2xl bg-slate-900/80 border border-white/10 hover:border-blue-400/50 transition">
                     <div class="flex items-center gap-3 mb-3 text-purple-400">
                         <i class="fa-solid fa-font text-lg"></i>
-                        <h4 class="font-bold text-white text-base">大小寫智慧轉換</h4>
+                        <h4 data-i18n="rules.r4_title" class="font-bold text-white text-base">大小寫智慧轉換</h4>
                     </div>
-                    <p class="text-xs text-slate-400 leading-relaxed mb-3">
+                    <p data-i18n="rules.r4_desc" class="text-xs text-slate-400 leading-relaxed mb-3">
                         一鍵統一副檔名大寫（如統一將 <code class="text-purple-300">.JPG</code> 轉為小寫 <code class="text-purple-300">.jpg</code>），或將主檔名轉為字首大寫、全大寫、全小寫。
                     </p>
                     <div class="p-2 rounded bg-slate-950 border border-slate-800 text-[11px] font-mono-code text-purple-300">
@@ -610,9 +616,9 @@
                 <div class="p-6 rounded-2xl bg-slate-900/80 border border-white/10 hover:border-blue-400/50 transition">
                     <div class="flex items-center gap-3 mb-3 text-rose-400">
                         <i class="fa-solid fa-tags text-lg"></i>
-                        <h4 class="font-bold text-white text-base">中繼資料變數注入</h4>
+                        <h4 data-i18n="rules.r5_title" class="font-bold text-white text-base">中繼資料變數注入</h4>
                     </div>
-                    <p class="text-xs text-slate-400 leading-relaxed mb-3">
+                    <p data-i18n="rules.r5_desc" class="text-xs text-slate-400 leading-relaxed mb-3">
                         自動讀取相機 EXIF、音樂 ID3 與檔案系統屬性，透過簡潔模板標籤語法自由展開組合。
                     </p>
                     <div class="p-2 rounded bg-slate-950 border border-slate-800 text-[11px] font-mono-code text-rose-300">
@@ -624,9 +630,9 @@
                 <div class="p-6 rounded-2xl bg-slate-900/80 border border-white/10 hover:border-blue-400/50 transition">
                     <div class="flex items-center gap-3 mb-3 text-cyan-400">
                         <i class="fa-solid fa-language text-lg"></i>
-                        <h4 class="font-bold text-white text-base">漢字智慧轉拼音</h4>
+                        <h4 data-i18n="rules.r6_title" class="font-bold text-white text-base">漢字智慧轉拼音</h4>
                     </div>
-                    <p class="text-xs text-slate-400 leading-relaxed mb-3">
+                    <p data-i18n="rules.r6_desc" class="text-xs text-slate-400 leading-relaxed mb-3">
                         支援中文全拼（qing_tian）、首字大寫（Qing_Tian）與簡拼縮寫（qt），跨語系系統傳輸無障礙。
                     </p>
                     <div class="p-2 rounded bg-slate-950 border border-slate-800 text-[11px] font-mono-code text-cyan-300">
@@ -638,9 +644,9 @@
                 <div class="p-6 rounded-2xl bg-slate-900/80 border border-white/10 hover:border-blue-400/50 transition">
                     <div class="flex items-center gap-3 mb-3 text-indigo-400">
                         <i class="fa-solid fa-shield-virus text-lg"></i>
-                        <h4 class="font-bold text-white text-base">非法字元與裝飾清洗</h4>
+                        <h4 data-i18n="rules.r7_title" class="font-bold text-white text-base">非法字元與裝飾清洗</h4>
                     </div>
-                    <p class="text-xs text-slate-400 leading-relaxed mb-3">
+                    <p data-i18n="rules.r7_desc" class="text-xs text-slate-400 leading-relaxed mb-3">
                         自動濾除 Windows 禁止字元（<code class="text-indigo-300">\/:*?"&lt;&gt;|</code>）與網路資源常見的垃圾裝飾符號（如【】★等）。
                     </p>
                     <div class="p-2 rounded bg-slate-950 border border-slate-800 text-[11px] font-mono-code text-indigo-300">
@@ -652,9 +658,9 @@
                 <div class="p-6 rounded-2xl bg-slate-900/80 border border-white/10 hover:border-blue-400/50 transition">
                     <div class="flex items-center gap-3 mb-3 text-teal-400">
                         <i class="fa-solid fa-crop-simple text-lg"></i>
-                        <h4 class="font-bold text-white text-base">空白修剪與去重</h4>
+                        <h4 data-i18n="rules.r8_title" class="font-bold text-white text-base">空白修剪與去重</h4>
                     </div>
-                    <p class="text-xs text-slate-400 leading-relaxed mb-3">
+                    <p data-i18n="rules.r8_desc" class="text-xs text-slate-400 leading-relaxed mb-3">
                         自動修除檔名前後多餘的空白字元，並將中間連續多個空格收斂為單一空格，讓檔名維持標準乾淨整齊。
                     </p>
                     <div class="p-2 rounded bg-slate-950 border border-slate-800 text-[11px] font-mono-code text-teal-300">
@@ -672,27 +678,27 @@
                 <div class="lg:col-span-5">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-bold mb-4">
                         <i class="fa-solid fa-database"></i>
-                        <span>非同步多執行緒讀取</span>
+                        <span data-i18n="meta.badge">非同步多執行緒讀取</span>
                     </div>
-                    <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight mb-6 leading-tight">
+                    <h2 data-i18n="meta.title" class="text-3xl sm:text-4xl font-black text-white tracking-tight mb-6 leading-tight">
                         多維中繼資料抽取<br>
                         <span class="text-blue-400">攝影、音樂與文檔整理的究極神器</span>
                     </h2>
-                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                    <p data-i18n="meta.desc" class="text-slate-400 text-sm leading-relaxed mb-6">
                         KyteRename 內建專業級非同步中繼資料讀取引擎（Pillow 與 mutagen 支援）。您無需手動查詢相機資訊或音訊屬性，只要在規則模板中使用花括號標籤，系統即刻在後台解析完成並自動填補：
                     </p>
                     <ul class="space-y-3 text-sm text-slate-300 mb-8 font-sans">
                         <li class="flex items-center gap-3">
                             <i class="fa-solid fa-camera text-amber-400 text-base"></i>
-                            <span><b>相片 EXIF 資訊</b>：精確拍攝年月日與時分秒、圖片寬高解析度、相機機型。</span>
+                            <span data-i18n="meta.li_exif"><b>相片 EXIF 資訊</b>：精確拍攝年月日與時分秒、圖片寬高解析度、相機機型。</span>
                         </li>
                         <li class="flex items-center gap-3">
                             <i class="fa-solid fa-music text-blue-400 text-base"></i>
-                            <span><b>音樂 ID3 / 標籤</b>：演出者 (Artist)、專輯 (Album)、音軌序號 (Track)、曲名 (Title)。</span>
+                            <span data-i18n="meta.li_id3"><b>音樂 ID3 / 標籤</b>：演出者 (Artist)、專輯 (Album)、音軌序號 (Track)、曲名 (Title)。</span>
                         </li>
                         <li class="flex items-center gap-3">
                             <i class="fa-solid fa-folder text-emerald-400 text-base"></i>
-                            <span><b>檔案系統屬性</b>：建立/修改日期、上層資料夾名稱、自動序號補零。</span>
+                            <span data-i18n="meta.li_fs"><b>檔案系統屬性</b>：建立/修改日期、上層資料夾名稱、自動序號補零。</span>
                         </li>
                     </ul>
                 </div>
@@ -701,16 +707,16 @@
                 <div class="lg:col-span-7">
                     <div class="p-6 rounded-3xl dark-glass border border-white/15 shadow-2xl overflow-x-auto">
                         <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center justify-between">
-                            <span>常用中繼資料變數語法對照表</span>
+                            <span data-i18n="meta.table_title">常用中繼資料變數語法對照表</span>
                             <span class="text-blue-400 font-mono-code text-[11px]"><i class="fa-solid fa-code mr-1"></i>Template Tags</span>
                         </div>
                         <table class="w-full text-left text-xs font-mono-code">
                             <thead>
                                 <tr class="border-b border-white/10 text-slate-300 font-sans">
-                                    <th class="py-2.5 px-3">變數標籤</th>
-                                    <th class="py-2.5 px-3">資料來源</th>
-                                    <th class="py-2.5 px-3">展開範例</th>
-                                    <th class="py-2.5 px-3 font-sans">說明</th>
+                                    <th data-i18n="meta.th_tag" class="py-2.5 px-3">變數標籤</th>
+                                    <th data-i18n="meta.th_source" class="py-2.5 px-3">資料來源</th>
+                                    <th data-i18n="meta.th_example" class="py-2.5 px-3">展開範例</th>
+                                    <th data-i18n="meta.th_desc" class="py-2.5 px-3 font-sans">說明</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-white/5 text-slate-300">
@@ -718,43 +724,43 @@
                                     <td class="py-2.5 px-3 text-amber-300 font-bold">{exif_date}</td>
                                     <td class="py-2.5 px-3 text-slate-400 font-sans">相片 EXIF</td>
                                     <td class="py-2.5 px-3 text-emerald-400">2026-10-05_143022</td>
-                                    <td class="py-2.5 px-3 text-slate-400 font-sans">相機原始拍攝時間</td>
+                                    <td data-i18n="meta.td_exif_desc" class="py-2.5 px-3 text-slate-400 font-sans">相機原始拍攝時間</td>
                                 </tr>
                                 <tr class="hover:bg-white/5 transition">
                                     <td class="py-2.5 px-3 text-amber-300 font-bold">{resolution}</td>
                                     <td class="py-2.5 px-3 text-slate-400 font-sans">影像尺寸</td>
                                     <td class="py-2.5 px-3 text-emerald-400">3840x2160</td>
-                                    <td class="py-2.5 px-3 text-slate-400 font-sans">寬度 x 高度解析度</td>
+                                    <td data-i18n="meta.td_res_desc" class="py-2.5 px-3 text-slate-400 font-sans">寬度 x 高度解析度</td>
                                 </tr>
                                 <tr class="hover:bg-white/5 transition">
                                     <td class="py-2.5 px-3 text-blue-300 font-bold">{artist}</td>
                                     <td class="py-2.5 px-3 text-slate-400 font-sans">音樂 ID3</td>
                                     <td class="py-2.5 px-3 text-emerald-400">周杰倫</td>
-                                    <td class="py-2.5 px-3 text-slate-400 font-sans">歌曲演出者/演唱者</td>
+                                    <td data-i18n="meta.td_artist_desc" class="py-2.5 px-3 text-slate-400 font-sans">歌曲演出者/演唱者</td>
                                 </tr>
                                 <tr class="hover:bg-white/5 transition">
                                     <td class="py-2.5 px-3 text-blue-300 font-bold">{album}</td>
                                     <td class="py-2.5 px-3 text-slate-400 font-sans">音樂 ID3</td>
                                     <td class="py-2.5 px-3 text-emerald-400">葉惠美</td>
-                                    <td class="py-2.5 px-3 text-slate-400 font-sans">音樂唱片專輯名稱</td>
+                                    <td data-i18n="meta.td_album_desc" class="py-2.5 px-3 text-slate-400 font-sans">音樂唱片專輯名稱</td>
                                 </tr>
                                 <tr class="hover:bg-white/5 transition">
                                     <td class="py-2.5 px-3 text-blue-300 font-bold">{track}</td>
                                     <td class="py-2.5 px-3 text-slate-400 font-sans">音樂 ID3</td>
                                     <td class="py-2.5 px-3 text-emerald-400">03</td>
-                                    <td class="py-2.5 px-3 text-slate-400 font-sans">唱片音軌序號 (自動補零)</td>
+                                    <td data-i18n="meta.td_track_desc" class="py-2.5 px-3 text-slate-400 font-sans">唱片音軌序號 (自動補零)</td>
                                 </tr>
                                 <tr class="hover:bg-white/5 transition">
                                     <td class="py-2.5 px-3 text-cyan-300 font-bold">{parent}</td>
                                     <td class="py-2.5 px-3 text-slate-400 font-sans">檔案系統</td>
                                     <td class="py-2.5 px-3 text-emerald-400">2026旅遊相簿</td>
-                                    <td class="py-2.5 px-3 text-slate-400 font-sans">檔案所在上層目錄名稱</td>
+                                    <td data-i18n="meta.td_parent_desc" class="py-2.5 px-3 text-slate-400 font-sans">檔案所在上層目錄名稱</td>
                                 </tr>
                                 <tr class="hover:bg-white/5 transition">
                                     <td class="py-2.5 px-3 text-cyan-300 font-bold">{date}</td>
                                     <td class="py-2.5 px-3 text-slate-400 font-sans">檔案系統</td>
                                     <td class="py-2.5 px-3 text-emerald-400">2026-10-05</td>
-                                    <td class="py-2.5 px-3 text-slate-400 font-sans">檔案修改日期</td>
+                                    <td data-i18n="meta.td_date_desc" class="py-2.5 px-3 text-slate-400 font-sans">檔案修改日期</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -768,13 +774,13 @@
     <section id="topology" class="py-24 bg-slate-950">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center max-w-3xl mx-auto mb-16">
-                <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-3.5 py-1.5 rounded-full border border-emerald-400/20">
+                <span data-i18n="topo.badge" class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-3.5 py-1.5 rounded-full border border-emerald-400/20">
                     Industrial-Grade Safety
                 </span>
-                <h2 class="text-3xl sm:text-5xl font-black text-white mt-4 tracking-tight">
+                <h2 data-i18n="topo.title" class="text-3xl sm:text-5xl font-black text-white mt-4 tracking-tight">
                     安全拓撲 DAG 與 Ctrl+Z 快照還原
                 </h2>
-                <p class="text-slate-400 text-base mt-4 leading-relaxed">
+                <p data-i18n="topo.desc" class="text-slate-400 text-base mt-4 leading-relaxed">
                     永遠不用擔心檔名相撞導致珍貴檔案被意外覆蓋。我們把「資料絕對安全」視為最高指導原則。
                 </p>
             </div>
@@ -785,8 +791,8 @@
                     <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-xl mb-6 border border-emerald-500/30">
                         <i class="fa-solid fa-code-merge"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-3">連鎖改名拓撲逆序解析</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                    <h3 data-i18n="topo.c1_title" class="text-xl font-bold text-white mb-3">連鎖改名拓撲逆序解析</h3>
+                    <p data-i18n="topo.c1_desc" class="text-slate-400 text-sm leading-relaxed mb-4">
                         當您將 <code class="text-emerald-300 font-mono-code text-xs">file1➔file2</code> 同時將 <code class="text-emerald-300 font-mono-code text-xs">file2➔file3</code> 時，系統自動計算有向無環圖 (DAG)，先執行 <code class="text-slate-200 font-mono-code text-xs">file2➔file3</code> 釋放佔位，杜絕檔案被覆蓋破壞。
                     </p>
                     <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-[11px] font-mono-code text-emerald-400">
@@ -800,8 +806,8 @@
                     <div class="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-400 flex items-center justify-center text-xl mb-6 border border-amber-500/30">
                         <i class="fa-solid fa-recycle"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-3">三階段暫存標記破圈</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                    <h3 data-i18n="topo.c2_title" class="text-xl font-bold text-white mb-3">三階段暫存標記破圈</h3>
+                    <p data-i18n="topo.c2_desc" class="text-slate-400 text-sm leading-relaxed mb-4">
                         若遇到直接死結（例如 <code class="text-amber-300 font-mono-code text-xs">A➔B</code> 且 <code class="text-amber-300 font-mono-code text-xs">B➔A</code> 的檔名對調），引擎自動插入微秒級暫存中介檔案 <code class="text-slate-200 font-mono-code text-xs">__kyte_tmp__</code> 進行破圈，最後原子提交還原。
                     </p>
                     <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-[11px] font-mono-code text-amber-400">
@@ -815,8 +821,8 @@
                     <div class="w-12 h-12 rounded-2xl bg-blue-500/15 text-blue-400 flex items-center justify-center text-xl mb-6 border border-blue-500/30">
                         <i class="fa-solid fa-clock-rotate-left"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-3">原子快照與 Ctrl+Z 逆向還原</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                    <h3 data-i18n="topo.c3_title" class="text-xl font-bold text-white mb-3">原子快照與 Ctrl+Z 逆向還原</h3>
+                    <p data-i18n="topo.c3_desc" class="text-slate-400 text-sm leading-relaxed mb-4">
                         每次按下改名，自動在本地資料夾儲存快照日誌。隔天或重啟電腦後，只需按 <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-blue-300 font-mono-code text-xs">Ctrl+Z</kbd>，系統依照逆向拓撲將所有檔案原路無痛復原。
                     </p>
                     <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-[11px] font-mono-code text-blue-400">
@@ -835,32 +841,32 @@
                 <div>
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-bold mb-4">
                         <i class="fa-solid fa-network-wired"></i>
-                        <span>Kyte 生態系原生跨進程互聯</span>
+                        <span data-i18n="ipc.badge">Kyte 生態系原生跨進程互聯</span>
                     </div>
-                    <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight mb-6 leading-tight">
+                    <h2 data-i18n="ipc.title" class="text-3xl sm:text-5xl font-black text-white tracking-tight mb-6 leading-tight">
                         改名同時預覽內容<br>
                         <span class="text-blue-400">Space 鍵瞬開 · 方向鍵上下零延遲切換</span>
                     </h2>
-                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-6 font-normal">
+                    <p data-i18n="ipc.desc" class="text-slate-300 text-sm sm:text-base leading-relaxed mb-6 font-normal">
                         您是否曾改名改到一半，分不清這張「IMG_0023.jpg」到底是不是合照？
                         KyteRename 內建 Windows 原生 Named Pipe 跨進程廣播，只要本機安裝了 <a href="https://kyteview.aisming.com/" class="text-blue-400 underline hover:text-blue-300 font-bold">KyteView</a>，兩者即可無縫合體：
                     </p>
                     <ul class="space-y-4 text-sm text-slate-300 mb-8 font-sans">
                         <li class="flex items-start gap-3">
                             <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-check text-xs"></i></span>
-                            <div>
+                            <div data-i18n="ipc.li1">
                                 <strong class="text-white">按 Space 空白鍵即時喚起</strong>：在清單選中項目隨手按 Space，KyteView 瞬間彈出預覽 4K 影音、Office 文件或高畫質相片。
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
                             <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-check text-xs"></i></span>
-                            <div>
+                            <div data-i18n="ipc.li2">
                                 <strong class="text-white">方向鍵上下移動，焦點絕不脫離</strong>：預覽開啟時按鍵盤 <kbd class="px-1.5 py-0.5 bg-slate-800 rounded font-mono-code text-xs text-blue-300">↑</kbd> <kbd class="px-1.5 py-0.5 bg-slate-800 rounded font-mono-code text-xs text-blue-300">↓</kbd>，KyteView 視窗即時同步切換，鍵盤焦點始終鎖定在改名清單！
                             </div>
                         </li>
                         <li class="flex items-start gap-3">
                             <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-check text-xs"></i></span>
-                            <div>
+                            <div data-i18n="ipc.li3">
                                 <strong class="text-white">純本機 IPC 記憶體通訊</strong>：零依賴網路，微秒級握手協定，兼顧極致靈敏反應與 100% 隱私安全。
                             </div>
                         </li>
@@ -900,13 +906,13 @@
     <section id="compare" class="py-24 bg-slate-950">
         <div class="max-w-6xl mx-auto px-6">
             <div class="text-center max-w-3xl mx-auto mb-16">
-                <span class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-3.5 py-1.5 rounded-full border border-blue-400/20">
+                <span data-i18n="comp.badge" class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-3.5 py-1.5 rounded-full border border-blue-400/20">
                     Feature Comparison
                 </span>
-                <h2 class="text-3xl sm:text-5xl font-black text-white mt-4 tracking-tight">
+                <h2 data-i18n="comp.title" class="text-3xl sm:text-5xl font-black text-white mt-4 tracking-tight">
                     為什麼 KyteRename 鶴立雞群？
                 </h2>
-                <p class="text-slate-400 text-base mt-4 leading-relaxed">
+                <p data-i18n="comp.desc" class="text-slate-400 text-base mt-4 leading-relaxed">
                     告別死板笨重的舊工具，享受專業現代的批次改名新標竿。
                 </p>
             </div>
@@ -916,8 +922,8 @@
                     <table class="w-full text-left border-collapse text-xs sm:text-sm">
                         <thead>
                             <tr class="bg-slate-900/90 border-b border-white/10 text-slate-300">
-                                <th class="p-4 sm:p-5 font-bold">核心指標 / 功能</th>
-                                <th class="p-4 sm:p-5 font-black text-blue-400 bg-blue-950/40">KyteRename (本軟體)</th>
+                                <th data-i18n="comp.th_metric" class="p-4 sm:p-5 font-bold">核心指標 / 功能</th>
+                                <th data-i18n="comp.th_kyterename" class="p-4 sm:p-5 font-black text-blue-400 bg-blue-950/40">KyteRename (本軟體)</th>
                                 <th class="p-4 sm:p-5 font-semibold text-slate-400">PowerToys PowerRename</th>
                                 <th class="p-4 sm:p-5 font-semibold text-slate-400">傳統改名工具 (Bulk Rename)</th>
                                 <th class="p-4 sm:p-5 font-semibold text-slate-400">Windows 檔案總管 F2</th>
@@ -927,62 +933,62 @@
                             <tr class="hover:bg-white/5 transition">
                                 <td class="p-4 sm:p-5 font-bold text-white flex items-center gap-2">
                                     <i class="fa-solid fa-bolt text-amber-400"></i>
-                                    <span>雙欄即時對照預覽</span>
+                                    <span data-i18n="comp.r1_metric">雙欄即時對照預覽</span>
                                 </td>
-                                <td class="p-4 sm:p-5 font-bold text-emerald-400 bg-blue-950/20">50ms 零延遲虛擬滾動</td>
-                                <td class="p-4 sm:p-5 text-slate-400">基礎清單 (大檔案易卡頓)</td>
-                                <td class="p-4 sm:p-5 text-slate-400">靜態預覽 (介面擁擠混亂)</td>
-                                <td class="p-4 sm:p-5 text-rose-400">無預覽 (直接改)</td>
+                                <td data-i18n="comp.r1_c1" class="p-4 sm:p-5 font-bold text-emerald-400 bg-blue-950/20">50ms 零延遲虛擬滾動</td>
+                                <td data-i18n="comp.r1_c2" class="p-4 sm:p-5 text-slate-400">基礎清單 (大檔案易卡頓)</td>
+                                <td data-i18n="comp.r1_c3" class="p-4 sm:p-5 text-slate-400">靜態預覽 (介面擁擠混亂)</td>
+                                <td data-i18n="comp.r1_c4" class="p-4 sm:p-5 text-rose-400">無預覽 (直接改)</td>
                             </tr>
                             <tr class="hover:bg-white/5 transition">
                                 <td class="p-4 sm:p-5 font-bold text-white flex items-center gap-2">
                                     <i class="fa-solid fa-highlighter text-amber-400"></i>
-                                    <span>原檔名琥珀金高亮匹配</span>
+                                    <span data-i18n="comp.r2_metric">原檔名琥珀金高亮匹配</span>
                                 </td>
-                                <td class="p-4 sm:p-5 font-bold text-emerald-400 bg-blue-950/20">即時 Delegate 精準高亮</td>
-                                <td class="p-4 sm:p-5 text-rose-400">無高亮</td>
-                                <td class="p-4 sm:p-5 text-rose-400">無高亮</td>
-                                <td class="p-4 sm:p-5 text-rose-400">無</td>
+                                <td data-i18n="comp.r2_c1" class="p-4 sm:p-5 font-bold text-emerald-400 bg-blue-950/20">即時 Delegate 精準高亮</td>
+                                <td data-i18n="comp.r2_c2" class="p-4 sm:p-5 text-rose-400">無高亮</td>
+                                <td data-i18n="comp.r2_c3" class="p-4 sm:p-5 text-rose-400">無高亮</td>
+                                <td data-i18n="comp.r2_c4" class="p-4 sm:p-5 text-rose-400">無</td>
                             </tr>
                             <tr class="hover:bg-white/5 transition">
                                 <td class="p-4 sm:p-5 font-bold text-white flex items-center gap-2">
                                     <i class="fa-solid fa-camera text-blue-400"></i>
-                                    <span>相片 EXIF 與音樂 ID3</span>
+                                    <span data-i18n="comp.r3_metric">相片 EXIF 與音樂 ID3</span>
                                 </td>
-                                <td class="p-4 sm:p-5 font-bold text-emerald-400 bg-blue-950/20">全自動非同步讀取展開</td>
-                                <td class="p-4 sm:p-5 text-rose-400">不支援</td>
-                                <td class="p-4 sm:p-5 text-amber-400">僅支援部分 EXIF</td>
-                                <td class="p-4 sm:p-5 text-rose-400">不支援</td>
+                                <td data-i18n="comp.r3_c1" class="p-4 sm:p-5 font-bold text-emerald-400 bg-blue-950/20">全自動非同步讀取展開</td>
+                                <td data-i18n="comp.r3_c2" class="p-4 sm:p-5 text-rose-400">不支援</td>
+                                <td data-i18n="comp.r3_c3" class="p-4 sm:p-5 text-amber-400">僅支援部分 EXIF</td>
+                                <td data-i18n="comp.r3_c4" class="p-4 sm:p-5 text-rose-400">不支援</td>
                             </tr>
                             <tr class="hover:bg-white/5 transition">
                                 <td class="p-4 sm:p-5 font-bold text-white flex items-center gap-2">
                                     <i class="fa-solid fa-diagram-project text-purple-400"></i>
-                                    <span>循環改名與防覆蓋</span>
+                                    <span data-i18n="comp.r4_metric">循環改名與防覆蓋</span>
                                 </td>
-                                <td class="p-4 sm:p-5 font-bold text-emerald-400 bg-blue-950/20">DAG 拓撲排序 + 暫存破圈</td>
-                                <td class="p-4 sm:p-5 text-rose-400">可能引發衝突或失敗</td>
-                                <td class="p-4 sm:p-5 text-amber-400">易發生檔案鎖定衝突</td>
-                                <td class="p-4 sm:p-5 text-rose-400">自動加上 (1) 括號亂名</td>
+                                <td data-i18n="comp.r4_c1" class="p-4 sm:p-5 font-bold text-emerald-400 bg-blue-950/20">DAG 拓撲排序 + 暫存破圈</td>
+                                <td data-i18n="comp.r4_c2" class="p-4 sm:p-5 text-rose-400">可能引發衝突或失敗</td>
+                                <td data-i18n="comp.r4_c3" class="p-4 sm:p-5 text-amber-400">易發生檔案鎖定衝突</td>
+                                <td data-i18n="comp.r4_c4" class="p-4 sm:p-5 text-rose-400">自動加上 (1) 括號亂名</td>
                             </tr>
                             <tr class="hover:bg-white/5 transition">
                                 <td class="p-4 sm:p-5 font-bold text-white flex items-center gap-2">
                                     <i class="fa-solid fa-rotate-left text-emerald-400"></i>
-                                    <span>Ctrl+Z 安全歷史還原</span>
+                                    <span data-i18n="comp.r5_metric">Ctrl+Z 安全歷史還原</span>
                                 </td>
-                                <td class="p-4 sm:p-5 font-bold text-emerald-400 bg-blue-950/20">原子快照日誌，重啟可復原</td>
-                                <td class="p-4 sm:p-5 text-amber-400">僅支援當前視窗復原</td>
-                                <td class="p-4 sm:p-5 text-slate-400">有限復原日誌</td>
-                                <td class="p-4 sm:p-5 text-amber-400">Windows Ctrl+Z (易失敗)</td>
+                                <td data-i18n="comp.r5_c1" class="p-4 sm:p-5 font-bold text-emerald-400 bg-blue-950/20">原子快照日誌，重啟可復原</td>
+                                <td data-i18n="comp.r5_c2" class="p-4 sm:p-5 text-amber-400">僅支援當前視窗復原</td>
+                                <td data-i18n="comp.r5_c3" class="p-4 sm:p-5 text-slate-400">有限復原日誌</td>
+                                <td data-i18n="comp.r5_c4" class="p-4 sm:p-5 text-amber-400">Windows Ctrl+Z (易失敗)</td>
                             </tr>
                             <tr class="hover:bg-white/5 transition">
                                 <td class="p-4 sm:p-5 font-bold text-white flex items-center gap-2">
                                     <i class="fa-solid fa-expand text-sky-400"></i>
-                                    <span>檔案快速預覽生態連動</span>
+                                    <span data-i18n="comp.r6_metric">檔案快速預覽生態連動</span>
                                 </td>
-                                <td class="p-4 sm:p-5 font-bold text-emerald-400 bg-blue-950/20">Space 鍵直通 KyteView 預覽</td>
-                                <td class="p-4 sm:p-5 text-rose-400">不支援</td>
-                                <td class="p-4 sm:p-5 text-rose-400">不支援</td>
-                                <td class="p-4 sm:p-5 text-rose-400">不支援</td>
+                                <td data-i18n="comp.r6_c1" class="p-4 sm:p-5 font-bold text-emerald-400 bg-blue-950/20">Space 鍵直通 KyteView 預覽</td>
+                                <td data-i18n="comp.r6_c2" class="p-4 sm:p-5 text-rose-400">不支援</td>
+                                <td data-i18n="comp.r6_c3" class="p-4 sm:p-5 text-rose-400">不支援</td>
+                                <td data-i18n="comp.r6_c4" class="p-4 sm:p-5 text-rose-400">不支援</td>
                             </tr>
                         </tbody>
                     </table>
@@ -995,13 +1001,13 @@
     <section id="shortcuts" class="py-24 bg-slate-900/60 border-t border-white/10">
         <div class="max-w-6xl mx-auto px-6">
             <div class="text-center max-w-3xl mx-auto mb-16">
-                <span class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-3.5 py-1.5 rounded-full border border-blue-400/20">
+                <span data-i18n="sc.badge" class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-3.5 py-1.5 rounded-full border border-blue-400/20">
                     Keyboard Shortcuts
                 </span>
-                <h2 class="text-3xl sm:text-5xl font-black text-white mt-4 tracking-tight">
+                <h2 data-i18n="sc.title" class="text-3xl sm:text-5xl font-black text-white mt-4 tracking-tight">
                     極速鍵盤工作流
                 </h2>
-                <p class="text-slate-400 text-base mt-4 leading-relaxed">
+                <p data-i18n="sc.desc" class="text-slate-400 text-base mt-4 leading-relaxed">
                     雙手無須離開鍵盤，快捷鍵讓您的檔案整理效率狂飆數倍。
                 </p>
             </div>
@@ -1010,8 +1016,8 @@
                 <!-- 鍵位 1 -->
                 <div class="p-5 rounded-2xl bg-slate-900/90 border border-white/10 flex items-center justify-between">
                     <div>
-                        <div class="text-sm font-bold text-white">快速預覽 / 關閉預覽</div>
-                        <div class="text-xs text-slate-400 mt-1">透過 KyteView 瞬開內容</div>
+                        <div data-i18n="sc.s1_title" class="text-sm font-bold text-white">快速預覽 / 關閉預覽</div>
+                        <div data-i18n="sc.s1_desc" class="text-xs text-slate-400 mt-1">透過 KyteView 瞬開內容</div>
                     </div>
                     <kbd class="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 font-mono-code text-blue-300 font-bold text-xs shadow">Space</kbd>
                 </div>
@@ -1019,8 +1025,8 @@
                 <!-- 鍵位 2 -->
                 <div class="p-5 rounded-2xl bg-slate-900/90 border border-white/10 flex items-center justify-between">
                     <div>
-                        <div class="text-sm font-bold text-white">連續導航檔案</div>
-                        <div class="text-xs text-slate-400 mt-1">移動選取，預覽無縫同步</div>
+                        <div data-i18n="sc.s2_title" class="text-sm font-bold text-white">連續導航檔案</div>
+                        <div data-i18n="sc.s2_desc" class="text-xs text-slate-400 mt-1">移動選取，預覽無縫同步</div>
                     </div>
                     <div class="flex items-center gap-1 font-mono-code text-xs">
                         <kbd class="px-2 py-1 rounded bg-slate-800 border border-slate-700 text-blue-300 font-bold">↑</kbd>
@@ -1031,8 +1037,8 @@
                 <!-- 鍵位 3 -->
                 <div class="p-5 rounded-2xl bg-slate-900/90 border border-white/10 flex items-center justify-between">
                     <div>
-                        <div class="text-sm font-bold text-white">復原上次更名 (Undo)</div>
-                        <div class="text-xs text-slate-400 mt-1">依照拓撲逆序安全還原</div>
+                        <div data-i18n="sc.s3_title" class="text-sm font-bold text-white">復原上次更名 (Undo)</div>
+                        <div data-i18n="sc.s3_desc" class="text-xs text-slate-400 mt-1">依照拓撲逆序安全還原</div>
                     </div>
                     <kbd class="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 font-mono-code text-emerald-400 font-bold text-xs shadow">Ctrl + Z</kbd>
                 </div>
@@ -1040,8 +1046,8 @@
                 <!-- 鍵位 4 -->
                 <div class="p-5 rounded-2xl bg-slate-900/90 border border-white/10 flex items-center justify-between">
                     <div>
-                        <div class="text-sm font-bold text-white">聚焦搜尋與取代列</div>
-                        <div class="text-xs text-slate-400 mt-1">快速輸入正則或文字</div>
+                        <div data-i18n="sc.s4_title" class="text-sm font-bold text-white">聚焦搜尋與取代列</div>
+                        <div data-i18n="sc.s4_desc" class="text-xs text-slate-400 mt-1">快速輸入正則或文字</div>
                     </div>
                     <kbd class="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 font-mono-code text-amber-400 font-bold text-xs shadow">Ctrl + F</kbd>
                 </div>
@@ -1049,8 +1055,8 @@
                 <!-- 鍵位 5 -->
                 <div class="p-5 rounded-2xl bg-slate-900/90 border border-white/10 flex items-center justify-between">
                     <div>
-                        <div class="text-sm font-bold text-white">全選清單項目</div>
-                        <div class="text-xs text-slate-400 mt-1">一次批量操作全部檔案</div>
+                        <div data-i18n="sc.s5_title" class="text-sm font-bold text-white">全選清單項目</div>
+                        <div data-i18n="sc.s5_desc" class="text-xs text-slate-400 mt-1">一次批量操作全部檔案</div>
                     </div>
                     <kbd class="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 font-mono-code text-slate-300 font-bold text-xs shadow">Ctrl + A</kbd>
                 </div>
@@ -1058,8 +1064,8 @@
                 <!-- 鍵位 6 -->
                 <div class="p-5 rounded-2xl bg-slate-900/90 border border-white/10 flex items-center justify-between">
                     <div>
-                        <div class="text-sm font-bold text-white">移除選取檔案項目</div>
-                        <div class="text-xs text-slate-400 mt-1">不影響硬碟實際檔案</div>
+                        <div data-i18n="sc.s6_title" class="text-sm font-bold text-white">移除選取檔案項目</div>
+                        <div data-i18n="sc.s6_desc" class="text-xs text-slate-400 mt-1">不影響硬碟實際檔案</div>
                     </div>
                     <kbd class="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 font-mono-code text-rose-400 font-bold text-xs shadow">Delete</kbd>
                 </div>
@@ -1067,17 +1073,155 @@
         </div>
     </section>
 
+    <!-- 授權方案與定價 (Pricing & Plans) -->
+    <section id="pricing" class="py-24 px-6 max-w-5xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <span data-i18n="price.badge" class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-3.5 py-1.5 rounded-full border border-blue-400/20">
+                PRICING & LICENSING
+            </span>
+            <h2 data-i18n="price.title" class="text-3xl sm:text-4xl font-extrabold text-white mt-4 tracking-tight">
+                簡單透明，買斷無訂閱負擔
+            </h2>
+            <p data-i18n="price.desc" class="text-slate-400 text-sm sm:text-base mt-3 leading-relaxed">
+                所有版本皆享完整隱私安全與離線本機極速體驗，拒絕繁瑣年費訂閱。
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+
+            <!-- 方案 1：14 天全功能免費試用版 -->
+            <div class="p-8 rounded-3xl bg-slate-900/50 border border-white/10 flex flex-col justify-between hover:border-white/20 transition relative">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span data-i18n="price.free_pill" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-800 text-slate-300 border border-white/10">零門檻試用</span>
+                    </div>
+                    <h3 data-i18n="price.free_title" class="text-2xl font-black text-white">免費下載體驗</h3>
+                    <p data-i18n="price.free_desc" class="text-xs text-slate-400 mt-2">下載即刻體驗，14 天全功能暢享，無需綁卡、無廣告干擾。</p>
+
+                    <div class="mt-6 mb-8 flex items-baseline gap-2">
+                        <span class="text-4xl font-black text-white">NT$ 0</span>
+                        <span data-i18n="price.free_duration" class="text-xs text-slate-500 font-medium">/ 14 天全功能暢享</span>
+                    </div>
+
+                    <div class="space-y-3.5 text-xs text-slate-300 border-t border-white/5 pt-6">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-check text-emerald-400"></i>
+                            <span data-i18n="price.free_f1"><b>雙欄 50ms 零延遲對照</b>（萬級檔案虛擬滾動 60 FPS）</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-check text-emerald-400"></i>
+                            <span data-i18n="price.free_f2"><b>14 天全功能解鎖</b>：體驗琥珀金正則高亮匹配與多規則串聯</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-check text-emerald-400"></i>
+                            <span data-i18n="price.free_f3"><b>14 天全功能解鎖</b>：體驗相片 EXIF 與音訊 ID3 標籤深度抽取</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-check text-emerald-400"></i>
+                            <span data-i18n="price.free_f4"><b>14 天全功能解鎖</b>：體驗三階段安全 DAG 拓撲換名與破圈處理</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-check text-emerald-400"></i>
+                            <span data-i18n="price.free_f5"><b>Ctrl+Z 歷史快照原子級安全還原</b>、KyteView 空白鍵連動預覽</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-slate-400">
+                            <i class="fa-solid fa-info-circle text-sky-400"></i>
+                            <span data-i18n="price.free_f6">試用期滿後<b>溫和降級</b>（保留基礎改名功能，工作流不中斷）</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-white/5">
+                    <a href="https://github.com/ais7896-hue/KyteRename/releases/download/v1.1.0/KyteRename_Setup_1.1.0.exe"
+                        data-i18n="price.free_btn" class="w-full py-3.5 px-6 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm text-center block transition shadow-sm">
+                        免費下載試用 (v1.1.0)
+                    </a>
+                </div>
+            </div>
+
+            <!-- 方案 2：個人終身專業版 (PRO) -->
+            <div class="p-8 rounded-3xl bg-gradient-to-b from-slate-900/90 to-slate-950 border-2 border-blue-500/60 shadow-2xl shadow-blue-500/20 flex flex-col justify-between relative overflow-hidden">
+                <!-- 裝飾光暈與早鳥徽章 -->
+                <div class="absolute -top-12 -right-12 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute top-4 right-4">
+                    <span class="text-[11px] font-extrabold px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-blue-500 text-white shadow-md flex items-center gap-1.5">
+                        <i class="fa-solid fa-fire"></i>
+                        <span data-i18n="price.pro_badge">早鳥特惠 · 限量發售</span>
+                    </span>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span data-i18n="price.pro_pill" class="text-xs font-bold px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">推薦旗艦</span>
+                    </div>
+                    <h3 class="text-2xl font-black text-white flex items-center gap-2">
+                        <span data-i18n="price.pro_title">個人終身專業版</span>
+                        <span class="text-xs px-2 py-0.5 rounded bg-blue-600 text-white font-bold">PRO</span>
+                    </h3>
+                    <p data-i18n="price.pro_desc" class="text-xs text-slate-300 mt-2">一次買斷終身使用，<b>預設提供 2 台裝置授權</b>，個人公私設備全包辦。</p>
+
+                    <div class="mt-6 mb-8 flex items-baseline gap-2.5">
+                        <span class="text-4xl sm:text-5xl font-black text-white tracking-tight">NT$ 199</span>
+                        <span class="text-sm text-slate-500 line-through">NT$ 299</span>
+                        <span data-i18n="price.pro_period" class="text-xs font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">買斷永久</span>
+                    </div>
+
+                    <div class="space-y-3.5 text-xs text-slate-200 border-t border-white/10 pt-6">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-circle-check text-blue-400 text-sm"></i>
+                            <span data-i18n="price.pro_f1"><b>1 組序號同時啟用 2 台裝置</b>（一桌機一筆電，全場包辦）</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-circle-check text-blue-400 text-sm"></i>
+                            <span data-i18n="price.pro_f2"><b>換機零後顧之憂</b>：舊電腦隨時一鍵移轉解綁，終身有效</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-circle-check text-blue-400 text-sm"></i>
+                            <span data-i18n="price.pro_f3"><b>完整解鎖琥珀金正則高亮</b>（支援高級 Capture Group 替換）</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-circle-check text-blue-400 text-sm"></i>
+                            <span data-i18n="price.pro_f4"><b>相片 EXIF / 音訊 ID3 深度抽取</b>（拍攝日期、相機型號、演出者）</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-circle-check text-blue-400 text-sm"></i>
+                            <span data-i18n="price.pro_f5"><b>三階段安全 DAG 拓撲換名與 Ctrl+Z 快照原路還原</b></span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-circle-check text-blue-400 text-sm"></i>
+                            <span data-i18n="price.pro_f6"><b>享有一年內免費維護與 Bug 修復</b>（若未來 OS 大型改版需重構，新版另行販售）</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-white/10">
+                    <a href="mailto:support@aisming.com?subject=KyteRename%20%E6%AD%A3%E7%89%88%E5%BA%8F%E8%99%9F%E8%B3%BC%E8%B2%B7%E8%AB%AE%E8%A9%A2"
+                        class="w-full py-3.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-sm text-center block transition shadow-lg shadow-blue-600/30 transform active:scale-98 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span data-i18n="price.pro_btn">立即取得早鳥序號 (NT$ 199 終身買斷)</span>
+                    </a>
+                    <div class="text-[11px] text-slate-400 text-center mt-2.5 flex items-center justify-center gap-3">
+                        <span><i class="fa-solid fa-shield-halved text-emerald-400 mr-1"></i><span data-i18n="price.pro_foot1">離線安全無後門</span></span>
+                        <span>·</span>
+                        <span><i class="fa-solid fa-rotate-left text-blue-400 mr-1"></i><span data-i18n="price.pro_foot2">支援自主換機移轉</span></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
     <!-- FAQ 常見問答 (Accordion) -->
     <section id="faq" class="py-24 bg-slate-950">
         <div class="max-w-4xl mx-auto px-6">
             <div class="text-center mb-16">
-                <span class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-3.5 py-1.5 rounded-full border border-blue-400/20">
+                <span data-i18n="faq.badge" class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-3.5 py-1.5 rounded-full border border-blue-400/20">
                     Frequently Asked Questions
                 </span>
-                <h2 class="text-3xl sm:text-5xl font-black text-white mt-4 tracking-tight">
+                <h2 data-i18n="faq.title" class="text-3xl sm:text-5xl font-black text-white mt-4 tracking-tight">
                     常見問與答
                 </h2>
-                <p class="text-slate-400 text-base mt-4">
+                <p data-i18n="faq.desc" class="text-slate-400 text-base mt-4">
                     任何關於授權、安全性與功能特性的疑問，在此都能找到解答。
                 </p>
             </div>
@@ -1086,10 +1230,10 @@
                 <!-- Q1 -->
                 <details class="group p-6 rounded-2xl dark-glass border border-white/10 open:border-blue-400/50 transition">
                     <summary class="flex justify-between items-center font-bold text-white cursor-pointer list-none text-base">
-                        <span>KyteRename 是免費的嗎？試用期與授權模式是什麼？</span>
+                        <span data-i18n="faq.q1">KyteRename 是免費的嗎？試用期與授權模式是什麼？</span>
                         <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition duration-300"></i>
                     </summary>
-                    <p class="text-slate-400 text-sm leading-relaxed mt-4 pt-4 border-t border-white/5">
+                    <p data-i18n="faq.a1" class="text-slate-400 text-sm leading-relaxed mt-4 pt-4 border-t border-white/5">
                         安裝後即享有 <strong>7 天全功能無限試用期</strong>！試用期結束後將溫和降級為基礎免費版。基礎免費版永久保留純文字替換、插入前後綴、大小寫轉換、清除字元、基本流水號等日常功能（單次上限 10 檔）。升級一次買斷專業版即可永久解鎖無限批次改名、相片 EXIF/ID3 中繼資料抽取、漢字拼音與正則表達式高級匹配。<br><br>
                         💡 <strong>維護與改版條款</strong>：本商品為一次性買斷，享有一年內免費維護與 Bug 修復。若未來作業系統大型改版（如 Windows 升級）導致軟體需重構，新版本將另行販售。
                     </p>
@@ -1098,10 +1242,10 @@
                 <!-- Q2 -->
                 <details class="group p-6 rounded-2xl dark-glass border border-white/10 open:border-blue-400/50 transition">
                     <summary class="flex justify-between items-center font-bold text-white cursor-pointer list-none text-base">
-                        <span>如果不小心按錯改名，如何保證能夠 100% 復原？</span>
+                        <span data-i18n="faq.q2">如果不小心按錯改名，如何保證能夠 100% 復原？</span>
                         <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition duration-300"></i>
                     </summary>
-                    <p class="text-slate-400 text-sm leading-relaxed mt-4 pt-4 border-t border-white/5">
+                    <p data-i18n="faq.a2" class="text-slate-400 text-sm leading-relaxed mt-4 pt-4 border-t border-white/5">
                         KyteRename 內建專利級安全快照引擎。每次執行改名時，系統會自動在本地硬碟產生結構化的原子對映 JSON 快照。您只需在主視窗隨時按下 <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-emerald-400 font-mono-code text-xs font-bold">Ctrl+Z</kbd> 或點擊頂部「復原上次改名」，引擎便會自動以逆向拓撲順序毫秒級原路還原。即使您隔天重新開機，歷史快照依然隨時可調用。
                     </p>
                 </details>
@@ -1109,10 +1253,10 @@
                 <!-- Q3 -->
                 <details class="group p-6 rounded-2xl dark-glass border border-white/10 open:border-blue-400/50 transition">
                     <summary class="flex justify-between items-center font-bold text-white cursor-pointer list-none text-base">
-                        <span>如何與 KyteView 連動？如果沒有安裝 KyteView 可以使用嗎？</span>
+                        <span data-i18n="faq.q3">如何與 KyteView 連動？如果沒有安裝 KyteView 可以使用嗎？</span>
                         <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition duration-300"></i>
                     </summary>
-                    <p class="text-slate-400 text-sm leading-relaxed mt-4 pt-4 border-t border-white/5">
+                    <p data-i18n="faq.a3" class="text-slate-400 text-sm leading-relaxed mt-4 pt-4 border-t border-white/5">
                         如果電腦未安裝 KyteView，KyteRename 所有重命名、EXIF/ID3 抽取、正規表達式與安全拓撲功能完全不受影響，依舊獨立完美運作。若有安裝 KyteView，則只需在清單按 <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-blue-300 font-mono-code text-xs font-bold">Space</kbd> 空白鍵，就能直接呼叫 KyteView 彈出影音與文件內容預覽，相輔相成。
                     </p>
                 </details>
@@ -1120,10 +1264,10 @@
                 <!-- Q4 -->
                 <details class="group p-6 rounded-2xl dark-glass border border-white/10 open:border-blue-400/50 transition">
                     <summary class="flex justify-between items-center font-bold text-white cursor-pointer list-none text-base">
-                        <span>支援 Windows 10 與 Windows 11 嗎？是否有深色模式？</span>
+                        <span data-i18n="faq.q4">支援 Windows 10 與 Windows 11 嗎？是否有深色模式？</span>
                         <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition duration-300"></i>
                     </summary>
-                    <p class="text-slate-400 text-sm leading-relaxed mt-4 pt-4 border-t border-white/5">
+                    <p data-i18n="faq.a4" class="text-slate-400 text-sm leading-relaxed mt-4 pt-4 border-t border-white/5">
                         完美原生支援 64 位元 Windows 10 (1809 以上) 與最新 Windows 11！在設定中支援「跟隨系統 (System)」、「深色模式 (Dark)」與「淺色模式 (Light)」動態即時切換，在夜間長時間整理檔案時能顯著減輕雙眼疲累。
                     </p>
                 </details>
@@ -1131,10 +1275,10 @@
                 <!-- Q5 -->
                 <details class="group p-6 rounded-2xl dark-glass border border-white/10 open:border-blue-400/50 transition">
                     <summary class="flex justify-between items-center font-bold text-white cursor-pointer list-none text-base">
-                        <span>改名時遇到檔案被其他軟體佔用鎖定會發生什麼事？</span>
+                        <span data-i18n="faq.q5">改名時遇到檔案被其他軟體佔用鎖定會發生什麼事？</span>
                         <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition duration-300"></i>
                     </summary>
-                    <p class="text-slate-400 text-sm leading-relaxed mt-4 pt-4 border-t border-white/5">
+                    <p data-i18n="faq.a5" class="text-slate-400 text-sm leading-relaxed mt-4 pt-4 border-t border-white/5">
                         KyteRename 具備嚴格的事前衝突偵測機制與非同步批次執行。若遇到少數被系統或 Excel 佔用的唯讀檔案，系統會跳出警告視窗明確告知受阻檔案路徑，並提供「略過鎖定檔案」或「重試」選項，絕不造成程序崩潰或清單中斷。
                     </p>
                 </details>
@@ -1142,10 +1286,10 @@
                 <!-- Q6 -->
                 <details class="group p-6 rounded-2xl dark-glass border border-white/10 open:border-blue-400/50 transition">
                     <summary class="flex justify-between items-center font-bold text-white cursor-pointer list-none text-base">
-                        <span>購買正式版享有什麼維護期？作業系統升級後能繼續使用嗎？</span>
+                        <span data-i18n="faq.q6">購買正式版享有什麼維護期？作業系統升級後能繼續使用嗎？</span>
                         <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition duration-300"></i>
                     </summary>
-                    <p class="text-slate-400 text-sm leading-relaxed mt-4 pt-4 border-t border-white/5">
+                    <p data-i18n="faq.a6" class="text-slate-400 text-sm leading-relaxed mt-4 pt-4 border-t border-white/5">
                         本商品為一次性買斷，享有一年內免費維護與 Bug 修復。若未來作業系統大型改版（如 Windows 升級）導致軟體需重構，新版本將另行販售。
                     </p>
                 </details>
@@ -1158,35 +1302,35 @@
         <div class="max-w-4xl mx-auto px-6 relative z-10">
             <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-blue-200 text-xs font-bold mb-6">
                 <i class="fa-solid fa-sparkles text-amber-300"></i>
-                <span>體驗極速、優雅且安全的批次更名</span>
+                <span data-i18n="cta.badge">體驗極速、優雅且安全的批次更名</span>
             </div>
-            <h2 class="text-3xl sm:text-5xl font-black tracking-tight mb-6 leading-tight">
+            <h2 data-i18n="cta.title" class="text-3xl sm:text-5xl font-black tracking-tight mb-6 leading-tight">
                 讓檔案整理從繁重負擔<br>變成順手愉悅的日常
             </h2>
-            <p class="text-blue-100 text-base sm:text-lg mb-10 max-w-2xl mx-auto font-normal leading-relaxed">
+            <p data-i18n="cta.desc" class="text-blue-100 text-base sm:text-lg mb-10 max-w-2xl mx-auto font-normal leading-relaxed">
                 立即下載 KyteRename，體驗 50ms 雙欄零延遲對照、琥珀金高亮匹配與三階段 DAG 拓撲換名技術。
             </p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <a href="https://github.com/ais7896-hue/KyteRename/releases/download/v1.1.0/KyteRename_Setup_1.1.0.exe"
                     class="w-full sm:w-auto px-8 py-4 bg-white text-blue-700 hover:bg-slate-100 font-extrabold rounded-2xl shadow-2xl hover:scale-105 active:scale-100 transition flex items-center justify-center gap-3">
                     <i class="fa-solid fa-download text-lg"></i>
-                    <span>免費下載 Windows 安裝版 (v1.1.0)</span>
+                    <span data-i18n="cta.btn_installer">免費下載 Windows 安裝版 (v1.1.0)</span>
                 </a>
                 <a href="https://github.com/ais7896-hue/KyteRename/releases/download/v1.1.0/KyteRename_1.1.0_Portable.zip"
                     class="w-full sm:w-auto px-7 py-4 bg-blue-900/70 hover:bg-blue-900 text-blue-200 font-bold rounded-2xl border border-blue-400/40 transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-file-zipper text-blue-300"></i>
-                    <span>免安裝綠色版 (.zip)</span>
+                    <span data-i18n="cta.btn_portable">免安裝綠色版 (.zip)</span>
                 </a>
                 <a href="guide.html"
                     class="w-full sm:w-auto px-7 py-4 bg-blue-900/40 hover:bg-blue-900/80 text-white font-bold rounded-2xl border border-white/20 transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-book-open"></i>
-                    <span>查閱操作指南</span>
+                    <span data-i18n="cta.btn_guide">查閱操作指南</span>
                 </a>
             </div>
             <div class="mt-8 text-xs text-blue-200/80 flex items-center justify-center gap-4">
-                <span><i class="fa-solid fa-check mr-1 text-emerald-400"></i>純本機安全運作</span>
-                <span><i class="fa-solid fa-check mr-1 text-emerald-400"></i>相容 Windows 10 & 11</span>
-                <span><i class="fa-solid fa-check mr-1 text-emerald-400"></i>無廣告無捆綁</span>
+                <span><i class="fa-solid fa-check mr-1 text-emerald-400"></i><span data-i18n="cta.point1">純本機安全運作</span></span>
+                <span><i class="fa-solid fa-check mr-1 text-emerald-400"></i><span data-i18n="cta.point2">相容 Windows 10 & 11</span></span>
+                <span><i class="fa-solid fa-check mr-1 text-emerald-400"></i><span data-i18n="cta.point3">無廣告無捆綁</span></span>
             </div>
         </div>
     </section>
@@ -1202,18 +1346,21 @@
                 </div>
             </div>
             <div class="flex flex-wrap items-center gap-6 text-xs text-slate-400">
-                <a href="https://ais7896-hue.github.io/Kyteindex/" class="hover:text-white transition font-bold text-amber-400 flex items-center gap-1"><i class="fa-solid fa-shapes text-xs"></i><span>Kyte 全系列</span></a>
-                <a href="https://kyteview.aisming.com/" class="hover:text-white transition">KyteView 預覽</a>
-                <a href="https://ais7896-hue.github.io/KyteShelf-website/" class="hover:text-white transition">KyteShelf 暫存</a>
-                <a href="#features" class="hover:text-white transition">核心特色</a>
-                <a href="#rules" class="hover:text-white transition">規則矩陣</a>
-                <a href="guide.html" class="hover:text-white transition font-bold text-blue-400">使用手冊 (User Guide)</a>
-                <a href="https://ais7896-hue.github.io/Kyteindex/terms.html" class="hover:text-white transition">服務條款</a>
-                <a href="https://ais7896-hue.github.io/Kyteindex/privacy.html" class="hover:text-white transition">隱私權政策</a>
-                <a href="mailto:support@aisming.com" class="hover:text-white transition">技術支援 (support@aisming.com)</a>
+                <a href="https://ais7896-hue.github.io/Kyteindex/" class="hover:text-white transition font-bold text-amber-400 flex items-center gap-1"><i class="fa-solid fa-shapes text-xs"></i><span data-i18n="footer.suite">Kyte 全系列</span></a>
+                <a href="https://kyteview.aisming.com/" data-i18n="footer.kyteview" class="hover:text-white transition">KyteView 預覽</a>
+                <a href="https://ais7896-hue.github.io/KyteShelf-website/" data-i18n="footer.kyteshelf" class="hover:text-white transition">KyteShelf 暫存</a>
+                <a href="#features" data-i18n="footer.features" class="hover:text-white transition">核心特色</a>
+                <a href="#rules" data-i18n="footer.rules" class="hover:text-white transition">規則矩陣</a>
+                <a href="#pricing" data-i18n="footer.pricing" class="hover:text-white transition text-amber-400 font-semibold">授權方案</a>
+                <a href="guide.html" data-i18n="footer.guide" class="hover:text-white transition font-bold text-blue-400">使用手冊 (User Guide)</a>
+                <a href="https://ais7896-hue.github.io/Kyteindex/terms.html" data-i18n="footer.terms" class="hover:text-white transition">服務條款</a>
+                <a href="https://ais7896-hue.github.io/Kyteindex/privacy.html" data-i18n="footer.privacy" class="hover:text-white transition">隱私權政策</a>
+                <a href="mailto:support@aisming.com" data-i18n="footer.support" class="hover:text-white transition">技術支援 (support@aisming.com)</a>
             </div>
         </div>
     </footer>
 
+    <!-- 多國語言即時切換引擎 -->
+    <script src="assets/i18n.js"></script>
 </body>
 </html>
