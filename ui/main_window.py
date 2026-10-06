@@ -485,7 +485,7 @@ class MainWindow(QMainWindow):
             self.entries.clear()
             self._load_paths(list(set(updated_paths)))
 
-            msg = f"{t('dialog.result_title')}！\n\n{t('dialog.result_success', count=result['success_count'])}"
+            msg = f"{t('dialog.result_title')}\n\n{t('dialog.result_success', count=result['success_count'])}"
             if result["failed_count"] > 0:
                 msg += f"\n{t('dialog.result_failed', count=result['failed_count'])}"
             msg += f"\n\n{t('dialog.result_undo_tip')}"
@@ -518,6 +518,14 @@ class MainWindow(QMainWindow):
             else:
                 self._refresh_previews(full_reset=True)
 
-            QMessageBox.information(self, t("dialog.undo_success_title"), f"{undo_result['message']}！")
+            msg = t("dialog.undo_success_msg", count=undo_result.get("restored_count", 0))
+            QMessageBox.information(self, t("dialog.undo_success_title"), msg)
         else:
-            QMessageBox.warning(self, t("dialog.undo_fail_title"), undo_result["message"])
+            err_code = undo_result.get("error_code")
+            if err_code == "no_snapshot" or "無可用的復原快照記錄" in undo_result.get("message", ""):
+                err_msg = t("dialog.undo_no_snapshot")
+            elif err_code == "read_failed":
+                err_msg = t("dialog.undo_failed_msg", err=undo_result.get("error", ""))
+            else:
+                err_msg = undo_result.get("message") or t("dialog.undo_failed_msg", err="")
+            QMessageBox.warning(self, t("dialog.undo_fail_title"), err_msg)

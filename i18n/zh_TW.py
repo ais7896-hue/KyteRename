@@ -35,6 +35,8 @@ TRANSLATIONS = {
     'dialog.undo_fail_title': '復原失敗',
     'dialog.undo_failed_msg': '復原過程發生錯誤：\n{err}',
     'dialog.undo_failed_title': '復原失敗',
+    'dialog.undo_no_snapshot': '無可用的復原快照記錄。',
+    'dialog.undo_success_msg': '成功還原 {count} 個檔案！',
     'dialog.undo_success_title': '復原成功',
     'license.activate_fail_title': '啟用失敗',
     'license.activate_success_title': '啟用成功',

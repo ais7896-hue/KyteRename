@@ -35,6 +35,8 @@ TRANSLATIONS = {
     'dialog.undo_fail_title': 'Undo Failed',
     'dialog.undo_failed_msg': 'Error during undo:\n{err}',
     'dialog.undo_failed_title': 'Undo Failed',
+    'dialog.undo_no_snapshot': 'No restore snapshots available.',
+    'dialog.undo_success_msg': 'Successfully restored {count} files!',
     'dialog.undo_success_title': 'Undo Successful',
     'license.activate_fail_title': 'Activation Failed',
     'license.activate_success_title': 'Activation Successful',

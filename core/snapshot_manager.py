@@ -56,13 +56,13 @@ class SnapshotManager:
             snapshot_path = self.get_latest_snapshot()
 
         if not snapshot_path or not snapshot_path.exists():
-            return {"success": False, "message": "無可用的復原快照記錄"}
+            return {"success": False, "error_code": "no_snapshot", "snapshot_exists": False, "message": "無可用的復原快照記錄"}
 
         try:
             data = json.loads(snapshot_path.read_text(encoding="utf-8"))
             operations = data.get("operations", [])
         except Exception as e:
-            return {"success": False, "message": f"快照檔案讀取失敗: {e}"}
+            return {"success": False, "error_code": "read_failed", "error": str(e), "message": f"快照檔案讀取失敗: {e}"}
 
         # 構建逆向操作：從 renamed_path 還原回 original_path
         reverse_pairs: List[Tuple[Path, Path]] = []

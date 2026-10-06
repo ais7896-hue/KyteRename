@@ -188,7 +188,7 @@ class LicenseDialog(QDialog):
             "4.%20%E6%88%AA%E5%9C%96%E6%88%96%E9%8C%AF%E8%AA%A4%E8%A8%8A%E6%81%AF%EF%BC%9A%0A"
         )
         self.support_lbl = QLabel(
-            f"{t('license.support_contact')}：<a href='{mailto_url}' style='color: #6366f1; text-decoration: underline;'>support@aisming.com</a>"
+            f"{t('license.support_contact')}: <a href='{mailto_url}' style='color: #6366f1; text-decoration: underline;'>support@aisming.com</a>"
         )
         self.support_lbl.setOpenExternalLinks(True)
         self.support_lbl.setObjectName("SupportLabel")
