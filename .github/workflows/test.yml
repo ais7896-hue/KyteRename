@@ -31,4 +31,15 @@ jobs:
           PYTHONIOENCODING: utf-8
           QT_QPA_PLATFORM: offscreen
         run: |
-          python run_tests.py
+          set -o pipefail
+          python run_tests.py 2>&1 | tee test_log.txt
+
+      - name: Expose Failure Details
+        if: failure()
+        shell: bash
+        run: |
+          tail -n 25 test_log.txt | while IFS= read -r line; do
+            if [ -n "$line" ]; then
+              echo "::error title=TestFailure::$line"
+            fi
+          done
