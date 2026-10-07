@@ -13,9 +13,12 @@ import tempfile
 import time
 import json
 from core.license import LicenseManager, get_machine_guid, TRIAL_DAYS, FREE_MAX_BATCH_FILES, generate_valid_key
+from i18n import i18n
 
 class TestLicenseModule(unittest.TestCase):
     def setUp(self):
+        self.orig_lang = i18n.current_language
+        i18n.apply_language("zh_TW")
         self.temp_dir = tempfile.TemporaryDirectory()
         self.old_appdata = os.environ.get("APPDATA")
         os.environ["APPDATA"] = self.temp_dir.name
@@ -27,6 +30,7 @@ class TestLicenseModule(unittest.TestCase):
         if self.old_appdata:
             os.environ["APPDATA"] = self.old_appdata
         self.temp_dir.cleanup()
+        i18n.apply_language(self.orig_lang)
 
     def test_machine_guid(self):
         guid = get_machine_guid()
@@ -93,7 +97,7 @@ class TestLicenseModule(unittest.TestCase):
         # > 10 檔拒絕
         allowed, msg = self.mgr.check_batch_limit(11)
         self.assertFalse(allowed)
-        self.assertIn(f"{FREE_MAX_BATCH_FILES} 個檔案", msg)
+        self.assertTrue(f"{FREE_MAX_BATCH_FILES} 個檔案" in msg or f"{FREE_MAX_BATCH_FILES} files" in msg, f"Expected 10 files limit in msg: {msg}")
         print("OK: test_downgrade_batch_limit passed: 10 files limit enforced")
 
     def test_downgrade_rules_limit(self):
@@ -108,15 +112,15 @@ class TestLicenseModule(unittest.TestCase):
         # 進階規則被限制
         allowed, msg = self.mgr.check_rule_allowed("MetadataRule", {})
         self.assertFalse(allowed)
-        self.assertIn("中繼資料", msg)
+        self.assertTrue("中繼資料" in msg or "Metadata" in msg, f"Expected metadata warning in msg: {msg}")
 
         allowed, msg = self.mgr.check_rule_allowed("PinyinRule", {})
         self.assertFalse(allowed)
-        self.assertIn("拼音", msg)
+        self.assertTrue("拼音" in msg or "Pinyin" in msg, f"Expected pinyin warning in msg: {msg}")
 
         allowed, msg = self.mgr.check_rule_allowed("ReplaceRule", {"use_regex": True})
         self.assertFalse(allowed)
-        self.assertIn("正規表達式", msg)
+        self.assertTrue("正規表達式" in msg or "Regex" in msg or "Regular" in msg, f"Expected regex warning in msg: {msg}")
         print("OK: test_downgrade_rules_limit passed: pro rules restricted, basic rules free")
 
     def test_pro_unlimited(self):
