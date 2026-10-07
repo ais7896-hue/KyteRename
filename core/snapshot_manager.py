@@ -25,7 +25,7 @@ class SnapshotManager:
             return None
 
         now = datetime.datetime.now()
-        filename = f"snapshot_{now.strftime('%Y%m%d_%H%M%S')}.json"
+        filename = f"snapshot_{now.strftime('%Y%m%d_%H%M%S_%f')}.json"
         snapshot_path = self.snapshot_dir / filename
 
         data = {

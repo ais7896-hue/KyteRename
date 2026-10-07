@@ -5,8 +5,9 @@ import unittest
 
 sys.stdout.reconfigure(encoding='utf-8')
 
-root_dir = Path(r"d:\Noah\Antigravity專案程式專用\KyteRename")
-sys.path.insert(0, str(root_dir))
+root_dir = Path(__file__).resolve().parent.parent
+if str(root_dir) not in sys.path:
+    sys.path.insert(0, str(root_dir))
 
 import tempfile
 import time
