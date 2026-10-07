@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.6.0.schema.json
 PackageIdentifier: ais7896-hue.KyteRename
-PackageVersion: 1.1.0
+PackageVersion: 1.1.1
 PackageLocale: en-US
 Publisher: ais7896-hue
 PublisherUrl: https://github.com/ais7896-hue
@@ -20,6 +20,6 @@ Tags:
   - file-renamer
   - utility
   - regex
-ReleaseNotesUrl: https://github.com/ais7896-hue/KyteRename/releases/tag/v1.1.0
+ReleaseNotesUrl: https://github.com/ais7896-hue/KyteRename/releases/tag/v1.1.1
 ManifestType: defaultLocale
 ManifestVersion: 1.6.0

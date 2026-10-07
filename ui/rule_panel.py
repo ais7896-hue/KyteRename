@@ -672,3 +672,51 @@ class RulePanel(QWidget):
         for idx, (key, _) in enumerate(self.CASE_ITEMS):
             self.combo_case.setItemText(idx, t(key))
         self.combo_case.blockSignals(False)
+
+    def reset_rules(self):
+        """將所有命名規則控制項重設回初始預設值"""
+        self.debounce_timer.stop()
+
+        # 1. 作用目標 (預設：僅主檔名)
+        self.btn_scope_base.setChecked(True)
+
+        # 2. 智慧標籤
+        self.chk_meta.setChecked(False)
+        self.combo_presets.setCurrentIndex(0)
+        self.edit_template.setText("{original}")
+
+        # 3. 流水號 (預設值：起 1, 增 1, 補 3, 分隔符 _, 尾端)
+        self.chk_serial.setChecked(False)
+        self.spin_serial_start.setValue(1)
+        self.spin_serial_step.setValue(1)
+        self.spin_serial_padding.setValue(3)
+        self.edit_serial_sep.setText("_")
+        self.combo_serial_pos.setCurrentIndex(0)
+
+        # 4. 搜尋與取代
+        self.edit_find.clear()
+        self.edit_replace.clear()
+        self.chk_case.setChecked(False)
+        self.chk_regex.setChecked(False)
+        self.lbl_regex_error.setVisible(False)
+        self.edit_find.setStyleSheet("")
+
+        # 5. 前後綴
+        self.edit_prefix.clear()
+        self.edit_suffix.clear()
+
+        # 6. 中文轉拼音
+        self.chk_pinyin.setChecked(False)
+        self.combo_pinyin_mode.setCurrentIndex(0)
+
+        # 7. 字元清洗與修剪 (預設清理非法字元勾選，其餘關閉)
+        self.chk_sanitize_illegal.setChecked(True)
+        self.chk_sanitize_symbols.setChecked(False)
+        self.combo_case.setCurrentIndex(0)
+        self.chk_trim_ends.setChecked(False)
+        self.chk_collapse_spaces.setChecked(False)
+
+        # 廣播 pattern 清空與發送最新規則
+        self.pattern_changed.emit(None)
+        self._emit_rules()
+

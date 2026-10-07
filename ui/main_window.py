@@ -474,6 +474,7 @@ class MainWindow(QMainWindow):
 
             if result["success_ops"]:
                 self.snapshot_manager.save_snapshot(result["success_ops"])
+                self.rule_panel.reset_rules()
 
             self._update_undo_button_state()
 

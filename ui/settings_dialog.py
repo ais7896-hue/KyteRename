@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, QTimer
 from config.settings import SettingsManager
-from ui.styles import get_theme_stylesheet
+from ui.styles import get_theme_stylesheet, CHECK_WHITE
 from i18n import t, i18n
 
 class SettingsDialog(QDialog):
@@ -332,13 +332,68 @@ class SettingsDialog(QDialog):
                 color: {text_c};
                 background: transparent;
             }}
-            QRadioButton, QCheckBox {{
+            QCheckBox {{
                 color: {text_c};
                 spacing: 8px;
                 background: transparent;
             }}
-            QRadioButton:hover, QCheckBox:hover {{
+            QCheckBox:hover {{
                 color: {'#FFFFFF' if is_dark else '#000000'};
+            }}
+            QCheckBox::indicator {{
+                width: 15px;
+                height: 15px;
+                border: 1.5px solid {'#5A6474' if is_dark else '#9CA3AF'};
+                border-radius: 4px;
+                background-color: {'#1A1D21' if is_dark else '#FFFFFF'};
+            }}
+            QCheckBox::indicator:hover {{
+                border: 1.5px solid {accent_c};
+                background-color: {'#23272E' if is_dark else '#F8FAFC'};
+            }}
+            QCheckBox::indicator:checked {{
+                border: 1.5px solid {accent_c};
+                background-color: {accent_c};
+                image: url({CHECK_WHITE});
+            }}
+            QCheckBox::indicator:checked:hover {{
+                border: 1.5px solid {'#3B99FC' if is_dark else '#4096FF'};
+                background-color: {'#3B99FC' if is_dark else '#4096FF'};
+            }}
+            QCheckBox::indicator:disabled {{
+                border: 1.5px solid {'#333842' if is_dark else '#D1D5DB'};
+                background-color: {'#16181B' if is_dark else '#F3F4F6'};
+            }}
+            QRadioButton {{
+                color: {text_c};
+                spacing: 8px;
+                background: transparent;
+            }}
+            QRadioButton:hover {{
+                color: {'#FFFFFF' if is_dark else '#000000'};
+            }}
+            QRadioButton::indicator {{
+                width: 15px;
+                height: 15px;
+                border-radius: 8px;
+                border: 1.5px solid {'#5A6474' if is_dark else '#9CA3AF'};
+                background-color: {'#1A1D21' if is_dark else '#FFFFFF'};
+            }}
+            QRadioButton::indicator:hover {{
+                border: 1.5px solid {accent_c};
+                background-color: {'#23272E' if is_dark else '#F8FAFC'};
+            }}
+            QRadioButton::indicator:checked {{
+                border: 4.5px solid {accent_c};
+                background-color: #FFFFFF;
+            }}
+            QRadioButton::indicator:checked:hover {{
+                border: 4.5px solid {'#3B99FC' if is_dark else '#4096FF'};
+                background-color: #FFFFFF;
+            }}
+            QRadioButton::indicator:disabled {{
+                border: 1.5px solid {'#333842' if is_dark else '#D1D5DB'};
+                background-color: {'#16181B' if is_dark else '#F3F4F6'};
             }}
             QComboBox, QSpinBox {{
                 background-color: {input_bg};
@@ -503,7 +558,7 @@ class SettingsDialog(QDialog):
         lines = [
             "```yaml",
             "# KyteRename 系統環境診斷資訊",
-            "Software: KyteRename v1.1.0 (64-bit)",
+            "Software: KyteRename v1.1.1 (64-bit)",
             f"Python_Version: {platform.python_version()} ({platform.architecture()[0]})",
             f"OS: {platform.system()} {sys.getwindowsversion().major}.{sys.getwindowsversion().minor} (Build {sys.getwindowsversion().build})",
         ]

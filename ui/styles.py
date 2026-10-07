@@ -13,6 +13,7 @@ ARROW_UP_LIGHT = str(ASSETS_DIR / "arrow_up_gray.png").replace("\\", "/")
 ARROW_UP_LIGHT_HOVER = str(ASSETS_DIR / "arrow_up_gray_hover.png").replace("\\", "/")
 ARROW_DOWN_LIGHT = str(ASSETS_DIR / "arrow_down_gray.png").replace("\\", "/")
 ARROW_DOWN_LIGHT_HOVER = str(ASSETS_DIR / "arrow_down_gray_hover.png").replace("\\", "/")
+CHECK_WHITE = str(ASSETS_DIR / "check_white.png").replace("\\", "/")
 
 DARK_STYLE = f"""
 QMainWindow, QDialog, QMessageBox {{
@@ -225,12 +226,66 @@ QPushButton[class="tag_btn"]:hover {{
     border-color: #177DDC;
     color: #FFFFFF;
 }}
-QRadioButton, QCheckBox {{
+QCheckBox {{
     color: #D1D5DB;
-    spacing: 7px;
+    spacing: 8px;
 }}
-QRadioButton:hover, QCheckBox:hover {{
+QCheckBox:hover {{
     color: #FFFFFF;
+}}
+QCheckBox::indicator {{
+    width: 15px;
+    height: 15px;
+    border: 1.5px solid #5A6474;
+    border-radius: 4px;
+    background-color: #1A1D21;
+}}
+QCheckBox::indicator:hover {{
+    border: 1.5px solid #3B99FC;
+    background-color: #23272E;
+}}
+QCheckBox::indicator:checked {{
+    border: 1.5px solid #177DDC;
+    background-color: #177DDC;
+    image: url({CHECK_WHITE});
+}}
+QCheckBox::indicator:checked:hover {{
+    border: 1.5px solid #3B99FC;
+    background-color: #3B99FC;
+}}
+QCheckBox::indicator:disabled {{
+    border: 1.5px solid #333842;
+    background-color: #16181B;
+}}
+QRadioButton {{
+    color: #D1D5DB;
+    spacing: 8px;
+}}
+QRadioButton:hover {{
+    color: #FFFFFF;
+}}
+QRadioButton::indicator {{
+    width: 15px;
+    height: 15px;
+    border-radius: 8px;
+    border: 1.5px solid #5A6474;
+    background-color: #1A1D21;
+}}
+QRadioButton::indicator:hover {{
+    border: 1.5px solid #3B99FC;
+    background-color: #23272E;
+}}
+QRadioButton::indicator:checked {{
+    border: 4.5px solid #177DDC;
+    background-color: #FFFFFF;
+}}
+QRadioButton::indicator:checked:hover {{
+    border: 4.5px solid #3B99FC;
+    background-color: #FFFFFF;
+}}
+QRadioButton::indicator:disabled {{
+    border: 1.5px solid #333842;
+    background-color: #16181B;
 }}
 QTableView {{
     background-color: #16181B;
@@ -471,12 +526,66 @@ QPushButton[class="tag_btn"]:hover {{
     border-color: #1677FF;
     color: #FFFFFF;
 }}
-QRadioButton, QCheckBox {{
+QCheckBox {{
     color: #374151;
-    spacing: 7px;
+    spacing: 8px;
 }}
-QRadioButton:hover, QCheckBox:hover {{
+QCheckBox:hover {{
     color: #111827;
+}}
+QCheckBox::indicator {{
+    width: 15px;
+    height: 15px;
+    border: 1.5px solid #9CA3AF;
+    border-radius: 4px;
+    background-color: #FFFFFF;
+}}
+QCheckBox::indicator:hover {{
+    border: 1.5px solid #1677FF;
+    background-color: #F8FAFC;
+}}
+QCheckBox::indicator:checked {{
+    border: 1.5px solid #1677FF;
+    background-color: #1677FF;
+    image: url({CHECK_WHITE});
+}}
+QCheckBox::indicator:checked:hover {{
+    border: 1.5px solid #4096FF;
+    background-color: #4096FF;
+}}
+QCheckBox::indicator:disabled {{
+    border: 1.5px solid #D1D5DB;
+    background-color: #F3F4F6;
+}}
+QRadioButton {{
+    color: #374151;
+    spacing: 8px;
+}}
+QRadioButton:hover {{
+    color: #111827;
+}}
+QRadioButton::indicator {{
+    width: 15px;
+    height: 15px;
+    border-radius: 8px;
+    border: 1.5px solid #9CA3AF;
+    background-color: #FFFFFF;
+}}
+QRadioButton::indicator:hover {{
+    border: 1.5px solid #1677FF;
+    background-color: #F8FAFC;
+}}
+QRadioButton::indicator:checked {{
+    border: 4.5px solid #1677FF;
+    background-color: #FFFFFF;
+}}
+QRadioButton::indicator:checked:hover {{
+    border: 4.5px solid #4096FF;
+    background-color: #FFFFFF;
+}}
+QRadioButton::indicator:disabled {{
+    border: 1.5px solid #D1D5DB;
+    background-color: #F3F4F6;
 }}
 QTableView {{
     background-color: #FFFFFF;
