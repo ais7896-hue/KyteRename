@@ -35,7 +35,7 @@ from i18n import t, i18n
 
 
 class MainWindow(QMainWindow):
-    APP_VERSION = "1.1.2"
+    APP_VERSION = "1.1.3"
     REPO_NAME = "ais7896-hue/KyteRename"
     CNAME_DOMAIN = "kyterename.aisming.com"
     def __init__(self, initial_paths: List[str] = None):

@@ -19,6 +19,8 @@ from typing import Tuple, Optional, Any
 
 from PySide6.QtCore import QObject, Signal
 
+from i18n import t
+
 
 def get_machine_guid() -> str:
     """取得 Windows 唯一 MachineGuid 機器識別碼。"""
@@ -258,7 +260,7 @@ class LicenseManager(QObject):
         """統一啟用入口。"""
         clean_key = key.strip().upper()
         if not clean_key:
-            return False, "請輸入授權序號。"
+            return False, t("license.empty_key_err")
         return self.activate_online(clean_key)
 
     def activate_online(self, key: str) -> Tuple[bool, str]:
@@ -282,7 +284,7 @@ class LicenseManager(QObject):
                 data=req_data,
                 headers={
                     "Content-Type": "application/json; charset=utf-8",
-                    "User-Agent": "KyteRename-Client/1.1.2 (Windows NT 10.0; Win64; x64)"
+                    "User-Agent": "KyteRename-Client/1.1.3 (Windows NT 10.0; Win64; x64)"
                 },
                 method="POST"
             )
@@ -307,9 +309,9 @@ class LicenseManager(QObject):
                     self._is_pro = True
                     self._license_data = save_data
                     self.license_changed.emit(True)
-                    return True, "🎉 授權啟用成功！KyteRename 專業版所有進階功能已永久解鎖。"
+                    return True, t("license.activate_success_msg")
                 else:
-                    return False, res_json.get("message", "啟用失敗，請確認序號。")
+                    return False, res_json.get("message", t("license.activate_failed_msg"))
 
         except urllib.error.HTTPError as e:
             try:
@@ -319,7 +321,7 @@ class LicenseManager(QObject):
             except Exception:
                 return False, f"伺服器回應錯誤: {e.code}"
         except urllib.error.URLError as e:
-            return False, f"網路連線失敗，請檢查網路: {e.reason}"
+            return False, t("license.net_err_msg", err=str(e.reason))
         except Exception as e:
             return False, f"啟用異常: {str(e)}"
 
@@ -341,7 +343,7 @@ class LicenseManager(QObject):
                     data=req_data,
                     headers={
                         "Content-Type": "application/json; charset=utf-8",
-                        "User-Agent": "KyteRename-Client/1.1.2 (Windows NT 10.0; Win64; x64)"
+                        "User-Agent": "KyteRename-Client/1.1.3 (Windows NT 10.0; Win64; x64)"
                     },
                     method="POST"
                 )
@@ -358,7 +360,7 @@ class LicenseManager(QObject):
         self._is_pro = False
         self._license_data = {}
         self.license_changed.emit(False)
-        return True, "已成功解除本機授權綁定，名額已釋放。"
+        return True, t("license.deactivate_success_msg")
 
     def get_license_info(self) -> dict:
         return {
@@ -389,8 +391,7 @@ class LicenseManager(QObject):
         if count > FREE_MAX_BATCH_FILES:
             return (
                 False,
-                f"免費體驗版單次限制更名 {FREE_MAX_BATCH_FILES} 個檔案 (目前已加入 {count} 檔)。\n\n"
-                "請升級 KyteRename 專業版解鎖「無限批次」極速更名！"
+                t("license.batch_limit_msg", max_count=FREE_MAX_BATCH_FILES, count=count)
             )
         return True, ""
 
@@ -410,20 +411,17 @@ class LicenseManager(QObject):
         if "metadata" in rt:
             return (
                 False,
-                "「EXIF / 音訊 ID3 / 影片中繼資料讀取」為專業版專屬進階功能。\n\n"
-                "試用期已結束，請啟用專業版以使用完整檔案中繼資料抽取重命名。"
+                t("license.rule_metadata_msg")
             )
         if "pinyin" in rt:
             return (
                 False,
-                "「漢字智能轉拼音」為專業版專屬進階功能。\n\n"
-                "試用期已結束，請啟用專業版解鎖拼音轉換能力。"
+                t("license.rule_pinyin_msg")
             )
         if "replace" in rt and rule_params and rule_params.get("use_regex"):
             return (
                 False,
-                "「正規表達式 (Regex) 高級搜尋與群組替換」為專業版專屬進階功能。\n\n"
-                "試用期已結束，純文字替換仍然完全免費開放！"
+                t("license.rule_regex_msg")
             )
 
         return True, ""

@@ -45,7 +45,7 @@ except ImportError:
 
 
 def parse_version(v: str) -> tuple:
-    """語義化版本解析，例如 '1.1.2' -> (1, 1, 2)，避免字串比對陷阱"""
+    """語義化版本解析，例如 '1.1.3' -> (1, 1, 3)，避免字串比對陷阱"""
     nums = re.findall(r"\d+", str(v))
     return tuple(int(n) for n in nums) if nums else (0,)
 

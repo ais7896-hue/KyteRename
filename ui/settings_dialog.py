@@ -565,14 +565,14 @@ class SettingsDialog(QDialog):
         if parent_win and hasattr(parent_win, "check_for_updates"):
             parent_win.check_for_updates(silent=False)
         else:
-            QMessageBox.information(self, t("settings.check_update", default="檢查更新"), "目前已是最新版本 (v1.1.2)。")
-
+            QMessageBox.information(self, t("settings.check_update", default="檢查更新"), "目前已是最新版本 (v1.1.3)。")
+    
     def _copy_diagnostic_info(self):
         """收集軟硬體環境資訊複製至剪貼簿"""
         lines = [
             "```yaml",
             "# KyteRename 系統環境診斷資訊",
-            "Software: KyteRename v1.1.2 (64-bit)",
+            "Software: KyteRename v1.1.3 (64-bit)",
             f"Python_Version: {platform.python_version()} ({platform.architecture()[0]})",
             f"OS: {platform.system()} {sys.getwindowsversion().major}.{sys.getwindowsversion().minor} (Build {sys.getwindowsversion().build})",
         ]
