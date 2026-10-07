@@ -1,4 +1,4 @@
-param(
+﻿param(
     [switch]$SkipTests
 )
 
@@ -39,6 +39,9 @@ if (-not $SkipTests) {
     }
 }
 
+# 0.8 確保沒有正在運行的實例鎖定檔案
+Get-Process KyteRename -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+
 # 1. 清理過往建置產物
 Write-Host "`n>>> [1/3] 正在清理過往建置目錄... " -ForegroundColor Yellow
 Remove-Item -Recurse -Force build, dist -ErrorAction SilentlyContinue
@@ -56,7 +59,19 @@ Write-Host "`n[OK] PyInstaller 打包成功！綠色免安裝目錄位於 dist\K
 
 # 2.5 打包免安裝綠色版 (Portable Zip)
 Write-Host "`n>>> 正在打包免安裝綠色版 (Portable Zip)... " -ForegroundColor Yellow
-$portableZip = "dist\KyteRename_1.1.3_Portable.zip"
+$appVersion = "1.1.3"
+if (Test-Path "version.json") {
+    try {
+        $vJson = Get-Content "version.json" -Raw | ConvertFrom-Json
+        if ($vJson.version) { $appVersion = $vJson.version }
+    } catch {}
+} elseif (Test-Path "setup.iss") {
+    $line = Get-Content "setup.iss" | Where-Object { $_ -match "MyAppVersion" } | Select-Object -First 1
+    if ($line -match '"([^"]+)"') {
+        $appVersion = $matches[1]
+    }
+}
+$portableZip = "dist\KyteRename_$($appVersion)_Portable.zip"
 if (Test-Path $portableZip) { Remove-Item -Force $portableZip }
 Compress-Archive -Path "dist\KyteRename\*" -DestinationPath $portableZip -Force
 Write-Host " [SUCCESS] 綠色免安裝包已產出：$portableZip " -ForegroundColor Green
