@@ -100,6 +100,13 @@ class SettingsDialog(QDialog):
         self.btn_open_license.clicked.connect(self._on_open_license_clicked)
         bottom_bar.addWidget(self.btn_open_license)
 
+        self.btn_check_update = QPushButton(t("settings.check_update", default="檢查更新"))
+        self.btn_check_update.setObjectName("btn_dialog_license")
+        self.btn_check_update.setFixedHeight(30)
+        self.btn_check_update.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.btn_check_update.clicked.connect(self._on_check_update_clicked)
+        bottom_bar.addWidget(self.btn_check_update)
+
         bottom_bar.addStretch()
 
         self.btn_cancel = QPushButton(t("settings.cancel"))
@@ -553,12 +560,19 @@ class SettingsDialog(QDialog):
         diag = LicenseDialog(self)
         diag.exec()
 
+    def _on_check_update_clicked(self):
+        parent_win = self.parent()
+        if parent_win and hasattr(parent_win, "check_for_updates"):
+            parent_win.check_for_updates(silent=False)
+        else:
+            QMessageBox.information(self, t("settings.check_update", default="檢查更新"), "目前已是最新版本 (v1.1.2)。")
+
     def _copy_diagnostic_info(self):
         """收集軟硬體環境資訊複製至剪貼簿"""
         lines = [
             "```yaml",
             "# KyteRename 系統環境診斷資訊",
-            "Software: KyteRename v1.1.1 (64-bit)",
+            "Software: KyteRename v1.1.2 (64-bit)",
             f"Python_Version: {platform.python_version()} ({platform.architecture()[0]})",
             f"OS: {platform.system()} {sys.getwindowsversion().major}.{sys.getwindowsversion().minor} (Build {sys.getwindowsversion().build})",
         ]

@@ -5,7 +5,8 @@ import os
 from pathlib import Path
 from typing import List, Tuple
 
-from PySide6.QtCore import Qt, QUrl
+import time
+from PySide6.QtCore import Qt, QUrl, QTimer
 from PySide6.QtGui import QDragEnterEvent, QDropEvent, QIcon, QFont, QKeySequence, QShortcut, QKeyEvent
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton,
@@ -20,6 +21,7 @@ from core.metadata_worker import MetadataWorker
 from core.rename_executor import RenameWorker
 from core.snapshot_manager import SnapshotManager
 from core.kyte_ipc import trigger_kyteview_preview_async
+from core.updater import CheckUpdateWorker, UpdateDialog
 from rules.base_rule import FileEntry, BaseRule
 from ui.preview_table import PreviewTable
 from ui.search_bar import SearchBar
@@ -33,6 +35,9 @@ from i18n import t, i18n
 
 
 class MainWindow(QMainWindow):
+    APP_VERSION = "1.1.2"
+    REPO_NAME = "ais7896-hue/KyteRename"
+    CNAME_DOMAIN = "kyterename.aisming.com"
     def __init__(self, initial_paths: List[str] = None):
         super().__init__()
         self.setWindowTitle(t("app.title"))
@@ -65,6 +70,11 @@ class MainWindow(QMainWindow):
 
         if initial_paths:
             self._load_paths(initial_paths)
+
+        # 啟動 3 秒後於背景靜默檢查更新 (不影響啟動速度)
+        self.updater_worker = None
+        self._is_silent_check = True
+        QTimer.singleShot(3000, lambda: self.check_for_updates(silent=True))
 
     def _init_ui(self):
         central_widget = QWidget(self)
@@ -530,3 +540,60 @@ class MainWindow(QMainWindow):
             else:
                 err_msg = undo_result.get("message") or t("dialog.undo_failed_msg", err="")
             QMessageBox.warning(self, t("dialog.undo_fail_title"), err_msg)
+
+    def check_for_updates(self, silent: bool = True):
+        """檢查版本更新 (silent=True 為背景自動檢查；silent=False 為使用者手動點擊)"""
+        last_check = float(self.settings.get("last_update_check_time", 0.0) or 0.0)
+        # 背景靜默檢查且 24 小時內已檢查過則略過
+        if silent and (time.time() - last_check < 86400):
+            return
+
+        self._is_silent_check = silent
+        self.settings.set("last_update_check_time", time.time())
+
+        # 避免重複觸發
+        if self.updater_worker and self.updater_worker.isRunning():
+            return
+
+        self.updater_worker = CheckUpdateWorker(
+            current_ver=self.APP_VERSION,
+            repo=self.REPO_NAME,
+            cname_domain=self.CNAME_DOMAIN,
+            parent=self
+        )
+        self.updater_worker.checked.connect(self._on_update_result)
+        self.updater_worker.error.connect(self._on_update_error)
+        self.updater_worker.start()
+
+    def _on_update_result(self, has_update: bool, latest_ver: str, notes: str, download_url: str):
+        if has_update:
+            skipped_ver = self.settings.get("skipped_version", "")
+            # 若為靜默檢查且使用者曾選擇「略過此版本」則不打擾
+            if self._is_silent_check and skipped_ver == latest_ver:
+                return
+
+            dlg = UpdateDialog(
+                app_name="KyteRename",
+                current_ver=self.APP_VERSION,
+                new_ver=latest_ver,
+                notes=notes,
+                download_url=download_url,
+                on_skip_cb=lambda v: self.settings.set("skipped_version", v),
+                parent=self
+            )
+            dlg.exec()
+        elif not self._is_silent_check:
+            QMessageBox.information(
+                self, 
+                t("update.latest_title", default="檢查更新"), 
+                t("update.latest_msg", ver=self.APP_VERSION, default=f"目前已是最新版本 (v{self.APP_VERSION})！")
+            )
+
+    def _on_update_error(self, err: str):
+        if not self._is_silent_check:
+            QMessageBox.warning(
+                self, 
+                t("update.latest_title", default="檢查更新"), 
+                t("update.err_conn", err=err, default=f"連線至伺服器時發生錯誤：\n{err}")
+            )
+

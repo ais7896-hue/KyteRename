@@ -52,7 +52,11 @@ class SettingsManager(QObject):
         "splitter_sizes": [650, 350],
 
         # 生態聯動
-        "enable_space_preview": True
+        "enable_space_preview": True,
+
+        # 自動更新
+        "last_update_check_time": 0.0,
+        "skipped_version": ""
     }
 
     def __new__(cls, *args, **kwargs):

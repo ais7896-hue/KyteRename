@@ -1,0 +1,9 @@
+{
+  "app_name": "KyteRename",
+  "version": "1.1.2",
+  "release_date": "2026-10-07",
+  "min_supported_version": "1.0.0",
+  "mandatory": false,
+  "notes": "1. [新功能] 內建自動版本檢測與一鍵無縫下載升級\n2. [優化] 設定視窗新增手動檢查更新按鈕\n3. [修復] 強化多語系環境下的 UI 即時回饋與記憶體優化",
+  "download_url": "https://github.com/ais7896-hue/KyteRename/releases/download/v1.1.2/KyteRename_Setup_1.1.2.exe"
+}
