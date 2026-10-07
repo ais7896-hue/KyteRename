@@ -25,7 +25,7 @@ ROOT_DIR = Path(__file__).resolve().parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-# 預先初始化 Headless QApplication，防止模組各自初始化時找不到 display plugin
+# 預先初始化 Headless QApplication
 try:
     from PySide6.QtWidgets import QApplication
     _app = QApplication.instance() or QApplication(["-platform", "offscreen"])
@@ -73,13 +73,17 @@ def run_all_tests():
     print(f"  執行耗時 (Elapsed) : {elapsed:.3f} 秒")
     print(f"{BOLD}------------------------------------------------------{RESET}\n")
 
-    # 如果有失敗或錯誤，印出詳細原因
+    # 如果有失敗或錯誤，透過 GitHub Actions Workflow Command 直接印出 annotation
     if failures > 0 or errors > 0:
         print(f"\n{RED}{BOLD}=== 失敗項目詳細清單 (Failures & Errors) ==={RESET}")
         for test, tb in result.failures:
-            print(f"\n{RED}[FAILURE] {test}:{RESET}\n{tb}")
+            last_line = tb.strip().splitlines()[-1] if tb.strip() else "AssertionError"
+            print(f"::error title={test}::{last_line}")
+            print(f"\n[FAILURE] {test}:\n{tb}")
         for test, tb in result.errors:
-            print(f"\n{RED}[ERROR] {test}:{RESET}\n{tb}")
+            last_line = tb.strip().splitlines()[-1] if tb.strip() else "Exception"
+            print(f"::error title={test}::{last_line}")
+            print(f"\n[ERROR] {test}:\n{tb}")
 
     # 如果在 GitHub Actions CI 環境中，將結果寫入 GITHUB_STEP_SUMMARY
     summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
