@@ -15,7 +15,7 @@ from rules.base_rule import FileEntry
 from core.rule_engine import RuleEngine
 from ui.preview_table import PreviewTableModel, PreviewSortFilterProxyModel
 
-app = QApplication.instance() or QApplication([])
+app = QApplication.instance() or QApplication(["-platform", "offscreen"])
 
 class TestPhase5(unittest.TestCase):
     def setUp(self):
