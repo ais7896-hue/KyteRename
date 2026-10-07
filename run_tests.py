@@ -1,11 +1,24 @@
 """
 KyteRename - Automated Test Runner
-一鍵自動化測試執行器，支援測試探索、彩色輸出與 CI 整合
+一鍵自動化測試執行器，支援 Headless 離屏渲染、測試探索、彩色輸出與 CI 整合
 """
+import os
 import sys
 import time
 import unittest
 from pathlib import Path
+
+# 強制設定 Qt 離屏渲染以支援 Headless 測試環境 (GitHub Actions / CI)
+os.environ["QT_QPA_PLATFORM"] = "offscreen"
+os.environ["PYTHONIOENCODING"] = "utf-8"
+
+# 確保輸出支援 UTF-8，防止英文環境 (cp1252/cp437) 出現 UnicodeEncodeError
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 # 將專案根目錄加入路徑
 ROOT_DIR = Path(__file__).resolve().parent
