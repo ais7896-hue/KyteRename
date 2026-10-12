@@ -1,4 +1,4 @@
-/**
+﻿/**
  * assets/i18n.js - KyteRename Official Bilingual i18n Engine (zh_TW & en_US)
  */
 
@@ -188,8 +188,8 @@ const TRANSLATIONS = {
         "price.pro_f4": "<b>相片 EXIF / 音訊 ID3 深度抽取</b>（拍攝日期、相機型號、演出者）",
         "price.pro_f5": "<b>三階段安全 DAG 拓撲換名與 Ctrl+Z 快照原路還原</b>",
         "price.pro_f6": "<b>享有一年內免費維護與 Bug 修復</b>（若未來 OS 大型改版需重構，新版另行販售）",
-        "price.pro_btn": "立即取得早鳥序號 (NT$ 199 終身買斷)",
-        "price.bundle_btn": "選購 Kyte Suite 旗艦三合一套裝 (All-in-One)",
+        "price.pro_btn": "立即取得早鳥序號 (NT$ 299 / $9.99 USD 終身買斷)",
+        "price.bundle_btn": "選購 Kyte Suite 旗艦三合一套裝 (NT$ 599 / $19.99 USD)",
         "price.pro_foot1": "離線安全無後門",
         "price.pro_foot2": "支援自主換機移轉",
         "faq.badge": "Frequently Asked Questions",
@@ -412,8 +412,8 @@ const TRANSLATIONS = {
         "price.pro_f4": "<b>Photo EXIF / Audio ID3 Deep Extraction</b> (Date, camera, artist, album, track)",
         "price.pro_f5": "<b>3-Stage Safe DAG Renaming & Ctrl+Z Snapshot Atomic Restore</b>",
         "price.pro_f6": "<b>Includes 1 Year Free Maintenance & Bug Fixes</b> (major OS redesigns sold separately)",
-        "price.pro_btn": "Get Early-Bird Key (NT$ 199 Lifetime)",
-        "price.bundle_btn": "Get Kyte Suite Trio (All-in-One Bundle)",
+        "price.pro_btn": "Get Early-Bird Key (NT$ 299 / $9.99 USD Lifetime)",
+        "price.bundle_btn": "Get Kyte Suite Trio (Bundle NT$ 599 / $19.99 USD)",
         "price.pro_foot1": "100% Offline Safe",
         "price.pro_foot2": "Self-Service Transfer",
         "faq.badge": "Frequently Asked Questions",
