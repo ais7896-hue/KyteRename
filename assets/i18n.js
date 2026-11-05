@@ -499,6 +499,12 @@ function applyLanguage(lang) {
     });
 
     // 更新導航列語言按鈕字樣 (當前是繁中則顯示 EN，反之顯示 繁中)
+    // 智能切換技術專欄 (Blog) 目標網址 (中: blog/ | 英: blog/en/)
+    const blogLinks = document.querySelectorAll('a[href="blog/"], a[href="blog/en/"]');
+    blogLinks.forEach(a => {
+        a.href = lang === 'en_US' ? 'blog/en/' : 'blog/';
+    });
+
     const langBtnText = document.getElementById('lang-toggle-text');
     if (langBtnText) {
         langBtnText.textContent = lang === 'zh_TW' ? 'EN' : '繁中';

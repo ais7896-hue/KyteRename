@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>KyteRename Blog (EN)</title>
+    <link>https://kyterename.aisming.com/blog/en/</link>
+    <description>Deep dives into Windows batch file renaming, Regex pattern tutorials, automated photo EXIF &amp; audio ID3 organization, and cycle-free DAG topological renaming.</description>
+    <language>en-us</language>
+    <item>
+      <title>The Complete Windows Batch Rename Guide: Auto-Numbering, Photo EXIF, ID3 Tags &amp; Live Regex</title>
+      <link>https://kyterename.aisming.com/blog/en/windows-batch-rename-files-regex-exif-guide.html</link>
+      <guid>https://kyterename.aisming.com/blog/en/windows-batch-rename-files-regex-exif-guide.html</guid>
+      <pubDate>2026-11-05</pubDate>
+      <description>Still pressing F2 to rename thousands of camera photos, music tracks, or project files on Windows? Learn how to combine EXIF timestamps, ID3 tags, and Amber Gold regex highlighting in KyteRename.</description>
+    </item>
+    <item>
+      <title>Why Traditional Batch Renamers Fail on Cyclic Collisions: Inside KyteRename&#x27;s 3-Stage DAG Engine</title>
+      <link>https://kyterename.aisming.com/blog/en/prevent-file-overwrite-dag-topological-rename.html</link>
+      <guid>https://kyterename.aisming.com/blog/en/prevent-file-overwrite-dag-topological-rename.html</guid>
+      <pubDate>2026-11-05</pubDate>
+      <description>Renaming 001.jpg to 002.jpg while renaming 002.jpg to 001.jpg causes naive batch renamers to crash or overwrite files. Here is how KyteRename uses Directed Acyclic Graph (DAG) topological sorting to guarantee zero overwrites.</description>
+    </item>
+  </channel>
+</rss>

@@ -8,6 +8,9 @@
     <meta name="keywords" content="批次改名, Regex教學, EXIF照片整理, Windows工具, KyteRename">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="https://kyterename.aisming.com/blog/windows-batch-rename-files-regex-exif-guide.html">
+    <link rel="alternate" hreflang="zh-Hant" href="https://kyterename.aisming.com/blog/windows-batch-rename-files-regex-exif-guide.html">
+    <link rel="alternate" hreflang="en" href="https://kyterename.aisming.com/blog/en/windows-batch-rename-files-regex-exif-guide.html">
+    <link rel="alternate" hreflang="x-default" href="https://kyterename.aisming.com/blog/en/windows-batch-rename-files-regex-exif-guide.html">
     <link rel="alternate" type="application/rss+xml" title="KyteRename Blog RSS" href="https://kyterename.aisming.com/blog/rss.xml">
 
     <!-- Open Graph / Social -->
@@ -33,6 +36,7 @@
       "description": "整理上千張旅遊照片、音樂收藏或專案文件時還在手動按 F2 改名？本篇完整示範如何結合 EXIF 拍攝時間、ID3 標籤、琥珀金 Regex 高亮與流水號，一鍵完成萬級檔案整理。",
       "datePublished": "2026-11-05",
       "dateModified": "2026-11-05",
+      "inLanguage": "zh-Hant",
       "author": {
         "@type": "Organization",
         "name": "Aisming / Kyte Suite",
@@ -88,8 +92,12 @@
                 <span class="text-slate-600">/</span>
                 <a href="index.html" class="text-sm font-bold text-sky-400 hover:text-sky-300 transition">Blog 技術專欄</a>
             </div>
-            <div class="flex items-center gap-4 text-xs font-bold">
+            <div class="flex items-center gap-3 sm:gap-4 text-xs font-bold">
                 <a href="index.html" class="text-slate-300 hover:text-white transition"><i class="fa-solid fa-arrow-left mr-1"></i>所有文章</a>
+                <a href="en/windows-batch-rename-files-regex-exif-guide.html" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-globe text-sky-400"></i>
+                    <span>EN</span>
+                </a>
                 <a href="https://github.com/ais7896-hue/KyteRename/releases/download/v1.1.3/KyteRename_Setup_1.1.3.exe" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white shadow transition">免費下載 KyteRename</a>
             </div>
         </div>
@@ -126,7 +134,7 @@
 <p class="text-slate-300 leading-relaxed my-4 text-base">在 <a href="../index.html" class="text-sky-400 hover:text-sky-300 underline underline-offset-4 transition">KyteRename</a> 中輸入搜尋字串或 Regex 時，左欄「原始檔名」會即時以高對比琥珀金底色標示出命中的文字區塊，右欄同步在 <strong class="text-white font-bold">50ms 內</strong>顯示改名後的新檔名，徹底消滅盲改風險。</p>
 <h3 class="text-xl font-bold text-slate-100 mt-7 mb-3">2. 相片 EXIF 與音樂 ID3 變數自動注入</h3>
 <p class="text-slate-300 leading-relaxed my-4 text-base">無需手動查看檔案內容，直接在模板中輸入 <code class="px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 font-mono text-xs">{exif_date}_{width}x{height}</code> 或 <code class="px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 font-mono text-xs">{artist} - {track}_{title}</code>，多執行緒背景引擎便會自動抽取相機拍攝時間、解析度與音樂專輯資訊。</p>
-<h3 class="text-xl font-bold text-slate-100 mt-7 mb-3">3. 漢字智慧轉拼音与非法字元清洗</h3>
+<h3 class="text-xl font-bold text-slate-100 mt-7 mb-3">3. 漢字智慧轉拼音與非法字元清洗</h3>
 <p class="text-slate-300 leading-relaxed my-4 text-base">針對跨語系伺服器上傳需求，支援一鍵將中文字轉為全拼、首字大寫或簡拼縮寫，並自動清除網路下載檔案常見的 <code class="px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 font-mono text-xs">【】★</code> 等垃圾符號。</p>
 <h3 class="text-xl font-bold text-slate-100 mt-7 mb-3">4. 原子級快照日誌與 <code class="px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 font-mono text-xs">Ctrl + Z</code> 一鍵還原</h3>
 <p class="text-slate-300 leading-relaxed my-4 text-base">每次執行更名都會在本地自動記錄變更快照，就算改完才發現規則設錯，按下 <code class="px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 font-mono text-xs">Ctrl + Z</code> 即可依照逆向順序安全無損地還原所有檔名。</p>

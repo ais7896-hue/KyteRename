@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>KyteRename Blog</title>
+    <title>KyteRename Blog (ZH)</title>
     <link>https://kyterename.aisming.com/blog/</link>
     <description>深入分享 Windows 批次檔案重新命名技巧、Regex 正規表示式教學、相片 EXIF 與音樂 ID3 自動整理、以及 DAG 拓撲安全改名技術。</description>
     <language>zh-tw</language>
