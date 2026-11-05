@@ -1,4 +1,4 @@
-﻿param(
+param(
     [switch]$SkipTests
 )
 
@@ -114,4 +114,9 @@ if ($foundIscc) {
 } else {
     Write-Host "`n[WARNING] 未偵測到 Inno Setup 編譯器 (ISCC.exe)。 " -ForegroundColor Yellow
     Write-Host "免安裝綠色版本已建置完成：dist\KyteRename\KyteRename.exe " -ForegroundColor Green
+}
+
+# 4. MSIX 封裝
+if (Test-Path ".\build_msix.ps1") {
+    & .\build_msix.ps1
 }
