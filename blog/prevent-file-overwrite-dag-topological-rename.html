@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>為什麼傳統批次改名會發生檔名衝突或覆蓋？解析三階段 DAG 拓撲安全更名技術 | KyteRename Blog</title>
+    <meta name="description" content="當把 file_02 改為 file_01、同時把 file_01 改為 file_02，或是重新編號時遇到既有檔名佔用，一般改名工具常會報錯中斷甚至覆蓋檔案。本文深入解析 KyteRename 的有向無環圖 (DAG) 破圈技術。">
+    <meta name="keywords" content="DAG拓撲, 檔案安全, 批次重新命名, 防覆蓋, KyteRename">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="https://kyterename.aisming.com/blog/prevent-file-overwrite-dag-topological-rename.html">
+    <link rel="alternate" type="application/rss+xml" title="KyteRename Blog RSS" href="https://kyterename.aisming.com/blog/rss.xml">
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="為什麼傳統批次改名會發生檔名衝突或覆蓋？解析三階段 DAG 拓撲安全更名技術">
+    <meta property="og:description" content="當把 file_02 改為 file_01、同時把 file_01 改為 file_02，或是重新編號時遇到既有檔名佔用，一般改名工具常會報錯中斷甚至覆蓋檔案。本文深入解析 KyteRename 的有向無環圖 (DAG) 破圈技術。">
+    <meta property="og:url" content="https://kyterename.aisming.com/blog/prevent-file-overwrite-dag-topological-rename.html">
+    <meta property="og:site_name" content="KyteRename Blog">
+    <meta property="og:image" content="https://kyterename.aisming.com/assets/icon.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="為什麼傳統批次改名會發生檔名衝突或覆蓋？解析三階段 DAG 拓撲安全更名技術">
+    <meta name="twitter:description" content="當把 file_02 改為 file_01、同時把 file_01 改為 file_02，或是重新編號時遇到既有檔名佔用，一般改名工具常會報錯中斷甚至覆蓋檔案。本文深入解析 KyteRename 的有向無環圖 (DAG) 破圈技術。">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "headline": "為什麼傳統批次改名會發生檔名衝突或覆蓋？解析三階段 DAG 拓撲安全更名技術",
+      "description": "當把 file_02 改為 file_01、同時把 file_01 改為 file_02，或是重新編號時遇到既有檔名佔用，一般改名工具常會報錯中斷甚至覆蓋檔案。本文深入解析 KyteRename 的有向無環圖 (DAG) 破圈技術。",
+      "datePublished": "2026-11-05",
+      "dateModified": "2026-11-05",
+      "author": {
+        "@type": "Organization",
+        "name": "Aisming / Kyte Suite",
+        "url": "https://kyteindex.aisming.com/"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "KyteRename",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://kyterename.aisming.com/assets/icon.png"
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://kyterename.aisming.com/blog/prevent-file-overwrite-dag-topological-rename.html"
+      },
+      "keywords": "DAG拓撲, 檔案安全, 批次重新命名, 防覆蓋, KyteRename"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "KyteRename",
+          "item": "https://kyterename.aisming.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Blog",
+          "item": "https://kyterename.aisming.com/blog/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "為什麼傳統批次改名會發生檔名衝突或覆蓋？解析三階段 DAG 拓撲安全更名技術",
+          "item": "https://kyterename.aisming.com/blog/prevent-file-overwrite-dag-topological-rename.html"
+        }
+      ]
+    }
+  ]
+}
+    </script>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased selection:bg-sky-600 selection:text-white min-h-screen flex flex-col">
+    <!-- Top Navbar -->
+    <nav class="sticky top-0 z-50 backdrop-blur-xl bg-slate-950/85 border-b border-white/10">
+        <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="../index.html" class="font-extrabold text-white text-lg hover:text-sky-400 transition">KyteRename</a>
+                <span class="text-slate-600">/</span>
+                <a href="index.html" class="text-sm font-bold text-sky-400 hover:text-sky-300 transition">Blog 技術專欄</a>
+            </div>
+            <div class="flex items-center gap-4 text-xs font-bold">
+                <a href="index.html" class="text-slate-300 hover:text-white transition"><i class="fa-solid fa-arrow-left mr-1"></i>所有文章</a>
+                <a href="https://github.com/ais7896-hue/KyteRename/releases/download/v1.1.3/KyteRename_Setup_1.1.3.exe" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white shadow transition">免費下載 KyteRename</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Article Main -->
+    <main class="max-w-3xl mx-auto px-6 py-12 flex-1 w-full">
+        <nav aria-label="Breadcrumb" class="text-xs text-slate-400 mb-6 flex items-center gap-2">
+            <a href="../index.html" class="hover:text-white transition">首頁</a>
+            <span>/</span>
+            <a href="index.html" class="hover:text-white transition">Blog</a>
+            <span>/</span>
+            <span class="text-slate-300 truncate">為什麼傳統批次改名會發生檔名衝突或覆蓋？解析三階段 DAG 拓撲安全更名技術</span>
+        </nav>
+
+        <article>
+            <header class="mb-8 pb-8 border-b border-white/10">
+                <div class="flex flex-wrap items-center gap-3 text-xs text-sky-400 font-semibold mb-3">
+                    <span class="px-2.5 py-0.5 rounded-full bg-sky-500/15 border border-sky-400/30">核心技術解析</span>
+                    <time datetime="2026-11-05"><i class="fa-regular fa-calendar mr-1"></i>2026-11-05</time>
+                    <span><i class="fa-regular fa-clock mr-1"></i>5 min read</span>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-black text-white leading-tight tracking-tight mb-4">為什麼傳統批次改名會發生檔名衝突或覆蓋？解析三階段 DAG 拓撲安全更名技術</h1>
+                <p class="text-slate-400 text-base leading-relaxed">當把 file_02 改為 file_01、同時把 file_01 改為 file_02，或是重新編號時遇到既有檔名佔用，一般改名工具常會報錯中斷甚至覆蓋檔案。本文深入解析 KyteRename 的有向無環圖 (DAG) 破圈技術。</p>
+                <div class="flex flex-wrap gap-2 mt-4"><span class="px-2.5 py-1 rounded-full bg-slate-800 text-sky-300 text-xs font-semibold border border-white/10">#DAG拓撲</span><span class="px-2.5 py-1 rounded-full bg-slate-800 text-sky-300 text-xs font-semibold border border-white/10">#檔案安全</span><span class="px-2.5 py-1 rounded-full bg-slate-800 text-sky-300 text-xs font-semibold border border-white/10">#批次重新命名</span><span class="px-2.5 py-1 rounded-full bg-slate-800 text-sky-300 text-xs font-semibold border border-white/10">#防覆蓋</span><span class="px-2.5 py-1 rounded-full bg-slate-800 text-sky-300 text-xs font-semibold border border-white/10">#KyteRename</span></div>
+            </header>
+
+            <div class="prose prose-invert max-w-none">
+                <p class="text-slate-300 leading-relaxed my-4 text-base">在執行大規模流水號重排時，你是否遇過改名改到一半突然跳出「檔案已存在」錯誤，導致資料夾裡一半是新檔名、一半是舊檔名的尷尬局面？</p>
+<h2 class="text-2xl font-extrabold text-white mt-10 mb-4 tracking-tight">循環改名與鏈式碰撞 (Cyclic & Chain Collisions)</h2>
+<p class="text-slate-300 leading-relaxed my-4 text-base">假設資料夾內已有 <code class="px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 font-mono text-xs">001.jpg</code> 與 <code class="px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 font-mono text-xs">002.jpg</code>，當你逆序重排要把 <code class="px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 font-mono text-xs">001.jpg</code> 改為 <code class="px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 font-mono text-xs">002.jpg</code>、同時將 <code class="px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 font-mono text-xs">002.jpg</code> 改為 <code class="px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 font-mono text-xs">001.jpg</code> 時，這在圖論上構成了一個<strong class="text-white font-bold">循環依賴 (Cycle)</strong>。若單純由上往下逐一呼叫作業系統的 <code class="px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 font-mono text-xs">rename()</code>，第一步就會因為 <code class="px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 font-mono text-xs">002.jpg</code> 已存在而失敗或引發覆蓋災難。</p>
+<h2 class="text-2xl font-extrabold text-white mt-10 mb-4 tracking-tight">KyteRename 的三階段 DAG 拓撲破圈引擎</h2>
+<p class="text-slate-300 leading-relaxed my-4 text-base"><a href="../index.html" class="text-sky-400 hover:text-sky-300 underline underline-offset-4 transition">KyteRename</a> 在真正觸碰硬碟檔案前，會先在記憶體中建立完整的依賴關係圖：</p>
+<ul class="list-disc list-inside space-y-2.5 text-slate-300 my-4 leading-relaxed">
+<li><strong class="text-white font-bold">第一階段（靜態衝突預檢）</strong>：在雙欄預覽階段即刻攔截「多對一」重名衝突與 Windows 保留字，未解決前禁止執行。</li>
+<li><strong class="text-white font-bold">第二階段（DAG 拓撲排序與微秒級中繼破圈）</strong>：自動識別鏈式依賴與循環環路，將涉及環路的節點先原子切換至具備微秒時間戳的安全暫存檔名。</li>
+<li><strong class="text-white font-bold">第三階段（原子提交與逆向還原日誌）</strong>：完成無衝突落盤並寫入本地快照，確保即使面對上萬個交錯編號的檔案，也能 100% 零覆蓋、零中斷完成。</li>
+</ul>
+            </div>
+        </article>
+
+        <!-- Conversion CTA Box -->
+        <div class="mt-12 p-8 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-sky-950/60 border border-sky-500/30 shadow-xl text-center">
+            <h3 class="text-2xl font-black text-white mb-2">立即體驗 KyteRename 的極致效率</h3>
+            <p class="text-sm text-slate-300 mb-6 max-w-xl mx-auto">具備 50ms 雙欄零延遲即時預覽、琥珀金正則高亮、EXIF/ID3 抽取與 Ctrl+Z 快照安全還原的次世代 Windows 批次改名神器。</p>
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <a href="https://github.com/ais7896-hue/KyteRename/releases/download/v1.1.3/KyteRename_Setup_1.1.3.exe" class="px-6 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm shadow-lg transition flex items-center gap-2">
+                    <i class="fa-brands fa-windows"></i>
+                    <span>免費下載 Windows 版</span>
+                </a>
+                <a href="../index.html" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm border border-white/10 transition">
+                    了解完整功能
+                </a>
+            </div>
+        </div>
+
+        
+        <section class="mt-14 pt-10 border-t border-white/10">
+            <h3 class="text-lg font-extrabold text-white mb-4">延伸閱讀 / More Articles</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <a href="windows-batch-rename-files-regex-exif-guide.html" class="block p-5 rounded-2xl bg-slate-900/90 border border-white/10 hover:border-sky-400/50 transition">
+                <div class="text-xs text-sky-400 font-semibold mb-1">2026-11-05 · 實戰教學</div>
+                <div class="font-bold text-white text-base mb-1">Windows 批次改名完整指南：從智慧流水號、EXIF 拍攝日期到 Regex 正規表示式實戰</div>
+                <div class="text-xs text-slate-400 line-clamp-2">整理上千張旅遊照片、音樂收藏或專案文件時還在手動按 F2 改名？本篇完整示範如何結合 EXIF 拍攝時間、ID3 標籤、琥珀金 Regex 高亮與流水號，一鍵完成萬級檔案整理。</div>
+            </a></div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 py-8 text-center text-xs text-slate-500">
+        <div class="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>© 2026 Aisming (KyteRename). All rights reserved.</div>
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="hover:text-slate-300 transition">官方首頁</a>
+                <a href="index.html" class="hover:text-slate-300 transition">Blog 首頁</a>
+                <a href="rss.xml" class="hover:text-slate-300 transition"><i class="fa-solid fa-rss mr-1"></i>RSS</a>
+                <a href="https://kyteindex.aisming.com/blog/" class="hover:text-slate-300 transition">Kyte Suite 總站專欄</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

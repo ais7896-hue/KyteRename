@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>KyteRename Blog</title>
+    <link>https://kyterename.aisming.com/blog/</link>
+    <description>深入分享 Windows 批次檔案重新命名技巧、Regex 正規表示式教學、相片 EXIF 與音樂 ID3 自動整理、以及 DAG 拓撲安全改名技術。</description>
+    <language>zh-tw</language>
+    <item>
+      <title>Windows 批次改名完整指南：從智慧流水號、EXIF 拍攝日期到 Regex 正規表示式實戰</title>
+      <link>https://kyterename.aisming.com/blog/windows-batch-rename-files-regex-exif-guide.html</link>
+      <guid>https://kyterename.aisming.com/blog/windows-batch-rename-files-regex-exif-guide.html</guid>
+      <pubDate>2026-11-05</pubDate>
+      <description>整理上千張旅遊照片、音樂收藏或專案文件時還在手動按 F2 改名？本篇完整示範如何結合 EXIF 拍攝時間、ID3 標籤、琥珀金 Regex 高亮與流水號，一鍵完成萬級檔案整理。</description>
+    </item>
+    <item>
+      <title>為什麼傳統批次改名會發生檔名衝突或覆蓋？解析三階段 DAG 拓撲安全更名技術</title>
+      <link>https://kyterename.aisming.com/blog/prevent-file-overwrite-dag-topological-rename.html</link>
+      <guid>https://kyterename.aisming.com/blog/prevent-file-overwrite-dag-topological-rename.html</guid>
+      <pubDate>2026-11-05</pubDate>
+      <description>當把 file_02 改為 file_01、同時把 file_01 改為 file_02，或是重新編號時遇到既有檔名佔用，一般改名工具常會報錯中斷甚至覆蓋檔案。本文深入解析 KyteRename 的有向無環圖 (DAG) 破圈技術。</description>
+    </item>
+  </channel>
+</rss>
