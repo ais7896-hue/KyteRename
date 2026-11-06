@@ -27,8 +27,8 @@ const TRANSLATIONS = {
         "hero.desc": "告別傳統更名工具盲目改名、檔案衝突覆蓋、或當機崩潰的惡夢！<br class=\"hidden sm:inline\">KyteRename 具備虛擬化雙欄即時預覽、相片 EXIF 拍攝時間、音樂 ID3 標籤抽取、漢字轉拼音與三階段安全 DAG 拓撲換名，更支援隨時按 <kbd class=\"px-2 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono-code text-blue-300 font-bold text-xs shadow\">Space</kbd> 空白鍵喚起 KyteView 內容預覽。",
         "hero.btn_installer": "立即下載 Windows 安裝版 (v1.1.3)",
         "hero.btn_portable": "免安裝綠色版 (.zip)",
-        "hero.btn_msstore": "Microsoft Store (審核中)",
-        "cta.btn_msstore": "Microsoft Store (審核中)",
+        "hero.btn_msstore": "Microsoft Store 下載",
+        "cta.btn_msstore": "Microsoft Store 下載",
         "hero.btn_guide": "閱讀完整圖文手冊",
         "hero.trial_note": "純本機極速運作 · 100% 離線免連網 · 內建原子級快照日誌 Ctrl+Z 隨時還原",
         "mock.title": "KyteRename — [D:\\Noah\\Camera_2026] 批次重新命名中 (32 項目)",
@@ -254,8 +254,8 @@ const TRANSLATIONS = {
         "hero.desc": "Say goodbye to blind renaming, overwriting disasters, and app freezes!<br class=\"hidden sm:inline\">KyteRename features virtualized dual-column real-time preview, EXIF photo timestamps, ID3 music metadata extraction, Pinyin conversion, and 3-stage DAG topological cycle-breaking. Press <kbd class=\"px-2 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono-code text-blue-300 font-bold text-xs shadow\">Space</kbd> anytime to preview content via KyteView.",
         "hero.btn_installer": "Download Windows Installer (v1.1.3)",
         "hero.btn_portable": "Portable Zip (.zip)",
-        "hero.btn_msstore": "Microsoft Store (In Review)",
-        "cta.btn_msstore": "Microsoft Store (In Review)",
+        "hero.btn_msstore": "Get it from Microsoft",
+        "cta.btn_msstore": "Get it from Microsoft",
         "hero.btn_guide": "User Guide & Docs",
         "hero.trial_note": "100% Local & Offline · Zero Telemetry · Atomic Snapshot Logs with Ctrl+Z Instant Undo",
         "mock.title": "KyteRename — [D:\\Noah\\Camera_2026] Batch Renaming (32 items)",
@@ -526,7 +526,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 // Microsoft Store 上架開關：審核通過後改為 true 即可全站啟用商店下載按鈕
-const MS_STORE_LIVE = false;
+const MS_STORE_LIVE = true;
 function updateMsStoreButtons(lang) {
     const isEn = lang === 'en_US';
     document.querySelectorAll('.ms-store-btn').forEach(btn => {
