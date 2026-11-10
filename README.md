@@ -44,25 +44,75 @@
 ## 🚀 快速開始
 
 ### 環境需求
+
 - Windows 10 / 11 64-bit
 - Python 3.10+
 
 ### 安裝依賴
+
 ```bash
 pip install -r requirements.txt
 ```
 
 ### 啟動應用程式
+
 ```bash
 python main.py
 ```
+
 *支援 CLI 參數啟動導入目錄或檔案：`python main.py "D:\Photos"`*
+
+---
+
+## 📁 專案架構
+
+```text
+KyteRename/
+├── main.py                      # 主程式進入點與 CLI 參數解析
+├── config/                      # 設定管理模組
+│   └── settings.py              # 偏好設定與規則範本持久化
+├── core/                        # 核心重新命名與資料引擎
+│   ├── file_scanner.py          # 非同步目錄與檔案掃描器
+│   ├── rule_engine.py           # 規則流水線即時預覽計算引擎
+│   ├── rename_executor.py       # 拓撲排序 (DAG) 安全批次改名執行器
+│   ├── snapshot_manager.py      # 歷史快照紀錄與逆向拓撲還原 (Ctrl+Z)
+│   ├── metadata_reader.py       # EXIF 相機資訊與 ID3 音樂標籤解析
+│   ├── metadata_worker.py       # 背景執行緒非同步中繼資料讀取
+│   ├── kyte_ipc.py              # KyteView Named Pipe 跨進程預覽連動
+│   ├── license.py               # 授權驗證管理
+│   └── updater.py               # 版本檢查與自動更新
+├── rules/                       # 模組化改名規則集
+│   ├── base_rule.py             # 規則抽象基底類別 (BaseRule)
+│   ├── replace_rule.py          # 關鍵字與正規表達式取代（含反向引用）
+│   ├── serial_rule.py           # 智慧自動補零流水號規則
+│   ├── metadata_rule.py         # EXIF / ID3 / 檔案屬性動態變數替換
+│   ├── prefix_suffix_rule.py    # 前綴與後綴插入規則
+│   ├── trim_rule.py             # 字元裁切與範圍移除規則
+│   ├── case_rule.py             # 大小寫格式轉換規則
+│   ├── pinyin_rule.py           # 中文轉全拼 / 首字母簡拼規則
+│   └── sanitize_rule.py         # 非法字元與裝飾符號清洗規則
+├── ui/                          # 使用者介面模組
+│   ├── main_window.py           # 主視窗佈局與快捷鍵綁定
+│   ├── preview_table.py         # QAbstractTableModel 萬級檔案虛擬滾動雙欄表格
+│   ├── rule_panel.py            # 左側規則堆疊與參數調整面板
+│   ├── search_bar.py            # 頂部即時搜尋與過濾列
+│   ├── settings_dialog.py       # 偏好設定對話框
+│   ├── license_dialog.py        # 授權註冊對話框
+│   └── styles.py                # 深淺色自適應現代 QSS 樣式表
+├── i18n/                        # 多國語系字典 (zh_TW / en_US)
+├── tests/                       # 單元測試與各階段整合測試
+├── msix/                        # Microsoft Store MSIX 封裝清單與資產
+├── scoop/ & winget/             # 套件管理器發布清單
+├── KyteRename.spec              # PyInstaller 打包設定檔
+└── setup.iss                    # Inno Setup 安裝精靈腳本
+```
 
 ---
 
 ## 📦 打包發布 (Phase 6)
 
 ### 一鍵編譯免安裝版與安裝精靈
+
 本專案內建自動化建置腳本，自動檢測環境、呼叫 PyInstaller 編譯無黑窗獨立程式，並透過 Inno Setup 產生安裝包：
 
 ```powershell
