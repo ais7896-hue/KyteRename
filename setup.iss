@@ -29,17 +29,14 @@ OutputDir=dist
 OutputBaseFilename=KyteRename_Setup_{#MyAppVersion}
 
 [Languages]
-Name: "chinesetrad"; MessagesFile: "compiler:Languages\ChineseTraditional.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [CustomMessages]
-chinesetrad.SystemIntegration=系統整合:
-chinesetrad.ContextMenuDesc=新增至 Windows 右鍵選單「使用 KyteRename 批次整理」 (推薦)
-chinesetrad.ContextMenuName=使用 KyteRename 批次整理
-
-english.SystemIntegration=System Integration:
-english.ContextMenuDesc=Add "Batch Rename with KyteRename" to Windows context menu (Recommended)
-english.ContextMenuName=Batch Rename with KyteRename
+english.CreateDesktopIcon=建立桌面捷徑 (Create desktop shortcut)
+english.AdditionalIcons=額外捷徑 (Additional icons):
+english.SystemIntegration=系統整合 (System Integration):
+english.ContextMenuDesc=新增至 Windows 右鍵選單「使用 KyteRename 批次整理」 (Add to context menu)
+english.ContextMenuName=使用 KyteRename 批次整理 (Batch Rename with KyteRename)
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked

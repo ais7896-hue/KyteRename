@@ -9,7 +9,7 @@
     "architecture": {
         "64bit": {
             "url": "https://github.com/ais7896-hue/KyteRename/releases/download/v1.1.4/KyteRename_1.1.4_Portable.zip",
-            "hash": "CBE05A0478FDCA6ACE933109B067DB17341A14EB6F209637F3E320D8317BA272"
+            "hash": "020415A6663D7194881BEB7932BEA8453DB0A0897FBDE15187CAB6AC37D44890"
         }
     },
     "bin": "KyteRename.exe",
