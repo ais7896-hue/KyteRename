@@ -18,7 +18,7 @@ SITE_CONFIG = {
     "og_image": "assets/icon.png",
     "blog_desc": "深入分享 Windows 批次檔案重新命名技巧、Regex 正規表示式教學、相片 EXIF 與音樂 ID3 自動整理、以及 DAG 拓撲安全改名技術。",
     "blog_desc_en": "Deep dives into Windows batch file renaming, Regex pattern tutorials, automated photo EXIF & audio ID3 organization, and cycle-free DAG topological renaming.",
-    "cta_url": "https://github.com/ais7896-hue/KyteRename/releases/download/v1.1.3/KyteRename_Setup_1.1.3.exe",
+    "cta_url": "https://github.com/ais7896-hue/KyteRename/releases/download/v1.1.4/KyteRename_Setup_1.1.4.exe",
     "cta_desc": "具備 50ms 雙欄零延遲即時預覽、琥珀金正則高亮、EXIF/ID3 抽取與 Ctrl+Z 快照安全還原的次世代 Windows 批次改名神器。",
     "cta_desc_en": "Next-gen Windows batch renamer featuring 50ms dual-column virtualized preview, Amber Gold regex highlighting, EXIF/ID3 metadata tags, and Ctrl+Z atomic snapshot undo."
 }

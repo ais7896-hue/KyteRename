@@ -1,4 +1,4 @@
-param(
+﻿param(
     [switch]$SkipTests
 )
 
@@ -59,7 +59,7 @@ Write-Host "`n[OK] PyInstaller 打包成功！綠色免安裝目錄位於 dist\K
 
 # 2.5 打包免安裝綠色版 (Portable Zip)
 Write-Host "`n>>> 正在打包免安裝綠色版 (Portable Zip)... " -ForegroundColor Yellow
-$appVersion = "1.1.3"
+$appVersion = "1.1.4"
 if (Test-Path "version.json") {
     try {
         $vJson = Get-Content "version.json" -Raw | ConvertFrom-Json
@@ -105,7 +105,7 @@ if ($foundIscc) {
     if ($LASTEXITCODE -eq 0) {
         Write-Host "`n=============================================" -ForegroundColor Green
         Write-Host " [SUCCESS] 安裝精靈打包成功！ " -ForegroundColor Green
-        Write-Host " 安裝檔位置：dist\KyteRename_Setup_1.1.3.exe " -ForegroundColor Green
+        Write-Host " 安裝檔位置：dist\KyteRename_Setup_1.1.4.exe " -ForegroundColor Green
         Write-Host "=============================================" -ForegroundColor Green
     } else {
         Write-Host "`n[ERROR] Inno Setup 封裝失敗，請檢查 setup.iss 設定！ " -ForegroundColor Red

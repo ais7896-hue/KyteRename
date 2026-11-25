@@ -9,7 +9,7 @@ $ErrorActionPreference = "Stop"
 Set-Location -Path $PSScriptRoot
 
 $appName = "KyteRename"
-$appVersion = "1.1.3"
+$appVersion = "1.1.4"
 if (Test-Path "version.json") {
     try {
         $vJson = Get-Content "version.json" -Raw -Encoding UTF8 | ConvertFrom-Json
